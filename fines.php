@@ -50,7 +50,7 @@ text-align:center;
 	<div style="margin-top:70px">
 
 	
-	    <h1 id="finetxt">Fines Table</h1>
+	    <h1 id="finetxt">Fine Charges</h1>
 	</div>
 
 	</div>

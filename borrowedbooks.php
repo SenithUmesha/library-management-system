@@ -37,7 +37,7 @@ font-size:40px;
 	<!-- info alert -->
 	<div id="borrowtxt"style="margin-top:70px">
 
-	    <h1>Borrow Books</h1>
+	    <h1>Borrowed Books</h1>
 	</div>
 
 	</div>
