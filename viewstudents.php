@@ -12,18 +12,41 @@ include "includes/header.php";
 			echo "<script>alert('Student Deleted!')</script>";
 		}
 	}
-
+	$current_page = basename($_SERVER['PHP_SELF']);
 ?>
 
+<style>
+    body {
+        background-image: url('images/notice3.jpg');
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+        padding: 0;
+        margin: 0;
+        width:100%;
+    }
+	.table td {
+        font-weight: bold;
+    }
 
-<div class="container">
+	
+	#streg{
+
+font-family: 'Protest Revolution', sans-serif;
+color:white;
+text-align:center;
+font-size:40px;
+}
+
+</style>
+<div class="container-fluid">
     <?php include "includes/nav.php"; ?>
 	<!-- navbar ends -->
 	<!-- info alert -->
-	<div class="alert alert-warning col-lg-7 col-md-12 col-sm-12 col-xs-12 col-lg-offset-2 col-md-offset-0 col-sm-offset-1 col-xs-offset-0" style="margin-top:70px">
+	<div style="margin-top:70px">
 
-		<span class="glyphicon glyphicon-book"></span>
-	    <strong>Student</strong> Table
+
+	    <h1 id="streg">Student Registration</h1>
 	</div>
 	<!-- <div class="alert alert-info col-lg-12 col-md-12 col-sm-12 col-xs-12" style="margin-top: 10px">
 		<button class="btn btn-success" style="float: left"><span class="glyphicon glyphicon-plus-sign"></span> Add Button</button>

@@ -19,19 +19,38 @@ if(isset($_POST['del'])){
 			
 
  }
-
+ $current_page = basename($_SERVER['PHP_SELF']);
 
 ?>
 
+<style>
+    body {
+        background-image: url('images/notice3.jpg');
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+        padding: 0;
+        margin: 0;
+        width:100%;
+    }
+	.table td {
+        font-weight: bold;
+    }
+	#userlisttxt{
 
-<div class="container">
+
+		font-family: 'Protest Revolution', sans-serif;
+		font-size:40px;
+	}
+</style>
+<div class="container-fluid">
     <?php include "includes/nav.php"; ?>
 	<!-- navbar ends -->
 	<!-- info alert -->
-	<div class="alert alert-warning col-lg-7 col-md-12 col-sm-12 col-xs-12 col-lg-offset-2 col-md-offset-0 col-sm-offset-1 col-xs-offset-0" style="margin-top:70px">
+	<div style="margin-top:70px">
+    <h4 id="userlisttxt" class="center-block" style="margin-top:70px; color: white; text-align: center; text-shadow: 2px 2px 4px #000000; ">Users List</h4>
+</div>
 
-	    <h4 class="center-block"><span class="admin_name">Users List</span> </h4>
-	</div>
 	
 
 
@@ -65,11 +84,11 @@ if(isset($_POST['del'])){
 
  	<thead>
 	 <tr>
-			  <th>adminId</th>
-			  <th>adminName</th>
-			  <th>password</th>
-			  <th>username</th>
-			  <th>email</th>
+			  <th>AdminID</th>
+			  <th>AdminName</th>
+			  <th>Password</th>
+			  <th>Username</th>
+			  <th>Email</th>
 			   <th>Delete</th>
 	 </tr>
 	</thead>

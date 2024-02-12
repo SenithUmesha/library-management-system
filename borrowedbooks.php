@@ -3,17 +3,41 @@ require 'includes/snippet.php';
 require 'includes/db-inc.php';
 include "includes/header.php";
 
+$current_page = basename($_SERVER['PHP_SELF']);
+
 ?>
 
+<style>
+    body {
+        background-image: url('images/notice3.jpg');
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+        padding: 0;
+        margin: 0;
+        width:100%;
+    }
+	.table td {
+        font-weight: bold;
+    }
 
-<div class="container">
+	
+	#borrowtxt{
+
+font-family: 'Protest Revolution', sans-serif;
+color:white;
+text-align:center;
+font-size:40px;
+}
+
+</style>
+<div class="container-fluid">
     <?php include "includes/nav.php"; ?>
 	<!-- navbar ends -->
 	<!-- info alert -->
-	<div class="alert alert-warning col-lg-7 col-md-12 col-sm-12 col-xs-12 col-lg-offset-2 col-md-offset-0 col-sm-offset-1 col-xs-offset-0" style="margin-top:70px">
+	<div id="borrowtxt"style="margin-top:70px">
 
-		<span class="glyphicon glyphicon-book"></span>
-	    <strong>Borrow Books</strong>
+	    <h1>Borrow Books</h1>
 	</div>
 
 	</div>
