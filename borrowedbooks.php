@@ -65,6 +65,7 @@ font-size:40px;
 		  </div>
 
 		  <table class="table table-bordered">
+		
 		  <thead>
 					<tr> 
 					<th>ID</th>
