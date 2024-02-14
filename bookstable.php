@@ -44,6 +44,8 @@ $current_page = basename($_SERVER['PHP_SELF']);
     <!-- Include any additional stylesheets or scripts here -->
 </head>
 <body>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
 <style>
     		@font-face {
             font-family: 'Protest Revolution';
@@ -55,6 +57,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
             background-repeat: no-repeat;
             background-attachment: fixed;
             padding: 0;
+
             margin: 0;
 			width:100%;
          
@@ -118,35 +121,59 @@ $current_page = basename($_SERVER['PHP_SELF']);
             font-weight : bold;
         }
 
-        /* Add margin to table cells */
-.table-striped  {
-    margin-right: 10px; /* Adjust the margin value as needed */
+    
+        .table{
+            width :80%;
+            height:100%;
+            padding:20px 50px;
+
+
+
+        }
+
+        table{
+            width:100%;
+            border-collapse:collapse;
+
+
+        }
+        td,th{
+font-weight:bold;
+cursor:pointer;
+padding:5px 5px;
+border:0.5px solid #606060;
+letter-spacing:1.46px;
+
+        }
+th{
+    font-size:19px;
+    background-color:#303030;
+    color:white;
+
 }
 
-/* Add margin to table headers */
-.table-striped th {
-    margin-right: 100px; /* Adjust the margin value as needed */
-}
 
-.table-striped td,
-.table-striped th {
-    padding-right: 40px; /* Adjust the padding value as needed */
-}
+.footer{
+
+    display:block;
+    
+   
 
 
-.table-striped {
-    border-spacing: 20px; /* Adjust the gap value as needed */
 }
 
 
 
 
+tr:hover td{
 
-
+    background-color:#30303045;
+    
+}
 
 
     </style>
-<div class="container">
+<div class="container-fluid">
     <?php include "includes/nav.php"; ?>
     <!-- Navbar ends -->
 
@@ -174,7 +201,21 @@ $current_page = basename($_SERVER['PHP_SELF']);
             </div>
 
             <!-- Table starts here -->
-            <table class="table table-striped" id="bookTable">
+            <table class="table " id="bookTable">
+                <div class="tab_head_container">
+                    <div class="page_limit">
+                        <span>Shows</span>
+                        <select id="table_size">
+                        <option value=10>10</option>
+                        <option value=20>20</option>
+                        <option value=50>150</option>
+                        <option value=100>100</option>
+                </select>
+
+                    </div>
+
+
+                </div>
                 <div class="search-container">
                     <img class="search-icon" src="images/searchIcon.png" alt="Search Icon">
                     <input type="search" id="searchInput" placeholder="Search by Title">
@@ -256,34 +297,15 @@ $current_page = basename($_SERVER['PHP_SELF']);
                 </tbody>
             </table>
             <!-- Table ends here -->
+                    <!-- Pagination -->
+<div class="footer">
+    <span>Showing 1 to 10 of 60 entries</span>
+    <div class="index_buttons"></div>
+    </div>
         </div>
     </div>
 </div>
 
-<!-- Pagination -->
-<div class="pagination">
-  <?php
-    // Check if the current page is greater than 1, and if so, add a "Previous" link
-    if ($page > 1) {
-      echo "<a href='?page=".($page - 1)."' class='btn btn-warning'>Previous</a>";
-    }
-
-    // Loop through the total number of pages and create links for each one
-    for ($i = 1; $i <= $total_pages; $i++) {
-      // If the current page is the same as the loop iteration, make the link active
-      if ($i == $page) {
-        echo "<a href='?page=".$i."' class='btn btn-secondary active'>".$i."</a>";
-      } else {
-        echo "<a href='?page=".$i."' class='btn btn-secondary'>".$i."</a>";
-      }
-    }
-
-    // Check if the current page is less than the total number of pages, and if so, add a "Next" link
-    if ($page < $total_pages) {
-      echo "<a href='?page=".($page + 1)."' class='btn btn-warning'>Next</a>";
-    }
-  ?>
-</div>
 
 
 
@@ -298,56 +320,160 @@ $current_page = basename($_SERVER['PHP_SELF']);
 </div>
 
 <script>
-        function Delete() {
-            return confirm('Would you like to delete the book?');
+    var array_length = <?php echo $total_records; ?>;
+    var table_size = <?php echo $results_per_page; ?>;
+    var start_index = 1;
+    var end_index = table_size;
+    var current_index = 1;
+    var max_index = Math.ceil(array_length / table_size);
+
+    function highlightIndexButtons() {
+        start_index = (current_index - 1) * table_size + 1;
+        end_index = start_index + table_size - 1;
+        if (end_index > array_length) {
+            end_index = array_length;
         }
+        $(".footer span").text('Showing ' + start_index + ' to ' + end_index + ' of ' + array_length + ' entries ');
+        $(".index_buttons button").removeClass('active');
+        $(".index_buttons button[index='" + current_index + "']").addClass('active');
+    }
 
-        function Edit(button) {
-            var row = button.parentNode.parentNode;
-            var cells = row.getElementsByTagName("td");
+    function next() {
+        if (current_index < max_index)
+            current_index++;
 
-            for (var i = 0; i < cells.length - 1; i++) { // excluding the last cell with the button
-                cells[i].setAttribute("contenteditable", "true");
-                cells[i].classList.add("editable");
-            }
-            button.textContent = "Save";
-            // button.setAttribute("onclick", "Save(this)");
-            button.name="save";
+        updateTableContent();
+        highlightIndexButtons();
+    }
+
+    function prev() {
+        if (current_index > 1)
+            current_index--;
+            updateTableContent();
+        highlightIndexButtons();
+    }
+
+
+
+    function updateTableContent() {
+    // Calculate the new offset based on the current index and table size
+    var offset = (current_index - 1) * table_size;
+    // Make an AJAX request to fetch the new data from the server
+    $.ajax({
+        url: 'get_data.php', // Replace 'get_data.php' with the actual URL to fetch data
+        type: 'GET',
+        data: { offset: offset, limit: table_size },
+        success: function(response) {
+            // Update the table body with the new data
+            $('#bookTable tbody').html(response);
+        },
+        error: function(xhr, status, error) {
+            console.error(xhr.responseText);
         }
+        
+    });
+}
 
-        document.getElementById("searchInput").addEventListener("keyup", function() {
-            let input = this.value.toLowerCase();
-            let rows = document.getElementById("bookTable").getElementsByTagName("tbody")[0].getElementsByTagName("tr");
+    function indexPagination(index) {
+        current_index = parseInt(index);
+        updateTableContent();
+        highlightIndexButtons();
+    }
 
-            for (let row of rows) {
-                let title = row.getElementsByTagName("td")[1].textContent.toLowerCase();
-                if (title.includes(input)) {
-                    row.style.display = "";
-                } else {
-                    row.style.display = "none";
-                }
-            }
-        });
+    $("#table_size").change(function() {
+        table_size = parseInt($(this).val());
+        current_index = 1;
+        start_index = 1;
+        fetchDataAndUpdateTable();
+    });
 
-        var availableCells = document.querySelectorAll("#bookTable tbody tr td:nth-child(7)");
+    function fetchDataAndUpdateTable() {
+    // Calculate the offset based on the current page and table size
+    var offset = (current_index - 1) * table_size;
+    
+    // Send an AJAX request to get data from the server
+    $.ajax({
+        url: 'get_data.php',
+        type: 'GET',
+        data: { offset: offset, limit: table_size },
+        success: function(response) {
+            // Update the table body with the fetched data
+            $('#bookTable tbody').html(response);
+        },
+        error: function(xhr, status, error) {
+            // Handle errors if any
+            console.error(error);
+        }
+    });
+    
+    // Update pagination buttons and display
+    displayIndexButtons();
+}
 
-        // Loop through each cell and modify its content and style
-        availableCells.forEach(function(cell) {
-            // Get the current content of the cell
-            var currentContent = cell.textContent.trim();
+    function displayIndexButtons() {
+        $(".index_buttons button").remove();
+        $(".index_buttons").append('<button onclick="prev()">Previous</button>');
+        for (var i = 1; i <= max_index; i++) {
+            $(".index_buttons").append('<button onclick="indexPagination(' + i + ')" index="' + i + '">' + i + '</button>');
+        }
+        $(".index_buttons").append('<button onclick="next();">Next</button>');
+        highlightIndexButtons();
+    }
+    displayIndexButtons();
 
-            // Check if the content is 'YES'
-            if (currentContent === 'YES') {
-                // Remove the text content of the cell
-                cell.textContent = '';
-                // Add a class to the cell for styling
-                cell.classList.add('available-yes');
+    // Rest of your JavaScript code...
+
+    function Delete() {
+        return confirm('Would you like to delete the book?');
+    }
+
+    function Edit(button) {
+        var row = button.parentNode.parentNode;
+        var cells = row.getElementsByTagName("td");
+
+        for (var i = 0; i < cells.length - 1; i++) { // excluding the last cell with the button
+            cells[i].setAttribute("contenteditable", "true");
+            cells[i].classList.add("editable");
+        }
+        button.textContent = "Save";
+        // button.setAttribute("onclick", "Save(this)");
+        button.name = "save";
+    }
+
+    document.getElementById("searchInput").addEventListener("keyup", function() {
+        let input = this.value.toLowerCase();
+        let rows = document.getElementById("bookTable").getElementsByTagName("tbody")[0].getElementsByTagName("tr");
+
+        for (let row of rows) {
+            let title = row.getElementsByTagName("td")[1].textContent.toLowerCase();
+            if (title.includes(input)) {
+                row.style.display = "";
             } else {
-                cell.textContent='';
-                cell.classList.add('available-no');
+                row.style.display = "none";
             }
-        });
-    </script>
+        }
+    });
+
+    var availableCells = document.querySelectorAll("#bookTable tbody tr td:nth-child(7)");
+
+    // Loop through each cell and modify its content and style
+    availableCells.forEach(function(cell) {
+        // Get the current content of the cell
+        var currentContent = cell.textContent.trim();
+
+        // Check if the content is 'YES'
+        if (currentContent === 'YES') {
+            // Remove the text content of the cell
+            cell.textContent = '';
+            // Add a class to the cell for styling
+            cell.classList.add('available-yes');
+        } else {
+            cell.textContent = '';
+            cell.classList.add('available-no');
+        }
+    });
+</script>
+
 
 
 </body>

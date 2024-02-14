@@ -23,7 +23,7 @@ if (isset($_SESSION['student-name'])) {
 <style>
     /* Custom styles for the navbar */
     .navbar {
-        background-color: #333; /* Navbar background color */
+        background-color: #555; /* Navbar background color */
         color: #fff; /* Navbar text color */
         border-radius: 0; /* Remove border-radius */
         width: 100%; /* Set width to 100% */
@@ -32,7 +32,7 @@ if (isset($_SESSION['student-name'])) {
         position: fixed;
         top: 0; /* Align the navbar to the top */
         left: 0; /* Align the navbar to the left */
-        z-index: 1;
+        z-index: 1000;
     }
 
     .navbar-brand {

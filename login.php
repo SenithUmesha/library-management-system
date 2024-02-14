@@ -65,60 +65,130 @@ if(isset($_POST['submit'])){
 
 
 ?>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css" rel="stylesheet">
+
+<style>
+	
+body {
+            background-image: url('images/notice3.jpg');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            padding: 0;
+
+            margin: 0;
+			width:100%;
+         
+        }
+
+.container {
+	margin-top: 20px;
+	position: relative;
+	width: 100%;
+	max-width: 500px;
+}
+
+.container form {
+	background-color: #fff;
+	padding: 20px;
+	border-radius: 10px;
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.container .form-control {
+	margin-bottom: 20px;
+}
+
+.container .btn-primary {
+	background-color: #9B3D12;
+	border: none;
+	border-radius: 5px;
+	padding: 10px 20px;
+	cursor: pointer;
+	width: 100%;
+}
+
+.container .btn-primary:hover {
+	background-color: #7a2d08;
+}
+
+.signupContainer {
+	margin-top: 20px;
+	position: relative;
+	width: 100%;
+	max-width: 500px;
+	margin-left:550px;
+	border-radius: 5px;
+}
 
 
+.signupContainer form {
+	background-color: #fff;
+	padding: 20px;
+	border-radius: 10px;
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+
+.signupContainer button {
+	color: white;
+	padding: 10px 20px;
+	background-color: #9B3D12;
+	width: 100%;
+	border: none;
+	border-radius: 5px;
+	cursor: pointer;
+	transition: background-color 0.3s;
+}
+
+.signupContainer button:hover {
+	background-color: #7a2d08;
+}
+
+.signupContainer button i {
+	margin-left: 5px;
+}
+
+</style>
 
 <div class="container">
-
-	<div class="container  col-lg-9 col-md-11 col-sm-12 col-xs-12 col-lg-offset-2 col-md-offset-1 col-sm-offset-0 col-xs-offset-0  ">
-		<div class="jumbotron login col-lg-10 col-md-11 col-sm-12 col-xs-12">
-			<!-- <div class="alert alert-success alert-dismissable">
-				  <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-				  <strong>Warning!</strong> Better check yourself, you're not looking too good.
-			</div> -->
-			<p class="text-center" style="text-align: center">Please provide details</p>
-
-			<div class="container">
-				<form class="form-horizontal" role="form" method="post" action="login.php" enctype="multipart/form-data">
-					<div class="form-group">
-						<div class="col-sm-10">
-							<input type="text" class="form-control" name="username" placeholder="Enter your username" id="username" required>
-						</div>
-					</div>
-					<div class="form-group">
-
-					</div>
-					<div class="form-group">
-						<div class="col-sm-10">
-							<input type="password" class="form-control" placeholder="Enter your password" name="password" id="password" required>
-						</div>
-					</div>
-
-					<div class="form-group">
-						<div class="col-sm-offset-2 col-sm-10">
-							<input type="submit" class="btn btn-primary col-lg-4" name="submit" value="Login">
-
-
-						</div>
-					</div>
-
-					</div>
-				</form>
-			</div>
+	<form class="form-horizontal" role="form" method="post" action="login.php" enctype="multipart/form-data">
+		<p class="text-center">Login</p>
+		<div class="form-group">
+			<input type="text" class="form-control" name="username" placeholder="Enter your username" id="username" required>
 		</div>
-	</div>
-
+		<div class="form-group">
+			<input type="password" class="form-control" placeholder="Enter your password" name="password" id="password" required>
+		</div>
+		<div class="form-group">
+			<input type="submit" class="btn btn-primary" name="submit" value="Login">
+		</div>
+	</form>
 </div>
 
+<div class="signupContainer">
+	<form>
+	<div>
+		<p class="text-center">Signup</p>
+		<div class="SignupDescription">
+			<span>Don't have an account ? Create one now !</span><br>
+			<a href="register.php" class="btn btn-primary">Create Account</a>
+
+
+		</div>
+	</div>
+</form>
+</div>
 
 <script type="text/javascript" src="js/jquery.js"></script>
 <script type="text/javascript" src="js/bootstrap.js"></script>
 <script type="text/javascript" src="js/sweetalert.min.js"> </script>
-	<?php if (isset($alert_user)) { ?>
+
+<?php if (isset($alert_user)) { ?>
 	<script type="text/javascript">
 		swal("Oops...", "You are not allowed to view this page directly...!", "error");
 	</script>
-	<?php } ?>
+<?php } ?>
 
 </body>
 </html>
