@@ -3,6 +3,15 @@ require 'includes/snippet.php';
 require 'includes/db-inc.php';
 include "includes/header_new.php";
 
+if (isset($_POST['submit'])) {
+	$id = trim($_POST['del_btn']);
+	$sql = "DELETE from students where studentId = '$id' ";
+	$query = mysqli_query($conn, $sql);
+
+	if ($query) {
+		echo "<script>alert('Student Deleted!')</script>";
+	}
+}
 $current_page = basename($_SERVER['PHP_SELF']);
 ?>
 
@@ -12,18 +21,16 @@ $current_page = basename($_SERVER['PHP_SELF']);
 		margin: 0;
 		width: 100%;
 	}
-
-	h4 {
-		margin-top: 18px;
-		font-weight: bold;
-	}
 </style>
 
 <div class="wrapper"> <?php include "includes/side_navbar.php"; ?>
 	<div class="main p-3">
-		<h4>| Students</h4>
 		<div class="container">
-			<div style="margin-top:40px">
+			<div style="display: flex; justify-content: space-between; align-items: center; margin-top: 18px;">
+				<h4 style=" font-weight: bold;">| Students</h4>
+				<button type="button" class="btn btn-success"><span class="bi-plus"></span>&nbsp;Student</button>
+			</div>
+			<div style="margin-top:30px">
 				<table id="students_table" class="table table-striped" style="width:100%">
 					<thead>
 						<th>ID</th>
@@ -51,8 +58,8 @@ $current_page = basename($_SERVER['PHP_SELF']);
 								<td><?php echo $row['username']; ?></td>
 								<td><?php echo $row['password']; ?></td>
 								<td>
-									<button type="button" class="btn btn-primary" onclick="deleteRow(this)">Edit</button>
-									<button type="button" class="btn btn-danger" onclick="editRow(this)">Delete</button>
+									<button type="button" class="btn btn-primary" onclick="deleteRow(this)"><span class="bi-pencil"></span></button>
+									<button type="button" class="btn btn-danger" onclick="editRow(this)"><span class="bi-trash"></span></button>
 								</td>
 							</tr>
 
