@@ -6,7 +6,7 @@ include "includes/header.php";
 
 $registration_success = false;
 
-if(isset($_POST['submit'])){
+if (isset($_POST['submit'])) {
     // Retrieve data from POST request
     $matric_no = sanitize(trim($_POST['matric_no']));
     $password = sanitize(trim($_POST['password']));
@@ -22,20 +22,21 @@ if(isset($_POST['submit'])){
     // Insert data into the students table
     $sql = "INSERT INTO students (matric_no, password, username, email, dept, numOfBooks, moneyOwed, photo, phoneNumber, name) 
             VALUES ('$matric_no', '$password', '$username', '$email', '$dept', $numOfBooks, '$moneyOwed', '$photo', '$phoneNumber', '$name')";
-    
-    if(mysqli_query($conn, $sql)){
+
+    if (mysqli_query($conn, $sql)) {
 
         $registration_success = true;
         // Redirect to a success page or perform any other actions
-        header("Location: login.php");
+        header("Location: login_new.php");
         exit();
-    } else{
+    } else {
         echo "Error: " . $sql . "<br>" . mysqli_error($conn);
     }
 }
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -59,6 +60,7 @@ if(isset($_POST['submit'])){
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <h2 class="mb-4">Register Student</h2>
@@ -130,13 +132,14 @@ if(isset($_POST['submit'])){
             </div>
         </div>
         <script>
-            $(document).ready(function(){
+            $(document).ready(function() {
                 $('#registrationSuccessModal').modal('show');
             });
         </script>
-            <?php endif; ?>
-            <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <?php endif; ?>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
+
 </html>

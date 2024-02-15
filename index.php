@@ -120,7 +120,7 @@ if (isset($_POST['del'])) {
 
           </ul>
           <ul class="nav navbar-nav">
-            <li><a href="login.php">Login</a></li>
+            <li><a href="login_new.php">Login</a></li>
           </ul>
         </div>
       </div>
