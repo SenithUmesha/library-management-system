@@ -28,7 +28,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
 		<div class="container">
 			<div style="display: flex; justify-content: space-between; align-items: center; margin-top: 18px;">
 				<h4 style=" font-weight: bold;">| Students</h4>
-				<button type="button" class="btn btn-success"><span class="bi-plus"></span>&nbsp;Student</button>
+				<button type="button" class="btn btn-success" onclick="addRow(this)"><span class="bi-plus"></span>&nbsp;Student</button>
 			</div>
 			<div style="margin-top:30px">
 				<table id="students_table" class="table table-striped" style="width:100%">
@@ -58,8 +58,10 @@ $current_page = basename($_SERVER['PHP_SELF']);
 								<td><?php echo $row['username']; ?></td>
 								<td><?php echo $row['password']; ?></td>
 								<td>
-									<button type="button" class="btn btn-primary" onclick="deleteRow(this)"><span class="bi-pencil"></span></button>
-									<button type="button" class="btn btn-danger" onclick="editRow(this)"><span class="bi-trash"></span></button>
+									<form action="viewstudents.php" method="post">
+										<input type="hidden" value="<?php echo $row['studentId']; ?>" name="del_btn">
+										<!-- <button class="btn btn-primary"><span class="bi-pencil"></span></button> -->
+										<button name="submit" class="btn btn-danger"><span class="bi-trash"></span></button>
 								</td>
 							</tr>
 
@@ -76,14 +78,6 @@ $current_page = basename($_SERVER['PHP_SELF']);
 <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
 <script>
 	new DataTable('#students_table');
-
-	function editRow(button) {
-		alert('Edit clicked');
-	}
-
-	function deleteRow(button) {
-		alert('Delete clicked');
-	}
 </script>
 
 </body>

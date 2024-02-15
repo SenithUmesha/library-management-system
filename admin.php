@@ -21,6 +21,7 @@ if (isset($_POST['submit'])) {
 
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
@@ -30,13 +31,14 @@ if (isset($_POST['submit'])) {
     <link rel="stylesheet" type="text/css" href="flickity/flickity.css">
     <link rel="stylesheet" type="text/css" href="css/sweetalert.css">
     <script type="text/javascript" src="flickity/flickity.js"></script>
-    <script type="text/javascript" src="sweetalert.min.js"></script>   
+    <script type="text/javascript" src="sweetalert.min.js"></script>
     <title>Library Management</title>
     <style>
-		@font-face {
+        @font-face {
             font-family: 'Protest Revolution';
             src: url('fonts/ProtestRevolution-Regular.ttf') format('truetype');
         }
+
         body {
             background-image: url('images/notice3.jpg');
             background-size: cover;
@@ -44,8 +46,9 @@ if (isset($_POST['submit'])) {
             background-attachment: fixed;
             padding: 0;
             margin: 0;
-			width:100%;
+            width: 100%;
         }
+
         .announcement-container {
             display: flex;
             flex-wrap: nowrap;
@@ -53,8 +56,10 @@ if (isset($_POST['submit'])) {
             padding: 20px;
             margin-top: 20px;
         }
+
         .announcement {
-            position: relative; /* Added position relative */
+            position: relative;
+            /* Added position relative */
             flex: 0 0 auto;
             width: 600px;
             height: 400px;
@@ -67,82 +72,87 @@ if (isset($_POST['submit'])) {
             color: white;
             font-family: 'Protest Revolution', sans-serif;
         }
+
         .announcement h3 {
             text-align: center;
         }
+
         .announcement .delete-btn {
             position: absolute;
             top: 380px;
             right: 300px;
         }
+
         .add-announcement {
             margin-top: 20px;
             text-align: center;
         }
-		.text-center{
 
-			font-family: 'Protest Revolution', sans-serif;
-			color:white;
-			font-size: 60px; 
-		
-		
+        .text-center {
 
-		}
+            font-family: 'Protest Revolution', sans-serif;
+            color: white;
+            font-size: 60px;
 
-		h1.text-center {
-        margin-top: 80px; /* Adjust margin to create space between navbar and text */
-        color: white; /* Ensure text color is visible against the background */
-        font-family: 'Protest Revolution', sans-serif; /* Apply font family */
-		font-size: 60px; 
-		
-    }
 
+
+        }
+
+        h1.text-center {
+            margin-top: 80px;
+            /* Adjust margin to create space between navbar and text */
+            color: white;
+            /* Ensure text color is visible against the background */
+            font-family: 'Protest Revolution', sans-serif;
+            /* Apply font family */
+            font-size: 60px;
+
+        }
     </style>
 </head>
 
 <body>
 
     <div class="container-fluid">
-	
 
-	<?php include "includes/nav.php"; ?>
-	<h1 class="text-center">Welcome !</h1>
-      
-	
+
+        <?php include "includes/nav.php"; ?>
+        <h1 class="text-center">Welcome !</h1>
+
+
     </div>
-	
+
     <div class="announcement-container">
         <?php
-  
-		
-        if(isset($_POST['submit'])){
+
+
+        if (isset($_POST['submit'])) {
             $news = sanitize(trim($_POST['news']));
             $sql = "INSERT into news (announcement) values ('$news')";
-            $query = mysqli_query($conn,$sql);
+            $query = mysqli_query($conn, $sql);
             $error = false;
-            if($query){
+            if ($query) {
                 $error = true;
-            }
-            else{
+            } else {
                 echo "<script>alert('Not successful!! Try again.');</script>";
             }
         }
 
-        if(isset($_POST['UpDat'])){
+        if (isset($_POST['UpDat'])) {
             $id = sanitize(trim($_POST['id']));
             $text = sanitize(trim($_POST['text']));
             $sql_up = "UPDATE news set announcement = '$text' where newsId = '$id'";
-            echo mysqli_error($sql_up);
-            $result = mysqli_query($conn,$sql_del);
+            // echo mysqli_error($sql_up);
+            $result = mysqli_query($conn, $sql_del);
             if ($result) {
                 echo "<script>alert('Update successful');</script>";
             }
         }
 
-        if(isset($_POST['del'])){
+        if (isset($_POST['del'])) {
             $id = sanitize(trim($_POST['id']));
             $sql_del = "DELETE from news where newsId = $id";
-            $result = mysqli_query($conn,$sql_del);
+            $result = mysqli_query($conn, $sql_del);
             if ($result) {
                 //echo "<script>alert('User was successfully deleted from the database');</script>";
             }
@@ -191,4 +201,5 @@ if (isset($_POST['submit'])) {
     <script type="text/javascript" src="js/jquery.js"></script>
     <script type="text/javascript" src="js/bootstrap.js"></script>
 </body>
+
 </html>
