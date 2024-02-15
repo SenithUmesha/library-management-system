@@ -117,8 +117,8 @@ if (isset($_SESSION['student-name'])) {
                 <ul class="navbar-nav" style="list-style: none; padding-left: 0;">
                     <?php if (isset($admin)) { ?>
                         <li class="nav-item <?php echo $current_page == 'admin.php' ? 'active' : ''; ?>"><a href="admin.php" style="color: #fff;">Home</a></li>
-                        <li class="nav-item <?php echo $current_page == 'bookstable.php' ? 'active' : ''; ?>"><a href="bookstable.php" style="color: #fff;">Books</a></li>
-                        <li class="nav-item <?php echo $current_page == 'users.php' ? 'active' : ''; ?>"><a href="users.php" style="color: #fff;">Admins</a></li>
+                        <li class="nav-item <?php echo $current_page == 'bookstable_new.php' ? 'active' : ''; ?>"><a href="bookstable_new.php" style="color: #fff;">Books</a></li>
+                        <li class="nav-item <?php echo $current_page == 'users_new.php' ? 'active' : ''; ?>"><a href="users_new.php" style="color: #fff;">Admins</a></li>
                         <li class="nav-item <?php echo $current_page == 'viewstudents_new.php' ? 'active' : ''; ?>"><a href="viewstudents_new.php" style="color: #fff;">Students</a></li>
                         <li class="nav-item <?php echo $current_page == 'borrowedbooks.php' ? 'active' : ''; ?>"><a href="borrowedbooks.php" style="color: #fff;">Borrow Books</a></li>
                         <li class="nav-item <?php echo $current_page == 'fines.php' ? 'active' : ''; ?>"><a href="fines.php" style="color: #fff;">Fines</a></li>
@@ -126,7 +126,7 @@ if (isset($_SESSION['student-name'])) {
                     <?php } ?>
                     <?php if (isset($student)) { ?>
                         <li class="nav-item active"><a href="studentportal.php" onclick="highlightNavItem(this)" style="color: #fff;">Home</a></li>
-                        <li class="nav-item"><a href="profile.php" onclick="highlightNavItem(this)" style="color: #fff;">View Profile</a></li>
+                        <li class="nav-item"><a href="profile_new.php" onclick="highlightNavItem(this)" style="color: #fff;">View Profile</a></li>
                         <li class="nav-item"><a href="borrow-student.php" onclick="highlightNavItem(this)" style="color: #fff;">Borrow Books</a></li>
                         <li class="nav-item"><a href="fine-student.php" onclick="highlightNavItem(this)" style="color: #fff;">Fines</a></li>
                         <!-- Add more navbar items with onclick attribute -->

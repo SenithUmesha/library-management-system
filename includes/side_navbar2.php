@@ -170,36 +170,20 @@ if (isset($_SESSION['student-name'])) {
         </div>
         <ul class="sidebar-nav">
             <li class="sidebar-item">
-                <a href="viewstudents_new.php" class="sidebar-link">
+                <a href="profile_new.php" class="sidebar-link">
                     <i class="lni lni-user"></i>
-                    <span>Students</span>
+                    <span>Profile</span>
                 </a>
             </li>
+
             <li class="sidebar-item">
-                <a href="bookstable_new.php" class="sidebar-link collapsed has-dropdown" data-bs-toggle="collapse" data-bs-target="#books" aria-expanded="false" aria-controls="books">
-                    <i class="lni lni-book"></i>
+                <a href="borrow-student_new.php" class="sidebar-link">
+                    <i class="lni lni-users"></i>
                     <span>Books</span>
                 </a>
-
-                <ul id="books" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
-                    <li class="sidebar-item">
-                        <a href="bookstable_new.php" class="sidebar-link">Books</a>
-                    </li>
-                </ul>
-                <ul id="books" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
-                    <li class="sidebar-item">
-                        <a href="borrowedbooks.php" class="sidebar-link">Borrowed Books</a>
-                    </li>
-                </ul>
             </li>
             <li class="sidebar-item">
-                <a href="users_new.php" class="sidebar-link">
-                    <i class="lni lni-users"></i>
-                    <span>Admins</span>
-                </a>
-            </li>
-            <li class="sidebar-item">
-                <a href="fines_new.php" class="sidebar-link">
+                <a href="fine-student_new.php" class="sidebar-link">
                     <i class="lni lni-coin"></i>
                     <span>Fines</span>
                 </a>

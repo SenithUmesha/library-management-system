@@ -24,7 +24,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
 </style>
 
 <div class="wrapper"> 
-	<?php include "includes/side_navbar.php"; ?>
+	<?php include "includes/side_navbar2.php"; ?>
 	<div class="main p-3">
 		<div class="container">
 			<div style="display: flex; justify-content: space-between; align-items: center; margin-top: 18px;">
@@ -34,36 +34,32 @@ $current_page = basename($_SERVER['PHP_SELF']);
 			<div style="margin-top:30px">
 				<table id="students_table" class="table table-striped" style="width:100%">
 					<thead>
-						<th>ID</th>
-						<th>Student Name</th>
-						<th>Matric No</th>
-						<th>Email</th>
-						<th>Department</th>
-						<th>Username</th>
-						<th>Password</th>
-						<th>Actions</th>
+                    <th>ID</th>
+					<th>BOOK</th>
+					<th>AVAILABLE</th>
+					<th>BORROW</th>
 					</thead>
-					<?php
-					$sql = "SELECT * FROM students";
-					$query = mysqli_query($conn, $sql);
-					$counter = 1;
-					while ($row = mysqli_fetch_assoc($query)) {
-					?>
+                    <?php
+
+            $sql = "SELECT * FROM books"; 	
+
+            $query = mysqli_query($conn, $sql);
+            $counter = 1;
+            while($row = mysqli_fetch_array($query)){
+            $_SESSION['book_Title'] = $row['bookTitle'];
+        
+                ?>
 						<tbody>
 							<tr>
-								<td><?php echo $counter++; ?></td>
-								<td><?php echo $row['name']; ?></td>
-								<td><?php echo $row['matric_no']; ?></td>
-								<td><?php echo $row['email']; ?></td>
-								<td><?php echo $row['dept']; ?></td>
-								<td><?php echo $row['username']; ?></td>
-								<td><?php echo $row['password']; ?></td>
-								<td>
-									<form action="viewstudents_new.php" method="post">
-										<input type="hidden" value="<?php echo $row['studentId']; ?>" name="del_btn">
-										<button class="btn btn-primary"><span class="bi-pencil"></span></button>
-										<button name="submit" class="btn btn-danger"><span class="bi-trash"></span></button>
-								</td>
+                            <td><?php echo $counter++; ?></td>
+							<td><?php echo $row['bookTitle'];?></td>
+							<td><?php echo $row['available']; ?></td>
+                            <td><a href="lend-student.php" id="show" class="show-in"><button class="btn btn-success">Borrow Now
+                            </button>
+							<input type="hidden" class="book-id" value="<?php echo $row['bookId']; ?>">
+							<input type="hidden" class="book-name" value="<?php echo $row['bookTitle']; ?>">
+							<input type="hidden" class="purpose" value="show">
+							</a></td>
 							</tr>
 
 						</tbody>

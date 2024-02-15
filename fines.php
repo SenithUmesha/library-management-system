@@ -109,7 +109,8 @@ text-align:center;
 		             <td><?php echo $row['borrowDate']; ?></td>
 		             <td><?php echo $row['returnDate']; ?></td>
 		             <td><?php echo $row['fine']; ?></td>
-		             <td><form action="fines.php" method="post"> 
+		             <td>
+						<form action="fines.php" method="post"> 
                      		<input type="hidden" value="<?php echo $row['borrowId']; ?>" name="del-btn">
                       <button class="btn btn-warning" name="del">STOP COUNT</button>
                      	</form>

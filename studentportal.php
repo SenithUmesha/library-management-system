@@ -28,9 +28,9 @@
 
 			<div class="collapse navbar-collapse" id="bs-example">
 				<ul class="nav navbar-nav">
-					<li class="active"><a href="#">Home</a></li>
-					<li><a href="profile.php">View Profile</a></li>
-					<li><a href="borrow-student.php">Borrow Books</a></li>					
+	
+					<li><a href="profile.php">Profile</a></li>
+					<li><a href="borrow-student.php">Books</a></li>					
 					<li><a href="fine-student.php">Fines</a></li>					
 				</ul>
 				<ul class="nav navbar-nav navbar-right">

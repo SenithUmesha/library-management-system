@@ -46,7 +46,7 @@ if(isset($_POST['submit'])){
 					$_SESSION['student-username'] = $row['username'];
 					$_SESSION['student-name'] = $row['name'];
 					$_SESSION['student-matric'] = $row['matric_no'];
-						header("Location:studentportal.php");
+						header("Location:profile_new.php");
 					}
 					else {
 						echo"<div class='alert alert-danger alert-dismissable'>
