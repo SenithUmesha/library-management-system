@@ -60,7 +60,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
 								<td>
 									<form action="viewstudents.php" method="post">
 										<input type="hidden" value="<?php echo $row['studentId']; ?>" name="del_btn">
-										<!-- <button class="btn btn-primary"><span class="bi-pencil"></span></button> -->
+										<button class="btn btn-primary"><span class="bi-pencil"></span></button>
 										<button name="submit" class="btn btn-danger"><span class="bi-trash"></span></button>
 								</td>
 							</tr>
