@@ -1,14 +1,5 @@
 <?php
-session_start();
-
-if (isset($_SESSION['admin'])) {
-    $admin = $_SESSION['admin'];
-}
-
-if (isset($_SESSION['student-name'])) {
-    $student = $_SESSION['student-name'];
-}
-
+require 'includes/db-inc.php';
 ?>
 
 <style>
@@ -169,20 +160,19 @@ if (isset($_SESSION['student-name'])) {
             </div>
         </div>
         <ul class="sidebar-nav">
-            <li class="sidebar-item">
+            <li class="sidebar-item  <?php echo $current_page == 'profile_new.php' ? 'active' : ''; ?>">
                 <a href="profile_new.php" class="sidebar-link">
                     <i class="lni lni-user"></i>
                     <span>Profile</span>
                 </a>
             </li>
-
-            <li class="sidebar-item">
+            <li class="sidebar-item <?php echo $current_page == 'borrow-student_new.php' ? 'active' : ''; ?>">
                 <a href="borrow-student_new.php" class="sidebar-link">
-                    <i class="lni lni-users"></i>
+                    <i class="lni lni-book"></i>
                     <span>Books</span>
                 </a>
             </li>
-            <li class="sidebar-item">
+            <li class="sidebar-item <?php echo $current_page == 'fine-student_new.php' ? 'active' : ''; ?>">
                 <a href="fine-student_new.php" class="sidebar-link">
                     <i class="lni lni-coin"></i>
                     <span>Fines</span>

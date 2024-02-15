@@ -169,7 +169,7 @@ if (isset($_SESSION['student-name'])) {
             </div>
         </div>
         <ul class="sidebar-nav">
-            <li class="sidebar-item">
+            <li class="sidebar-item <?php echo $current_page == 'viewstudents_new.php' ? 'active' : ''; ?>">
                 <a href="viewstudents_new.php" class="sidebar-link">
                     <i class="lni lni-user"></i>
                     <span>Students</span>
@@ -182,23 +182,23 @@ if (isset($_SESSION['student-name'])) {
                 </a>
 
                 <ul id="books" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
-                    <li class="sidebar-item">
-                        <a href="bookstable_new.php" class="sidebar-link">Books</a>
+                    <li class="sidebar-item <?php echo $current_page == 'bookstable_new.php' ? 'active' : ''; ?>">
+                        <a href="bookstable_new.php" class="sidebar-link">All Books</a>
                     </li>
                 </ul>
                 <ul id="books" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
-                    <li class="sidebar-item">
+                    <li class="sidebar-item <?php echo $current_page == 'bookstable_new.php' ? 'active' : ''; ?>">
                         <a href="borrowedbooks.php" class="sidebar-link">Borrowed Books</a>
                     </li>
                 </ul>
             </li>
-            <li class="sidebar-item">
+            <li class="sidebar-item <?php echo $current_page == 'users_new.php' ? 'active' : ''; ?>">
                 <a href="users_new.php" class="sidebar-link">
                     <i class="lni lni-users"></i>
                     <span>Admins</span>
                 </a>
             </li>
-            <li class="sidebar-item">
+            <li class="sidebar-item <?php echo $current_page == 'fines_new.php' ? 'active' : ''; ?>">
                 <a href="fines_new.php" class="sidebar-link">
                     <i class="lni lni-coin"></i>
                     <span>Fines</span>
