@@ -1,12 +1,10 @@
-<?php
-require 'includes/snippet.php';
-require 'includes/db-inc.php';
-include "includes/header_new.php";
+<?php 
 
+require 'includes/db-inc.php';
 session_start();
 $student_name = $_SESSION['student-username'];
-?>
 
+ ?>
 
 <style>
     body {

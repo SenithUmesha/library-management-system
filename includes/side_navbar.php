@@ -188,7 +188,7 @@ if (isset($_SESSION['student-name'])) {
                 </ul>
                 <ul id="books" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
                     <li class="sidebar-item <?php echo $current_page == 'bookstable_new.php' ? 'active' : ''; ?>">
-                        <a href="borrowedbooks.php" class="sidebar-link">Borrowed Books</a>
+                        <a href="borrowedbooks_new.php" class="sidebar-link">Borrowed Books</a>
                     </li>
                 </ul>
             </li>
