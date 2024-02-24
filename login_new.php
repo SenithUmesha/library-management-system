@@ -7,30 +7,37 @@ if (isset($_POST['submit'])) {
     $username = sanitize(trim($_POST['username']));
     $password = sanitize(trim($_POST['password']));
 
-    $sql_admin = "SELECT * from admin where username = '$username' and  password = '$password' ";
-    $query = mysqli_query($conn, $sql_admin);
+    // Admin Login
+    $sql_admin = "SELECT * FROM admin WHERE username = ? AND password = ?";
+    $stmt_admin = mysqli_prepare($conn, $sql_admin);
+    mysqli_stmt_bind_param($stmt_admin, "ss", $username, $password);
+    mysqli_stmt_execute($stmt_admin);
+    $result_admin = mysqli_stmt_get_result($stmt_admin);
 
-    if (mysqli_num_rows($query) > 0) {
-
-        while ($row = mysqli_fetch_assoc($query)) {
-            $_SESSION['auth'] = true;
-            $_SESSION['admin'] = $row['username'];
-        }
-        if ($_SESSION['auth'] === true) {
-            header("Location: viewstudents_new.php");
-            exit();
-        }
+    if (mysqli_num_rows($result_admin) > 0) {
+        $row = mysqli_fetch_assoc($result_admin);
+        $_SESSION['username'] = $row['username'];
+        $_SESSION['name'] = $row['admin_name'];
+        $_SESSION['account_type'] = "admin";
+        header("Location: viewstudents_new.php");
+        exit();
     } else {
-        $sql_stud = "SELECT * from students where username='$username' and password = '$password'";
-        $query = mysqli_query($conn, $sql_stud);
-        $row = mysqli_fetch_assoc($query);
-        if ($row && $row['username'] == $username && $row['password'] == $password) {
-            $_SESSION['student-username'] = $row['username'];
-            $_SESSION['student-name'] = $row['name'];
-            $_SESSION['student-matric'] = $row['matric_no'];
-            header("Location:reserved_books.php");
+        // Student Login
+        $sql_student = "SELECT * FROM students WHERE username = ? AND password = ?";
+        $stmt_student = mysqli_prepare($conn, $sql_student);
+        mysqli_stmt_bind_param($stmt_student, "ss", $username, $password);
+        mysqli_stmt_execute($stmt_student);
+        $result_student = mysqli_stmt_get_result($stmt_student);
+
+        if ($row = mysqli_fetch_assoc($result_student)) {
+            $_SESSION['id'] = $row['username'];
+            $_SESSION['username'] = $row['username'];
+            $_SESSION['name'] = $row['name'];
+            $_SESSION['account_type'] = "student";
+            header("Location: profile_new.php");
+            exit();
         } else {
-            echo '<script>alert("Login Failed.  Please check your details.")</script>';
+            echo '<script>alert("Login Failed. Please check your details.")</script>';
         }
     }
 }

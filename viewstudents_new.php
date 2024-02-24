@@ -35,13 +35,12 @@ $current_page = basename($_SERVER['PHP_SELF']);
 				<div style="margin-top:30px">
 					<table id="students_table" class="table table-striped" style="width:100%">
 						<thead>
-							<th>ID</th>
-							<th>Student Name</th>
+							<th>Student ID</th>
 							<th>Admission ID</th>
+							<th>Student Name</th>
 							<th>Username</th>
 							<th>Email</th>
 							<th>Class</th>
-							<!-- <th>Password</th> -->
 							<th>Actions</th>
 						</thead>
 						<?php
@@ -52,16 +51,15 @@ $current_page = basename($_SERVER['PHP_SELF']);
 						?>
 							<tbody>
 								<tr>
-									<td><?php echo $counter++; ?></td>
-									<td><?php echo $row['name']; ?></td>
-									<td><?php echo $row['matric_no']; ?></td>
+									<td><?php echo $row['student_id']; ?></td>
+									<td><?php echo $row['admission_id']; ?></td>
+									<td><?php echo $row['student_name']; ?></td>
 									<td><?php echo $row['username']; ?></td>
 									<td><?php echo $row['email']; ?></td>
-									<td><?php echo $row['dept']; ?></td>
-									<!-- <td><?php echo $row['password']; ?></td> -->
+									<td><?php echo $row['class']; ?></td>
 									<td>
 										<form action="viewstudents_new.php" method="post">
-											<input type="hidden" value="<?php echo $row['studentId']; ?>" name="del_btn">
+											<input type="hidden" value="<?php echo $row['student_id']; ?>" name="del_btn">
 											<button class="btn btn-primary"><span class="bi-pencil"></span></button>
 											<button name="submit" class="btn btn-danger"><span class="bi-trash"></span></button>
 									</td>

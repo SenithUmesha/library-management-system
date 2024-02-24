@@ -12,9 +12,7 @@ function cleanInput($input)
     $output = preg_replace($search, '', $input);
     return $output;
 }
-?>
 
-<?php
 function sanitize($input)
 {
     $dbhost = "localhost";

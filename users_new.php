@@ -43,7 +43,6 @@ $current_page = basename($_SERVER['PHP_SELF']);
 							<th>AdminName</th>
 							<th>Username</th>
 							<th>Email</th>
-							<!-- <th>Password</th> -->
 							<th>Actions</th>
 						</thead>
 						<?php
@@ -53,11 +52,10 @@ $current_page = basename($_SERVER['PHP_SELF']);
 						while ($row = mysqli_fetch_assoc($query)) {
 						?>
 							<tbody>
-								<td> <?php echo $counter++ ?></td>
-								<td> <?php echo $row['adminName'] ?></td>
+								<td> <?php echo $row['admin_id'] ?></td>
+								<td> <?php echo $row['admin_name'] ?></td>
 								<td> <?php echo $row['username'] ?></td>
 								<td> <?php echo $row['email'] ?></td>
-								<!-- <td> <?php echo $row['password'] ?></td> -->
 								<td>
 									<form method='post' action='users_new.php'>
 										<input type='hidden' value="<?php echo $row['adminId']; ?>" name='id'>
