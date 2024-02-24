@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Feb 24, 2024 at 03:04 PM
+-- Generation Time: Feb 24, 2024 at 06:03 PM
 -- Server version: 10.4.32-MariaDB
--- PHP Version: 8.0.30
+-- PHP Version: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -28,20 +28,20 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `admin` (
-  `adminId` int(11) NOT NULL,
-  `adminName` varchar(60) NOT NULL,
+  `admin_id` int(11) NOT NULL,
+  `admin_name` varchar(60) NOT NULL,
   `password` varchar(150) NOT NULL,
   `username` varchar(60) NOT NULL,
   `email` varchar(60) NOT NULL,
-  `photo` text NOT NULL
+  `profile_image` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
 -- Dumping data for table `admin`
 --
 
-INSERT INTO `admin` (`adminId`, `adminName`, `password`, `username`, `email`, `photo`) VALUES
-(9, 'admin', 'admin', 'admin', 'admin@gmail.com', '');
+INSERT INTO `admin` (`admin_id`, `admin_name`, `password`, `username`, `email`, `profile_image`) VALUES
+(1, 'admin', 'admin', 'admin', 'admin@gmail.com', '');
 
 -- --------------------------------------------------------
 
@@ -66,7 +66,6 @@ CREATE TABLE `books` (
 --
 
 INSERT INTO `books` (`bookId`, `bookTitle`, `author`, `ISBN`, `bookCopies`, `publisherName`, `available`, `categories`, `callNumber`) VALUES
-(5, 'Advance Databases', 'Informatics College', '1900-124-3242', '30', 'Juliet Caeser', 'YES', 'Morals', '0902334'),
 (6, 'Software Engineering', 'Robert Thompson', '123-423-4-13', '12', 'Robert Thompson.Inc', 'YES', 'Information Technology', '0216230.');
 
 -- --------------------------------------------------------
@@ -114,12 +113,12 @@ INSERT INTO `news` (`newsId`, `announcement`) VALUES
 --
 
 CREATE TABLE `reservations` (
-  `ID` int(11) NOT NULL,
-  `Book ID` int(11) NOT NULL,
-  `Book Name` varchar(50) NOT NULL,
-  `Member Name` varchar(50) NOT NULL,
-  `Matric Number` varchar(50) NOT NULL,
-  `Reserved Date` date NOT NULL
+  `reservation_id` int(11) NOT NULL,
+  `book_id` int(11) NOT NULL,
+  `book_name` varchar(50) NOT NULL,
+  `student_name` varchar(50) NOT NULL,
+  `isbn` varchar(50) NOT NULL,
+  `reserved_date` date NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -152,26 +151,22 @@ INSERT INTO `returned_books` (`ID`, `Book Name`, `Member Name`, `Matric Number`,
 --
 
 CREATE TABLE `students` (
-  `studentId` int(11) NOT NULL,
-  `matric_no` varchar(30) NOT NULL,
+  `student_id` int(11) NOT NULL,
+  `admission_id` int(30) NOT NULL,
   `password` varchar(150) NOT NULL,
   `username` varchar(150) NOT NULL,
   `email` varchar(60) NOT NULL,
-  `dept` varchar(60) NOT NULL,
-  `numOfBooks` int(11) NOT NULL,
-  `moneyOwed` varchar(20) NOT NULL,
-  `photo` text NOT NULL,
-  `phoneNumber` varchar(11) NOT NULL,
-  `name` varchar(60) NOT NULL
+  `class` varchar(60) NOT NULL,
+  `profile_image` text NOT NULL,
+  `student_name` varchar(60) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
 -- Dumping data for table `students`
 --
 
-INSERT INTO `students` (`studentId`, `matric_no`, `password`, `username`, `email`, `dept`, `numOfBooks`, `moneyOwed`, `photo`, `phoneNumber`, `name`) VALUES
-(1, 'ADSE-9835', 'student1', 'student1', 'student1gmail.com', 'Software Engineering', 2, '1500', '4477_1526321327.jpeg', '08124579655', 'Student One'),
-(2, 'ADSE-9835', 'student 2', 'student 2', 'student2@gmail.com', 'Software Engineering', 2, '1234', '2093_1531223199.jpeg', '08124578966', 'Student Two');
+INSERT INTO `students` (`student_id`, `admission_id`, `password`, `username`, `email`, `class`, `profile_image`, `student_name`) VALUES
+(1, 17321, 'student', 'student', 'student1gmail.com', 'Grade 09', '4477_1526321327.jpeg', 'Student One');
 
 --
 -- Indexes for dumped tables
@@ -181,7 +176,7 @@ INSERT INTO `students` (`studentId`, `matric_no`, `password`, `username`, `email
 -- Indexes for table `admin`
 --
 ALTER TABLE `admin`
-  ADD PRIMARY KEY (`adminId`);
+  ADD PRIMARY KEY (`admin_id`);
 
 --
 -- Indexes for table `books`
@@ -205,7 +200,7 @@ ALTER TABLE `news`
 -- Indexes for table `reservations`
 --
 ALTER TABLE `reservations`
-  ADD PRIMARY KEY (`ID`);
+  ADD PRIMARY KEY (`reservation_id`);
 
 --
 -- Indexes for table `returned_books`
@@ -217,7 +212,7 @@ ALTER TABLE `returned_books`
 -- Indexes for table `students`
 --
 ALTER TABLE `students`
-  ADD PRIMARY KEY (`studentId`);
+  ADD PRIMARY KEY (`student_id`);
 
 --
 -- AUTO_INCREMENT for dumped tables
@@ -227,7 +222,7 @@ ALTER TABLE `students`
 -- AUTO_INCREMENT for table `admin`
 --
 ALTER TABLE `admin`
-  MODIFY `adminId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `admin_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `books`
@@ -251,7 +246,7 @@ ALTER TABLE `news`
 -- AUTO_INCREMENT for table `reservations`
 --
 ALTER TABLE `reservations`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `reservation_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `returned_books`
@@ -263,7 +258,7 @@ ALTER TABLE `returned_books`
 -- AUTO_INCREMENT for table `students`
 --
 ALTER TABLE `students`
-  MODIFY `studentId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `student_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
