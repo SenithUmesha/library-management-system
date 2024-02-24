@@ -4,7 +4,10 @@ require 'includes/db-inc.php';
 include "includes/header_new.php";
 
 session_start();
-$student = $_SESSION['student-name'];
+@$student = $_SESSION['student-name'];
+
+
+
 
 $current_page = basename($_SERVER['PHP_SELF']);
 ?>
