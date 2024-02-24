@@ -21,11 +21,13 @@ $current_page = basename($_SERVER['PHP_SELF']);
         margin: 0;
         width: 100%;
     }
+
     .rating {
         text-align: center;
         position: relative;
         display: inline-block;
     }
+
     .rating .star {
         display: inline-block;
         font-size: 2em;
@@ -33,14 +35,16 @@ $current_page = basename($_SERVER['PHP_SELF']);
         color: #ccc;
         transition: color 0.3s;
     }
-    .rating .star.rated, .rating .star:hover {
+
+    .rating .star.rated,
+    .rating .star:hover {
         color: gold;
     }
 </style>
 
 <body>
     <div class="wrapper">
-        <?php include "includes/side_navbar2.php"; ?>
+        <?php include "includes/side_navbar.php"; ?>
         <div class="main p-3">
             <div class="container">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 18px;">
@@ -112,12 +116,16 @@ $current_page = basename($_SERVER['PHP_SELF']);
     <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
     <script>
         new DataTable('#students_table');
+
         function submitRating(bookID) {
             var rating = $('#ratingModal' + bookID).find('.star.rated').length;
             $.ajax({
-                url: 'update_rating.php', 
+                url: 'update_rating.php',
                 type: 'POST',
-                data: { bookID: bookID, rating: rating },
+                data: {
+                    bookID: bookID,
+                    rating: rating
+                },
                 success: function(response) {
                     $('#rating_' + bookID).text(rating + ' stars');
                     alert("Rating updated successfully!");
@@ -138,4 +146,5 @@ $current_page = basename($_SERVER['PHP_SELF']);
         });
     </script>
 </body>
+
 </html>

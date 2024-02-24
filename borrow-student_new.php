@@ -16,7 +16,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
 
 <body>
 	<div class="wrapper">
-		<?php include "includes/side_navbar2.php"; ?>
+		<?php include "includes/side_navbar.php"; ?>
 		<div class="main p-3">
 			<div class="container">
 				<div style="display: flex; justify-content: space-between; align-items: center; margin-top: 18px;">

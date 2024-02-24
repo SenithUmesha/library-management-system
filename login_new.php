@@ -3,6 +3,8 @@ require 'includes/snippet.php';
 require 'includes/db-inc.php';
 include "includes/header_new.php";
 
+session_start();
+
 if (isset($_POST['submit'])) {
     $username = sanitize(trim($_POST['username']));
     $password = sanitize(trim($_POST['password']));
@@ -30,9 +32,9 @@ if (isset($_POST['submit'])) {
         $result_student = mysqli_stmt_get_result($stmt_student);
 
         if ($row = mysqli_fetch_assoc($result_student)) {
-            $_SESSION['id'] = $row['username'];
+            $_SESSION['id'] = $row['student_id'];
             $_SESSION['username'] = $row['username'];
-            $_SESSION['name'] = $row['name'];
+            $_SESSION['name'] = $row['student_name'];
             $_SESSION['account_type'] = "student";
             header("Location: profile_new.php");
             exit();

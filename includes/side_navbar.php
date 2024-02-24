@@ -1,14 +1,5 @@
 <?php
-session_start();
-
-if (isset($_SESSION['admin'])) {
-    $admin = $_SESSION['admin'];
-}
-
-if (isset($_SESSION['student-name'])) {
-    $student = $_SESSION['student-name'];
-}
-
+$current_page = basename($_SERVER['PHP_SELF']);
 ?>
 
 <style>
@@ -169,48 +160,83 @@ if (isset($_SESSION['student-name'])) {
             </div>
         </div>
         <ul class="sidebar-nav">
-            <li class="sidebar-item <?php echo $current_page == 'viewstudents_new.php' ? 'active' : ''; ?>">
-                <a href="viewstudents_new.php" class="sidebar-link">
-                    <i class="lni lni-user"></i>
-                    <span>Students</span>
-                </a>
-            </li>
-            <li class="sidebar-item <?php echo $current_page == 'bookstable_new.php' ? 'active' : ''; ?>">
-                <a href="bookstable_new.php" class="sidebar-link">
-                    <i class="bi bi-book"></i>
-                    <span>Books</span>
-                </a>
-            </li>
-            <li class="sidebar-item <?php echo $current_page == 'borrowedbooks_new.php' ? 'active' : ''; ?>">
-                <a href="borrowedbooks_new.php" class="sidebar-link">
-                    <i class="bi bi-book-half"></i>
-                    <span>Borrowed Books</span>
-                </a>
-            </li>
-            <li class="sidebar-item <?php echo $current_page == 'returned_books.php' ? 'active' : ''; ?>">
-                <a href="returned_books.php" class="sidebar-link">
-                    <i class="bi bi-arrow-return-right"></i>
-                    <span>Returned Books</span>
-                </a>
-            </li>
-            <li class="sidebar-item <?php echo $current_page == 'users_new.php' ? 'active' : ''; ?>">
-                <a href="users_new.php" class="sidebar-link">
-                    <i class="lni lni-users"></i>
-                    <span>Admins</span>
-                </a>
-            </li>
-            <li class="sidebar-item <?php echo $current_page == 'fines_new.php' ? 'active' : ''; ?>">
-                <a href="fines_new.php" class="sidebar-link">
-                    <i class="lni lni-coin"></i>
-                    <span>Fines</span>
-                </a>
-            </li>
-            <li class="sidebar-item <?php echo $current_page == 'reserved_books_admin.php' ? 'active' : ''; ?>">
-                <a href="reserved_books_admin.php" class="sidebar-link">
-                    <i class="bi bi-bookmark"></i>
-                    <span>Reservations</span>
-                </a>
-            </li>
+            <?php if (isset($_SESSION['account_type']) && $_SESSION['account_type'] == "admin") { ?>
+                <li class="sidebar-item <?php echo $current_page == 'viewstudents_new.php' ? 'active' : ''; ?>">
+                    <a href="viewstudents_new.php" class="sidebar-link">
+                        <i class="lni lni-user"></i>
+                        <span>Students</span>
+                    </a>
+                </li>
+                <li class="sidebar-item <?php echo $current_page == 'bookstable_new.php' ? 'active' : ''; ?>">
+                    <a href="bookstable_new.php" class="sidebar-link">
+                        <i class="bi bi-book"></i>
+                        <span>Books</span>
+                    </a>
+                </li>
+                <li class="sidebar-item <?php echo $current_page == 'borrowedbooks_new.php' ? 'active' : ''; ?>">
+                    <a href="borrowedbooks_new.php" class="sidebar-link">
+                        <i class="bi bi-book-half"></i>
+                        <span>Borrowed Books</span>
+                    </a>
+                </li>
+                <li class="sidebar-item <?php echo $current_page == 'returned_books.php' ? 'active' : ''; ?>">
+                    <a href="returned_books.php" class="sidebar-link">
+                        <i class="bi bi-arrow-return-right"></i>
+                        <span>Returned Books</span>
+                    </a>
+                </li>
+                <li class="sidebar-item <?php echo $current_page == 'users_new.php' ? 'active' : ''; ?>">
+                    <a href="users_new.php" class="sidebar-link">
+                        <i class="lni lni-users"></i>
+                        <span>Admins</span>
+                    </a>
+                </li>
+                <li class="sidebar-item <?php echo $current_page == 'fines_new.php' ? 'active' : ''; ?>">
+                    <a href="fines_new.php" class="sidebar-link">
+                        <i class="lni lni-coin"></i>
+                        <span>Fines</span>
+                    </a>
+                </li>
+                <li class="sidebar-item <?php echo $current_page == 'reserved_books_admin.php' ? 'active' : ''; ?>">
+                    <a href="reserved_books_admin.php" class="sidebar-link">
+                        <i class="bi bi-bookmark"></i>
+                        <span>Reservations</span>
+                    </a>
+                </li>
+            <?php } elseif (isset($_SESSION['account_type']) && $_SESSION['account_type'] == "student") { ?>
+                <li class="sidebar-item  <?php echo $current_page == 'profile_new.php' ? 'active' : ''; ?>">
+                    <a href="profile_new.php" class="sidebar-link">
+                        <i class="lni lni-user"></i>
+                        <span>Profile</span>
+                    </a>
+                </li>
+                <li class="sidebar-item <?php echo $current_page == 'borrow-student_new.php' ? 'active' : ''; ?>">
+                    <a href="borrow-student_new.php" class="sidebar-link">
+                        <i class="lni lni-book"></i>
+                        <span>Books</span>
+                    </a>
+                </li>
+                <li class="sidebar-item <?php echo $current_page == 'fine-student_new.php' ? 'active' : ''; ?>">
+                    <a href="fine-student_new.php" class="sidebar-link">
+                        <i class="lni lni-coin"></i>
+                        <span>Fines</span>
+                    </a>
+                </li>
+
+                <li class="sidebar-item <?php echo $current_page == 'returned_books_std.php' ? 'active' : ''; ?>">
+                    <a href="returned_books_std.php" class="sidebar-link">
+                        <i class="bi bi-arrow-return-right"></i>
+                        <span>Returned Books</span>
+                    </a>
+                </li>
+
+                <li class="sidebar-item <?php echo $current_page == 'reserved_books.php' ? 'active' : ''; ?>">
+                    <a href="reserved_books.php" class="sidebar-link">
+                        <i class="bi bi-arrow-down"></i>
+                        <span>Reservations</span>
+                    </a>
+                </li>
+            <?php } ?>
         </ul>
         <div class="sidebar-footer">
             <a href="index.php" class="sidebar-link">

@@ -25,12 +25,12 @@ $current_page = basename($_SERVER['PHP_SELF']);
 
 <body>
     <div class="wrapper">
-        <?php include "includes/side_navbar2.php"; ?>
+        <?php include "includes/side_navbar.php"; ?>
         <div class="main p-3">
             <div class="container">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 18px;">
                     <h4 style=" font-weight: bold;">| Reserved Books</h4>
-                    
+
                 </div>
                 <div style="margin-top:30px">
                     <table id="students_table" class="table table-striped" style="width:100%">
@@ -41,7 +41,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
                             <th>Member Name</th>
                             <th>Matric Number</th>
                             <th>Reserved Date</th>
-                            
+
                         </thead>
                         <tbody>
                             <?php
@@ -57,7 +57,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
                                     <td><?php echo $row['Member Name']; ?></td>
                                     <td><?php echo $row['Matric Number']; ?></td>
                                     <td><?php echo $row['Reserved Date']; ?></td>
-									
+
 
                                 </tr>
                             <?php } ?>
