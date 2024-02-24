@@ -2,7 +2,14 @@
 
 require 'includes/db-inc.php';
 session_start();
-$student_name = $_SESSION['student-username'];
+if (isset($_SESSION['student-username'])) {
+    $student_name = $_SESSION['student-username'];
+    console.log("Studne name :"+ $student_name);
+    // Rest of your code
+} else {
+    // Handle the case when the session variable is not set
+    echo "Session variable 'student-username' is not set.";
+}
 
  ?>
 

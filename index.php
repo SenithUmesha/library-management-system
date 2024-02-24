@@ -99,7 +99,81 @@ if (isset($_POST['del'])) {
   <title>Library Management</title>
 
 </head>
+<style>
+  @font-face {
+    font-family: Nunito;
+    src: url(NunitoSans.ttf);
+  }
+  body{
 
+    overflow:hidden;
+  }
+
+.carousel-cell {
+      width: 100%; /* Ensure each cell takes up the full width */
+      height: 100vh; /* Set a fixed height for the carousel cells */
+      margin-right: 15px; /* Add some margin between cells */
+    }
+
+    .carousel-cell img {
+      width: 100%; /* Ensure images fill the entire cell */
+      height: 100%; /* Ensure images fill the entire cell */
+      object-fit: cover; /* Prevent images from stretching */
+    }
+
+.carousel-container {
+      height: 100vh; /* Set carousel height to fill the full height of the viewport */
+    }
+
+
+.slide_title_container {
+    position: relative; /* Change position to relative */
+    height: 100vh; /* Set the height to fill the viewport */
+    justify-self: center;
+    justify-items:center;
+}
+
+.title_lib {
+    position: absolute;
+   
+    transform: translate(-50%, -50%); /* Center the title horizontally */
+    font-size: 100px;
+    color: white;
+    z-index: 1000;
+    text-align: center;
+    font-family: Nunito;
+    line-height: 1.7; /* Increase line height */
+    text-transform: uppercase;
+    text-shadow: 
+        -2px -2px 0 #000,  
+        2px -2px 0 #000,
+        -2px 2px 0 #000,
+        2px 2px 0 #000;
+    animation: slideInLeft 1s forwards
+}
+
+@keyframes slideInLeft {
+    from {
+        transform: translateX(-100%);
+    }
+    to {
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+    }
+    to {
+        transform: translateX(0);
+    }
+}
+
+
+
+
+</style>
 <body>
   <div class="container">
     <nav class="navbar navbar-inverse navbar-fixed-top">
@@ -113,7 +187,7 @@ if (isset($_POST['del'])) {
           </button>
           <a class="navbar-brand" href="#">Library Management System</a>
         </div>
-
+  
         <div class="collapse navbar-collapse" id="bs-example">
           <ul class="nav navbar-nav">
             <li class="active"><a href="#">Home</a></li>
@@ -128,12 +202,16 @@ if (isset($_POST['del'])) {
 
   </div>
 
-  <div class="container-fluid slide">
+  <div class=slide_title_container>
+  <h1 class="title_lib"><span>Welcome</br> to</span></br>
+    <span>Library Management System</span></h1>
+  <div>
+   
 
     <div class="slider">
       <!-- <h1>Flickity - wrapAround</h1> -->
 
-
+      <div class="carousel-container" id="carouselContainer">
       <div class="carousel" data-flickity='{ "autoPlay": true }' ;>
 
         <div class="carousel-cell" auto-play>
@@ -144,51 +222,14 @@ if (isset($_POST['del'])) {
         </div>
 
       </div>
-
+    </div>
 
 
     </div>
   </div>
 
-  <div class="container slide2">
+</div>
 
-    <div class="panel-heading">
-      <div class="row">
-        <h3 class="center-block" style="font-size: 30px;">Announcements</h3>
-      </div>
-    </div>
-    <table class="table table-bordered" style="font-size: 18px;">
-
-
-      <thead>
-        <tr>
-          <th>SN</th>
-          <th>Announcement</th>
-
-
-        </tr>
-      </thead>
-
-      <?php
-
-      $sql2 = "SELECT * from news";
-
-      $query2 = mysqli_query($conn, $sql2);
-      $counter = 1;
-      while ($row = mysqli_fetch_array($query2)) {  ?>
-
-
-        <tbody>
-          <td><?php echo $counter++; ?></td>
-          <td><?php echo $row['announcement']; ?></td>
-
-        </tbody>
-
-      <?php }
-      ?>
-
-      </tbody>
-    </table>
 
   </div>
 
@@ -197,63 +238,17 @@ if (isset($_POST['del'])) {
   </div>
   </div>
 
-  <div class="container-fluid slide3">
-    <div class="container">
-      <div class="row">
-        <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
-          <a href="#" class="thumbnail">
-            <img src="ify/2.jpg">
-          </a>
-        </div>
-        <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
-          <a href="#" class="thumbnail">
-            <img src="ify/1.jpg">
-          </a>
-        </div>
-        <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
-          <a href="#" class="thumbnail">
-            <img src="ify/3.jpg">
-          </a>
-        </div>
-        <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
-          <a href="#" class="thumbnail">
-            <img src="ify/4.jpg">
-          </a>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
-          <a href="#" class="thumbnail">
-            <img src="ify/2.jpg">
-          </a>
-        </div>
-        <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
-          <a href="#" class="thumbnail">
-            <img src="ify/1.jpg">
-          </a>
-        </div>
-        <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
-          <a href="#" class="thumbnail">
-            <img src="ify/3.jpg">
-          </a>
-        </div>
-        <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
-          <a href="#" class="thumbnail">
-            <img src="ify/4.jpg">
-          </a>
-        </div>
-      </div>
-    </div>
-
-  </div>
 
 
   <footer>
-    <p style="text-align:center;">Library Management System</p>
+ 
   </footer>
   <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 </body>
 
+<script>
+
+  </script>
 </html>

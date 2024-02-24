@@ -25,16 +25,17 @@ if (isset($_POST['submit'])) {
         $query = mysqli_query($conn, $sql_stud);
         $row = mysqli_fetch_assoc($query);
         if ($row['username'] == $username && $row['password'] == $password) {
-            $_SESSION['student-username'] = $row['username'];
+            $_SESSION['student-username'] = $row['username']; // Set the 'student-username' session variable
             $_SESSION['student-name'] = $row['name'];
             $_SESSION['student-matric'] = $row['matric_no'];
-            header("Location:profile_new.php");
+            header("Location:reserved_books.php");
         } else {
             echo "<div class='alert alert-danger alert-dismissable'>
-						<button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;</button>
-						<strong style='text-align: center'> Login Failed.  Please check your details.</strong>
-				  </div>";
+                        <button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;</button>
+                        <strong style='text-align: center'> Login Failed.  Please check your details.</strong>
+                  </div>";
         }
+        
     }
 }
 ?>

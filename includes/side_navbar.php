@@ -204,6 +204,22 @@ if (isset($_SESSION['student-name'])) {
                     <span>Fines</span>
                 </a>
             </li>
+
+            <li class="sidebar-item <?php echo $current_page == 'returned_books.php' ? 'active' : ''; ?>">
+                <a href="returned_books.php" class="sidebar-link">
+                    <i class="bi bi-arrow-return-right"></i>
+                    <span>Returned Books</span>
+                </a>
+            </li>
+
+
+
+            <li class="sidebar-item <?php echo $current_page == 'reserved_books_admin.php' ? 'active' : ''; ?>">
+                <a href="reserved_books_admin.php" class="sidebar-link">
+                    <i class="bi bi-arrow-down"></i>
+                    <span>Reserved Books</span>
+                </a>
+            </li>
         </ul>
         <div class="sidebar-footer">
             <a href="index.php" class="sidebar-link">

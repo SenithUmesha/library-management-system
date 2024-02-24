@@ -178,6 +178,24 @@ require 'includes/db-inc.php';
                     <span>Fines</span>
                 </a>
             </li>
+
+
+
+            <li class="sidebar-item <?php echo $current_page == 'returned_books_std.php' ? 'active' : ''; ?>">
+                <a href="returned_books_std.php" class="sidebar-link">
+                    <i class="bi bi-arrow-return-right"></i>
+                    <span>Returned Books</span>
+                </a>
+            </li>
+
+
+            
+            <li class="sidebar-item <?php echo $current_page == 'reserved_books.php' ? 'active' : ''; ?>">
+                <a href="reserved_books.php" class="sidebar-link">
+                    <i class="bi bi-arrow-down"></i>
+                    <span>Reserved Books</span>
+                </a>
+            </li>
         </ul>
         <div class="sidebar-footer">
             <a href="index.php" class="sidebar-link">
