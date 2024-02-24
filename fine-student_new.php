@@ -4,12 +4,9 @@ require 'includes/db-inc.php';
 include "includes/header_new.php";
 
 session_start();
-@$student = $_SESSION['student-name'];
-
-
-
-
-$current_page = basename($_SERVER['PHP_SELF']);
+if (isset($_SESSION['username'])) {
+	$username = $_SESSION['username'];
+}
 ?>
 
 <style>
@@ -40,7 +37,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
 							<th>Overdue Charges</th>
 						</thead>
 						<?php
-						$sql = "SELECT * FROM borrow where memberName = '$student'";
+						$sql = "SELECT * FROM borrow where memberName = '$username'";
 						$query = mysqli_query($conn, $sql);
 						$counter = 1;
 						while ($row = mysqli_fetch_assoc($query)) {
@@ -71,5 +68,3 @@ $current_page = basename($_SERVER['PHP_SELF']);
 	</script>
 
 </body>
-
-</html>

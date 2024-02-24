@@ -212,8 +212,20 @@ $current_page = basename($_SERVER['PHP_SELF']);
                 </li>
                 <li class="sidebar-item <?php echo $current_page == 'borrow-student_new.php' ? 'active' : ''; ?>">
                     <a href="borrow-student_new.php" class="sidebar-link">
-                        <i class="lni lni-book"></i>
+                        <i class="bi bi-book"></i>
                         <span>Books</span>
+                    </a>
+                </li>
+                <li class="sidebar-item <?php echo $current_page == 'borrowed_books_std.php' ? 'active' : ''; ?>">
+                    <a href="borrowed_books_std.php" class="sidebar-link">
+                        <i class="bi bi-book-half"></i>
+                        <span>Borrowed Books</span>
+                    </a>
+                </li>
+                <li class="sidebar-item <?php echo $current_page == 'returned_books_std.php' ? 'active' : ''; ?>">
+                    <a href="returned_books_std.php" class="sidebar-link">
+                        <i class="bi bi-arrow-return-right"></i>
+                        <span>Returned Books</span>
                     </a>
                 </li>
                 <li class="sidebar-item <?php echo $current_page == 'fine-student_new.php' ? 'active' : ''; ?>">
@@ -222,17 +234,9 @@ $current_page = basename($_SERVER['PHP_SELF']);
                         <span>Fines</span>
                     </a>
                 </li>
-
-                <li class="sidebar-item <?php echo $current_page == 'returned_books_std.php' ? 'active' : ''; ?>">
-                    <a href="returned_books_std.php" class="sidebar-link">
-                        <i class="bi bi-arrow-return-right"></i>
-                        <span>Returned Books</span>
-                    </a>
-                </li>
-
                 <li class="sidebar-item <?php echo $current_page == 'reserved_books.php' ? 'active' : ''; ?>">
                     <a href="reserved_books.php" class="sidebar-link">
-                        <i class="bi bi-arrow-down"></i>
+                        <i class="bi bi-bookmark"></i>
                         <span>Reservations</span>
                     </a>
                 </li>
