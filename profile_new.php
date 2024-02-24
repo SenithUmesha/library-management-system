@@ -1,76 +1,86 @@
 <?php
-
 require 'includes/db-inc.php';
 session_start();
-if (isset($_SESSION['student-username'])) {
-    $student_name = $_SESSION['student-username'];
+
+if (isset($_SESSION['student-name'])) {
+    $student_name = $_SESSION['student-name'];
 } else {
-    echo "Session variable 'student-username' is not set.";
+    $student_name = "Unknown";
 }
 
+$current_page = basename($_SERVER['PHP_SELF']);
 ?>
 
-<style>
-    body {
-        background-color: #f8f9fa;
-        color: #333;
-        padding: 0;
-        margin: 0;
-        width: 100%;
-    }
+<!DOCTYPE html>
+<html lang="en">
 
-    .container {
-        max-width: 800px;
-        margin: 0 auto;
-        margin-top: 60px;
-    }
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile</title>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            color: #333;
+            padding: 0;
+            margin: 0;
+            width: 100%;
+        }
 
-    .card {
-        border: none;
-        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-    }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            margin-top: 60px;
+        }
 
-    .card-header {
-        background-color: #007bff;
-        color: #fff;
-        padding: 20px;
-        border-radius: 5px 5px 0 0;
-    }
+        .card {
+            border: none;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
 
-    .card-title {
-        margin: 0;
-        font-size: 24px;
-        font-weight: bold;
-    }
+        .card-header {
+            background-color: #007bff;
+            color: #fff;
+            padding: 20px;
+            border-radius: 5px 5px 0 0;
+        }
 
-    .card-body {
-        padding: 30px;
-    }
+        .card-title {
+            margin: 0;
+            font-size: 24px;
+            font-weight: bold;
+        }
 
-    table {
-        width: 100%;
-    }
+        .card-body {
+            padding: 30px;
+        }
 
-    th {
-        width: 30%;
-        text-align: left;
-    }
+        table {
+            width: 100%;
+        }
 
-    td {
-        width: 70%;
-        text-align: left;
-    }
+        th {
+            width: 30%;
+            text-align: left;
+        }
 
-    th,
-    td {
-        padding: 10px 0;
-        border-bottom: 1px solid #eee;
-    }
+        td {
+            width: 70%;
+            text-align: left;
+        }
 
-    .name-highlight {
-        color: #dc3545;
-    }
-</style>
+        th,
+        td {
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .name-highlight {
+            color: #dc3545;
+        }
+    </style>
+</head>
 
 <body>
     <div class="wrapper">
@@ -78,47 +88,55 @@ if (isset($_SESSION['student-username'])) {
         <div class="main p-3">
             <div class="container">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 18px;">
-                    <h4 style=" font-weight: bold;">| Profile</h4>
+                    <h4 style="font-weight: bold;">| Profile</h4>
+                    <h4><?php echo "Student Name: " . $student_name; ?></h4>
                 </div>
                 <div style="margin-top:30px">
                     <div class="card">
                         <div class="card-body">
                             <table class="table">
                                 <?php
-                                $sql = "SELECT * from students where username = '$student_name'";
+                                $sql = "SELECT * FROM students WHERE username = 'student1'";
                                 $query = mysqli_query($conn, $sql);
-                                while ($row = mysqli_fetch_assoc($query)) { ?>
-                                    <tbody>
-                                        <tr>
-                                            <th class="name-highlight">Name</th>
-                                            <td><?php echo $row['name']; ?></td>
-                                        </tr>
-                                        <tr>
-                                            <th>Matric No</th>
-                                            <td><?php echo $row['matric_no']; ?></td>
-                                        </tr>
-                                        <tr>
-                                            <th>Email</th>
-                                            <td><?php echo $row['email']; ?></td>
-                                        </tr>
-                                        <tr>
-                                            <th>Department</th>
-                                            <td><?php echo $row['dept']; ?></td>
-                                        </tr>
-                                        <tr>
-                                            <th>Phone Number</th>
-                                            <td><?php echo $row['phoneNumber']; ?></td>
-                                        </tr>
-                                        <tr>
-                                            <th>Username</th>
-                                            <td><?php echo $row['username']; ?></td>
-                                        </tr>
-                                        <tr>
-                                            <th>Password</th>
-                                            <td><?php echo $row['password']; ?></td>
-                                        </tr>
-                                    </tbody>
-                                <?php } ?>
+                                if ($query && mysqli_num_rows($query) > 0) {
+                                    while ($row = mysqli_fetch_assoc($query)) {
+                                ?>
+                                        <tbody>
+                                            <tr>
+                                                <th class="name-highlight">Name</th>
+                                                <td><?php echo $row['name']; ?></td>
+                                            </tr>
+                                            <tr>
+                                                <th>Matric No</th>
+                                                <td><?php echo $row['matric_no']; ?></td>
+                                            </tr>
+                                            <tr>
+                                                <th>Email</th>
+                                                <td><?php echo $row['email']; ?></td>
+                                            </tr>
+                                            <tr>
+                                                <th>Department</th>
+                                                <td><?php echo $row['dept']; ?></td>
+                                            </tr>
+                                            <tr>
+                                                <th>Phone Number</th>
+                                                <td><?php echo $row['phoneNumber']; ?></td>
+                                            </tr>
+                                            <tr>
+                                                <th>Username</th>
+                                                <td><?php echo $row['username']; ?></td>
+                                            </tr>
+                                            <tr>
+                                                <th>Password</th>
+                                                <td><?php echo $row['password']; ?></td>
+                                            </tr>
+                                        </tbody>
+                                <?php
+                                    }
+                                } else {
+                                    echo "<tr><td colspan='2'>No data found</td></tr>";
+                                }
+                                ?>
                             </table>
                         </div>
                     </div>
@@ -126,10 +144,18 @@ if (isset($_SESSION['student-username'])) {
             </div>
         </div>
     </div>
-
     <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
     <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
+    <script>
+        // Initialize DataTable
+        $(document).ready(function() {
+            $('#students_table').DataTable();
+        });
+    </script>
 </body>
+<<<<<<< HEAD </html>
+    =======
 
 </html>
+>>>>>>> 26ea12a13a5b604c5ceb4a68d5f77222efd9e738
