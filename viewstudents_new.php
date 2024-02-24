@@ -3,6 +3,8 @@ require 'includes/snippet.php';
 require 'includes/db-inc.php';
 include "includes/header_new.php";
 
+session_start();
+
 if (isset($_POST['submit'])) {
 	$id = trim($_POST['del_btn']);
 	$sql = "DELETE from students where studentId = '$id' ";
@@ -12,7 +14,6 @@ if (isset($_POST['submit'])) {
 		echo "<script>alert('Student Deleted!')</script>";
 	}
 }
-$current_page = basename($_SERVER['PHP_SELF']);
 ?>
 
 <style>
@@ -80,5 +81,3 @@ $current_page = basename($_SERVER['PHP_SELF']);
 	</script>
 
 </body>
-
-</html>

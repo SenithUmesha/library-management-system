@@ -3,6 +3,8 @@ require 'includes/snippet.php';
 require 'includes/db-inc.php';
 include "includes/header_new.php";
 
+session_start();
+
 if (isset($_POST['del'])) {
 	$id = sanitize(trim($_POST['id']));
 	$sql_del = "DELETE from books where BookId = $id";
@@ -12,8 +14,6 @@ if (isset($_POST['del'])) {
 		$error = true;
 	}
 }
-
-$current_page = basename($_SERVER['PHP_SELF']);
 ?>
 
 <style>
@@ -80,5 +80,3 @@ $current_page = basename($_SERVER['PHP_SELF']);
 	</script>
 
 </body>
-
-</html>

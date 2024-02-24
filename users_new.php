@@ -3,6 +3,8 @@ require 'includes/snippet.php';
 require 'includes/db-inc.php';
 include "includes/header_new.php";
 
+session_start();
+
 if (isset($_POST['del'])) {
 
 	$id = sanitize(trim($_POST['id']));
@@ -16,7 +18,6 @@ if (isset($_POST['del'])) {
 		$error = true;
 	}
 }
-$current_page = basename($_SERVER['PHP_SELF']);
 ?>
 
 <style>
@@ -58,7 +59,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
 								<td> <?php echo $row['email'] ?></td>
 								<td>
 									<form method='post' action='users_new.php'>
-										<input type='hidden' value="<?php echo $row['adminId']; ?>" name='id'>
+										<input type='hidden' value="<?php echo $row['admin_id']; ?>" name='id'>
 										<button class="btn btn-primary"><span class="bi-pencil"></span></button>
 										<button name="del" class="btn btn-danger"><span class="bi-trash"></span></button>
 									</form>
@@ -79,5 +80,3 @@ $current_page = basename($_SERVER['PHP_SELF']);
 	</script>
 
 </body>
-
-</html>

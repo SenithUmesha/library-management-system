@@ -3,7 +3,7 @@ require 'includes/snippet.php';
 require 'includes/db-inc.php';
 include "includes/header_new.php";
 
-$current_page = basename($_SERVER['PHP_SELF']);
+session_start();
 ?>
 
 <style>
@@ -74,5 +74,3 @@ $current_page = basename($_SERVER['PHP_SELF']);
     </script>
 
 </body>
-
-</html>
