@@ -179,8 +179,6 @@ require 'includes/db-inc.php';
                 </a>
             </li>
 
-
-
             <li class="sidebar-item <?php echo $current_page == 'returned_books_std.php' ? 'active' : ''; ?>">
                 <a href="returned_books_std.php" class="sidebar-link">
                     <i class="bi bi-arrow-return-right"></i>
@@ -188,12 +186,10 @@ require 'includes/db-inc.php';
                 </a>
             </li>
 
-
-            
             <li class="sidebar-item <?php echo $current_page == 'reserved_books.php' ? 'active' : ''; ?>">
                 <a href="reserved_books.php" class="sidebar-link">
                     <i class="bi bi-arrow-down"></i>
-                    <span>Reserved Books</span>
+                    <span>Reservations</span>
                 </a>
             </li>
         </ul>

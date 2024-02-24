@@ -3,15 +3,6 @@ require 'includes/snippet.php';
 require 'includes/db-inc.php';
 include "includes/header_new.php";
 
-if (isset($_POST['submit'])) {
-    $id = trim($_POST['del_btn']);
-    $sql = "DELETE from students where studentId = '$id' ";
-    $query = mysqli_query($conn, $sql);
-
-    if ($query) {
-        echo "<script>alert('Student Deleted!')</script>";
-    }
-}
 $current_page = basename($_SERVER['PHP_SELF']);
 ?>
 
@@ -30,7 +21,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
             <div class="container">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 18px;">
                     <h4 style=" font-weight: bold;">| Returned Books</h4>
-                    
+
                 </div>
                 <div style="margin-top:30px">
                     <table id="students_table" class="table table-striped" style="width:100%">
@@ -55,16 +46,16 @@ $current_page = basename($_SERVER['PHP_SELF']);
                                     <td><?php echo $row['Member Name']; ?></td>
                                     <td><?php echo $row['Matric Number']; ?></td>
                                     <td><?php echo $row['Returned Date']; ?></td>
-									<td>
-    <form action="returned_books.php" method="post" style="display: inline;">
-        <input type="hidden" value="<?php echo $row['ID']; ?>" name="id">
-        <button class="btn btn-primary" name="edit"><span class="bi-pencil"></span></button>
-    </form>
-    <form action="returned_books.php" method="post" style="display: inline;">
-        <input type="hidden" value="<?php echo $row['ID']; ?>" name="id">
-        <button name="del" class="btn btn-danger"><span class="bi-trash"></span></button>
-    </form>
-</td>
+                                    <td>
+                                        <form action="returned_books.php" method="post" style="display: inline;">
+                                            <input type="hidden" value="<?php echo $row['ID']; ?>" name="id">
+                                            <button class="btn btn-primary" name="edit"><span class="bi-pencil"></span></button>
+                                        </form>
+                                        <form action="returned_books.php" method="post" style="display: inline;">
+                                            <input type="hidden" value="<?php echo $row['ID']; ?>" name="id">
+                                            <button name="del" class="btn btn-danger"><span class="bi-trash"></span></button>
+                                        </form>
+                                    </td>
 
                                 </tr>
                             <?php } ?>

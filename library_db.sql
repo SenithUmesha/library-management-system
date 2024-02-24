@@ -1,14 +1,13 @@
 -- phpMyAdmin SQL Dump
--- version 4.8.1
+-- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 13, 2019 at 08:24 AM
--- Server version: 10.1.33-MariaDB
--- PHP Version: 7.2.6
+-- Generation Time: Feb 24, 2024 at 03:04 PM
+-- Server version: 10.4.32-MariaDB
+-- PHP Version: 8.0.30
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-SET AUTOCOMMIT = 0;
 START TRANSACTION;
 SET time_zone = "+00:00";
 
@@ -35,7 +34,7 @@ CREATE TABLE `admin` (
   `username` varchar(60) NOT NULL,
   `email` varchar(60) NOT NULL,
   `photo` text NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
 -- Dumping data for table `admin`
@@ -60,7 +59,7 @@ CREATE TABLE `books` (
   `available` varchar(10) NOT NULL,
   `categories` varchar(30) NOT NULL,
   `callNumber` varchar(30) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
 -- Dumping data for table `books`
@@ -86,7 +85,7 @@ CREATE TABLE `borrow` (
   `bookId` int(2) NOT NULL,
   `borrowStatus` int(2) NOT NULL,
   `fine` varchar(100) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 -- --------------------------------------------------------
 
@@ -97,7 +96,7 @@ CREATE TABLE `borrow` (
 CREATE TABLE `news` (
   `newsId` int(11) NOT NULL,
   `announcement` text NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
 -- Dumping data for table `news`
@@ -107,6 +106,44 @@ INSERT INTO `news` (`newsId`, `announcement`) VALUES
 (1, 'Welcome to Our Online Library Management System. You can have access to all our e-books at a really good affordable price!'),
 (10, 'New books now available on our library. Please bring your student id along to borrow books'),
 (11, 'This month fines list has been published. Be sure to check out if you are also in the list.');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `reservations`
+--
+
+CREATE TABLE `reservations` (
+  `ID` int(11) NOT NULL,
+  `Book ID` int(11) NOT NULL,
+  `Book Name` varchar(50) NOT NULL,
+  `Member Name` varchar(50) NOT NULL,
+  `Matric Number` varchar(50) NOT NULL,
+  `Reserved Date` date NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `returned_books`
+--
+
+CREATE TABLE `returned_books` (
+  `ID` int(11) NOT NULL,
+  `Book Name` varchar(50) NOT NULL,
+  `Member Name` varchar(50) NOT NULL,
+  `Matric Number` varchar(50) NOT NULL,
+  `Returned Date` date NOT NULL,
+  `Actions` varchar(50) NOT NULL,
+  `Rating` int(50) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `returned_books`
+--
+
+INSERT INTO `returned_books` (`ID`, `Book Name`, `Member Name`, `Matric Number`, `Returned Date`, `Actions`, `Rating`) VALUES
+(1, 'Madolduwa', 'Thisara', '0w9wCa', '2024-02-14', '', 1);
 
 -- --------------------------------------------------------
 
@@ -126,7 +163,7 @@ CREATE TABLE `students` (
   `photo` text NOT NULL,
   `phoneNumber` varchar(11) NOT NULL,
   `name` varchar(60) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
 -- Dumping data for table `students`
@@ -165,6 +202,18 @@ ALTER TABLE `news`
   ADD PRIMARY KEY (`newsId`);
 
 --
+-- Indexes for table `reservations`
+--
+ALTER TABLE `reservations`
+  ADD PRIMARY KEY (`ID`);
+
+--
+-- Indexes for table `returned_books`
+--
+ALTER TABLE `returned_books`
+  ADD PRIMARY KEY (`ID`);
+
+--
 -- Indexes for table `students`
 --
 ALTER TABLE `students`
@@ -197,6 +246,18 @@ ALTER TABLE `borrow`
 --
 ALTER TABLE `news`
   MODIFY `newsId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+
+--
+-- AUTO_INCREMENT for table `reservations`
+--
+ALTER TABLE `reservations`
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `returned_books`
+--
+ALTER TABLE `returned_books`
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `students`

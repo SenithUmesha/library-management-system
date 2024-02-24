@@ -36,7 +36,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
 				<div style="margin-top:30px">
 					<table id="students_table" class="table table-striped" style="width:100%">
 						<thead>
-							<th>BookId</th>
+							<th>Book ID</th>
 							<th>Book Title</th>
 							<th>Author</th>
 							<th>ISBN</th>

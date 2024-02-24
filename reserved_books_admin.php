@@ -29,21 +29,19 @@ $current_page = basename($_SERVER['PHP_SELF']);
         <div class="main p-3">
             <div class="container">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 18px;">
-                    <h4 style=" font-weight: bold;">| Reserved Books</h4>
-                    
+                    <h4 style=" font-weight: bold;">| Reservations</h4>
+
                 </div>
                 <div style="margin-top:30px">
                     <table id="students_table" class="table table-striped" style="width:100%">
                         <thead>
-                            <th>ID</th>
+                            <th>Reservation ID</th>
                             <th>Book ID</th>
                             <th>Book Name</th>
-                            <th>Member Name</th>
-                            <th>Matric Number</th>
+                            <th>Student Name</th>
+                            <th>ISBN</th>
                             <th>Reserved Date</th>
                             <th>Actions</th>
-                            
-                            
                         </thead>
                         <tbody>
                             <?php
@@ -53,22 +51,22 @@ $current_page = basename($_SERVER['PHP_SELF']);
                             while ($row = mysqli_fetch_assoc($query)) {
                             ?>
                                 <tr>
-                                    <td><?php echo $counter++; ?></td>
-                                    <td><?php echo $row['Book ID']; ?></td>
-                                    <td><?php echo $row['Book Name']; ?></td>
-                                    <td><?php echo $row['Member Name']; ?></td>
-                                    <td><?php echo $row['Matric Number']; ?></td>
-                                    <td><?php echo $row['Reserved Date']; ?></td>
+                                    <td><?php echo $row['reservation_id']; ?></td>
+                                    <td><?php echo $row['book_id']; ?></td>
+                                    <td><?php echo $row['book_name']; ?></td>
+                                    <td><?php echo $row['student_name']; ?></td>
+                                    <td><?php echo $row['isbn']; ?></td>
+                                    <td><?php echo $row['reserved_date']; ?></td>
                                     <td>
-    <form action="returned_books.php" method="post" style="display: inline;">
-        <input type="hidden" value="<?php echo $row['ID']; ?>" name="id">
-        <button class="btn btn-primary" name="edit"><span class="bi-pencil"></span></button>
-    </form>
-    <form action="returned_books.php" method="post" style="display: inline;">
-        <input type="hidden" value="<?php echo $row['ID']; ?>" name="id">
-        <button name="del" class="btn btn-danger"><span class="bi-trash"></span></button>
-    </form>
-</td>
+                                        <form action="returned_books.php" method="post" style="display: inline;">
+                                            <input type="hidden" value="<?php echo $row['ID']; ?>" name="id">
+                                            <button class="btn btn-primary" name="edit"><span class="bi-pencil"></span></button>
+                                        </form>
+                                        <form action="returned_books.php" method="post" style="display: inline;">
+                                            <input type="hidden" value="<?php echo $row['ID']; ?>" name="id">
+                                            <button name="del" class="btn btn-danger"><span class="bi-trash"></span></button>
+                                        </form>
+                                    </td>
 
                                 </tr>
                             <?php } ?>
