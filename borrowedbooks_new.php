@@ -29,29 +29,29 @@ $current_page = basename($_SERVER['PHP_SELF']);
 		<div class="main p-3">
 			<div class="container">
 				<div style="display: flex; justify-content: space-between; align-items: center; margin-top: 18px;">
-					<h4 style=" font-weight: bold;">| Students</h4>
+					<h4 style=" font-weight: bold;">| Borrowed Books</h4>
 					<button type="button" class="btn btn-success" onclick="addRow(this)"><span class="bi-plus"></span>&nbsp;Student</button>
 				</div>
 				<div style="margin-top:30px">
 					<table id="students_table" class="table table-striped" style="width:100%">
 						<thead>
-                        <th>ID</th>
-					    <th>Book Name</th>
-					    <th>Member Name</th>
-	                    <th>Matric Number</th>
+							<th>ID</th>
+							<th>Book Name</th>
+							<th>Member Name</th>
+							<th>Matric Number</th>
 						</thead>
 						<?php
-							$sql = "SELECT * FROM borrow"; 	
+						$sql = "SELECT * FROM borrow";
 						$query = mysqli_query($conn, $sql);
 						$counter = 1;
 						while ($row = mysqli_fetch_assoc($query)) {
 						?>
 							<tbody>
 								<tr>
-                                <td><?php echo $counter++; ?></td>
-							<td><?php echo $row['bookName'];?></td>
-							 <td><?php echo $row['memberName']; ?></td>
-				             <td><?php echo $row['matricNo']; ?></td>
+									<td><?php echo $counter++; ?></td>
+									<td><?php echo $row['bookName']; ?></td>
+									<td><?php echo $row['memberName']; ?></td>
+									<td><?php echo $row['matricNo']; ?></td>
 								</tr>
 							</tbody>
 						<?php } ?>

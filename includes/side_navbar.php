@@ -178,7 +178,7 @@ if (isset($_SESSION['student-name'])) {
             <li class="sidebar-item <?php echo $current_page == 'bookstable_new.php' ? 'active' : ''; ?>">
                 <a href="bookstable_new.php" class="sidebar-link">
                     <i class="bi bi-book"></i>
-                    <span>All Books</span>
+                    <span>Books</span>
                 </a>
             </li>
             <li class="sidebar-item <?php echo $current_page == 'borrowedbooks_new.php' ? 'active' : ''; ?>">

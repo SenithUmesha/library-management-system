@@ -148,14 +148,10 @@ $current_page = basename($_SERVER['PHP_SELF']);
     <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
     <script>
-        // Initialize DataTable
         $(document).ready(function() {
             $('#students_table').DataTable();
         });
     </script>
 </body>
-<<<<<<< HEAD </html>
-    =======
 
 </html>
->>>>>>> 26ea12a13a5b604c5ceb4a68d5f77222efd9e738
