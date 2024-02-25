@@ -30,7 +30,7 @@ if (isset($_POST['submit'])) {
 		<div class="main p-3">
 			<div class="container">
 				<div style="display: flex; justify-content: space-between; align-items: center; margin-top: 18px;">
-					<h4 style=" font-weight: bold;">| Students</h4>
+					<h4 style="font-weight: bold;">| Students</h4>
 					<button type="button" class="btn btn-success" onclick="addRow(this)"><span class="bi-plus"></span>&nbsp;Student</button>
 				</div>
 				<div style="margin-top:30px">
