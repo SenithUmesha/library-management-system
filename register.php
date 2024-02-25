@@ -27,7 +27,7 @@ if (isset($_POST['submit'])) {
 
         $registration_success = true;
         // Redirect to a success page or perform any other actions
-        header("Location: login_new.php");
+        header("Location: login.php");
         exit();
     } else {
         echo "Error: " . $sql . "<br>" . mysqli_error($conn);
