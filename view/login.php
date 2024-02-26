@@ -1,6 +1,6 @@
 <?php
-require  __DIR__ . '../../includes/snippet.php';
-require  __DIR__ . '../../includes/db-inc.php';
+require  __DIR__ . '../../util/snippet.php';
+require  __DIR__ . '../../util/db_conn.php';
 
 session_start();
 
