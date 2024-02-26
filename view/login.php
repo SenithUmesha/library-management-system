@@ -1,6 +1,6 @@
 <?php
 require  __DIR__ . '../../util/snippet.php';
-require  __DIR__ . '../../util/db_conn.php';
+require  __DIR__ . '../../includes/db_conn.php';
 
 session_start();
 
@@ -17,6 +17,7 @@ if (isset($_POST['submit'])) {
 
     if (mysqli_num_rows($result_admin) > 0) {
         $row = mysqli_fetch_assoc($result_admin);
+        $_SESSION['id'] = $row['admin_no'];
         $_SESSION['username'] = $row['username'];
         $_SESSION['name'] = $row['admin_name'];
         $_SESSION['account_type'] = "admin";
@@ -31,7 +32,7 @@ if (isset($_POST['submit'])) {
         $result_student = mysqli_stmt_get_result($stmt_student);
 
         if ($row = mysqli_fetch_assoc($result_student)) {
-            $_SESSION['id'] = $row['student_id'];
+            $_SESSION['id'] = $row['student_no'];
             $_SESSION['username'] = $row['username'];
             $_SESSION['name'] = $row['student_name'];
             $_SESSION['account_type'] = "student";

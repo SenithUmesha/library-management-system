@@ -167,6 +167,12 @@ $current_page = basename($_SERVER['PHP_SELF']);
                         <span>Students</span>
                     </a>
                 </li>
+                <li class="sidebar-item <?php echo $current_page == 'admins.php' ? 'active' : ''; ?>">
+                    <a href="admins.php" class="sidebar-link">
+                        <i class="lni lni-users"></i>
+                        <span>Admins</span>
+                    </a>
+                </li>
                 <li class="sidebar-item <?php echo $current_page == 'books.php' ? 'active' : ''; ?>">
                     <a href="books.php" class="sidebar-link">
                         <i class="bi bi-book"></i>
@@ -183,12 +189,6 @@ $current_page = basename($_SERVER['PHP_SELF']);
                     <a href="returned_books.php" class="sidebar-link">
                         <i class="bi bi-arrow-return-right"></i>
                         <span>Returned Books</span>
-                    </a>
-                </li>
-                <li class="sidebar-item <?php echo $current_page == 'admins.php' ? 'active' : ''; ?>">
-                    <a href="admins.php" class="sidebar-link">
-                        <i class="lni lni-users"></i>
-                        <span>Admins</span>
                     </a>
                 </li>
                 <li class="sidebar-item <?php echo $current_page == 'fines.php' ? 'active' : ''; ?>">

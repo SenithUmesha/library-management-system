@@ -1,6 +1,6 @@
 <?php
 require '../../util/snippet.php';
-require '../../util/db_conn.php';
+require '../../includes/db_conn.php';
 include '../header.php';
 
 session_start();

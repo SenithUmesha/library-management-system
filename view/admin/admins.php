@@ -1,6 +1,6 @@
 <?php
 require '../../util/snippet.php';
-require '../../util/db_conn.php';
+require '../../includes/db_conn.php';
 include '../header.php';
 
 session_start();
@@ -40,8 +40,8 @@ if (isset($_POST['del'])) {
 				<div style="margin-top:30px">
 					<table id="students_table" class="table table-striped" style="width:100%">
 						<thead>
-							<th>AdminID</th>
-							<th>AdminName</th>
+							<th>Admin No.</th>
+							<th>Admin Name</th>
 							<th>Username</th>
 							<th>Email</th>
 							<th>Actions</th>
@@ -53,15 +53,15 @@ if (isset($_POST['del'])) {
 						while ($row = mysqli_fetch_assoc($query)) {
 						?>
 							<tbody>
-								<td> <?php echo $row['admin_id'] ?></td>
+								<td> <?php echo $row['admin_no'] ?></td>
 								<td> <?php echo $row['admin_name'] ?></td>
 								<td> <?php echo $row['username'] ?></td>
 								<td> <?php echo $row['email'] ?></td>
 								<td>
 									<form method='post' action='view/admin/admins.php'>
-										<input type='hidden' value="<?php echo $row['admin_id']; ?>" name='id'>
-										<button class="btn btn-primary"><span class="bi-pencil"></span></button>
-										<button name="del" class="btn btn-danger"><span class="bi-trash"></span></button>
+										<input type='hidden' value="<?php echo $row['admin_no']; ?>" name='id'>
+										<button class="btn btn-primary"><span class="bi-pencil">&nbsp;Edit</span></button>
+										<button name="del" class="btn btn-danger"><span class="bi-trash">&nbsp;Delete</span></button>
 									</form>
 								</td>
 							</tbody>
