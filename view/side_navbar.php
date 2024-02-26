@@ -147,6 +147,11 @@ $current_page = basename($_SERVER['PHP_SELF']);
         transform: rotate(45deg);
         transition: all .2s ease-out;
     }
+
+    .sidebar-footer {
+        position: fixed;
+        bottom: 0;
+    }
 </style>
 
 <body>

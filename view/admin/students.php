@@ -173,9 +173,9 @@ session_start();
 						}
 					}
 				],
-				lengthMenu: [10, 25, 50, 100],
+				lengthMenu: [8, 25, 50, 100],
 				paging: true,
-				pageLength: 10,
+				pageLength: 8,
 				pagingType: 'full_numbers'
 			});
 		}
