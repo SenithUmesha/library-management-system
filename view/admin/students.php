@@ -41,7 +41,7 @@ session_start();
 						while ($row = mysqli_fetch_assoc($query)) {
 						?>
 							<tbody>
-								<tr>
+								<tr data-student-no="<?php echo $row['student_no']; ?>">
 									<td><?php echo $row['student_no']; ?></td>
 									<td><?php echo $row['student_name']; ?></td>
 									<td><?php echo $row['admission_id']; ?></td>
@@ -170,6 +170,14 @@ session_start();
 						alert(data.error);
 						return;
 					}
+
+					var row = $('#students_table').find('tr[data-student-no="' + studentNo + '"]');
+					row.find('td:eq(1)').text(updatedStudentName);
+					row.find('td:eq(2)').text(updatedAdmissionId);
+					row.find('td:eq(3)').text(updatedUsername);
+					row.find('td:eq(4)').text(updatedEmail);
+					row.find('td:eq(5)').text(updatedClass);
+
 					console.log('Changes saved successfully:', data);
 
 					var modal = new bootstrap.Modal(document.getElementById('editModal'));
