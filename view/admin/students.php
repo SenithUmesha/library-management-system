@@ -49,14 +49,14 @@ session_start();
 					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 				</div>
 				<div class="modal-body">
-					<form id="addForm">
+					<form id="addForm" onsubmit="return validateAddForm()">
 						<div class="mb-3">
 							<label for="addStudentName" class="form-label">Student Name</label>
 							<input type="text" class="form-control" id="addStudentName" name="addStudentName" required>
 						</div>
 						<div class="mb-3">
 							<label for="addAdmissionId" class="form-label">Admission ID</label>
-							<input type="text" class="form-control" id="addAdmissionId" name="addAdmissionId" required>
+							<input type="text" class="form-control" id="addAdmissionId" name="addAdmissionId" pattern="\d{6}" title="Admission ID must be 6 digits" required>
 						</div>
 						<div class="mb-3">
 							<label for="addUsername" class="form-label">Username</label>
@@ -86,14 +86,14 @@ session_start();
 					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 				</div>
 				<div class="modal-body">
-					<form id="editForm">
+					<form id="editForm" onsubmit="return validateEditForm()">
 						<div class="mb-3">
 							<label for="editStudentName" class="form-label">Student Name</label>
 							<input type="text" class="form-control" id="editStudentName" name="editStudentName" required>
 						</div>
 						<div class="mb-3">
 							<label for="editAdmissionId" class="form-label">Admission ID</label>
-							<input type="text" class="form-control" id="editAdmissionId" name="editAdmissionId" required>
+							<input type="text" class="form-control" id="editAdmissionId" name="editAdmissionId" pattern="\d{6}" title="Admission ID must be 6 digits" required>
 						</div>
 						<div class="mb-3">
 							<label for="editUsername" class="form-label">Username</label>
@@ -179,6 +179,43 @@ session_start();
 			dataTable.ajax.reload();
 		}
 
+		function validateEditForm() {
+			var updatedStudentName = document.getElementById('editStudentName').value;
+			var updatedAdmissionId = document.getElementById('editAdmissionId').value;
+			var updatedUsername = document.getElementById('editUsername').value;
+			var updatedEmail = document.getElementById('editEmail').value;
+			var updatedClass = document.getElementById('editClass').value;
+
+			if (!updatedStudentName || !updatedAdmissionId || !updatedUsername || !updatedEmail || !updatedClass) {
+				return false;
+			}
+
+			if (updatedAdmissionId.length !== 6) {
+				return false;
+			}
+
+			return true;
+		}
+
+		function validateAddForm() {
+			var newStudentName = document.getElementById('addStudentName').value;
+			var newAdmissionId = document.getElementById('addAdmissionId').value;
+			var newUsername = document.getElementById('addUsername').value;
+			var newEmail = document.getElementById('addEmail').value;
+			var newClass = document.getElementById('addClass').value;
+
+			if (!newStudentName || !newAdmissionId || !newUsername || !newEmail || !newClass) {
+				return false;
+			}
+
+			if (newAdmissionId.length !== 6) {
+				alert('Admission ID should be a 6-digit number.');
+				return false;
+			}
+
+			return true;
+		}
+
 		function openAddModal() {
 			var modal = new bootstrap.Modal(document.getElementById('addModal'));
 			modal.show();
@@ -191,7 +228,7 @@ session_start();
 			var newEmail = document.getElementById('addEmail').value;
 			var newClass = document.getElementById('addClass').value;
 
-			if (!newStudentName || !newAdmissionId || !newUsername || !newEmail || !newClass) {
+			if (!validateAddForm()) {
 				return;
 			}
 
@@ -270,7 +307,7 @@ session_start();
 			var updatedEmail = document.getElementById('editEmail').value;
 			var updatedClass = document.getElementById('editClass').value;
 
-			if (!updatedStudentName || !updatedAdmissionId || !updatedUsername || !updatedEmail || !updatedClass) {
+			if (!validateEditForm()) {
 				return;
 			}
 
