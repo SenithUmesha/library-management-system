@@ -140,7 +140,8 @@ session_start();
 					},
 					{
 						data: 'student_name',
-						title: 'Student Name'
+						title: 'Student Name',
+						searchable: true
 					},
 					{
 						data: 'admission_id',
@@ -171,7 +172,11 @@ session_start();
                                 </button>`;
 						}
 					}
-				]
+				],
+				lengthMenu: [10, 25, 50, 100],
+				paging: true,
+				pageLength: 10,
+				pagingType: 'full_numbers'
 			});
 		}
 
