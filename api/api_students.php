@@ -71,15 +71,38 @@ function fetchStudent($conn)
 
 function addStudent($conn)
 {
-
-    $randomNumber = generateRandomSixDigitNumber();
-    $hashedPassword = hashPassword($randomNumber);
-
     $newStudentName = $_POST['newStudentName'];
     $newAdmissionId = $_POST['newAdmissionId'];
     $newUsername = $_POST['newUsername'];
     $newEmail = $_POST['newEmail'];
     $newClass = $_POST['newClass'];
+
+    $checkUsernameQuery = "SELECT * FROM students WHERE username = '$newUsername'";
+    $resultUsername = mysqli_query($conn, $checkUsernameQuery);
+
+    $checkEmailQuery = "SELECT * FROM students WHERE email = '$newEmail'";
+    $resultEmail = mysqli_query($conn, $checkEmailQuery);
+
+    $checkAdmissionIdQuery = "SELECT * FROM students WHERE admission_id = '$newAdmissionId'";
+    $resultAdmissionId = mysqli_query($conn, $checkAdmissionIdQuery);
+
+    if (mysqli_num_rows($resultUsername) > 0) {
+        echo json_encode(['error' => 'Username already exists']);
+        return;
+    }
+
+    if (mysqli_num_rows($resultEmail) > 0) {
+        echo json_encode(['error' => 'Email already exists']);
+        return;
+    }
+
+    if (mysqli_num_rows($resultAdmissionId) > 0) {
+        echo json_encode(['error' => 'Admission ID already exists']);
+        return;
+    }
+
+    $randomNumber = generateRandomSixDigitNumber();
+    $hashedPassword = hashPassword($randomNumber);
 
     $sql = "INSERT INTO students (student_name, admission_id, username, email, class, password) 
             VALUES ('$newStudentName', '$newAdmissionId', '$newUsername', '$newEmail', '$newClass', '$hashedPassword')";
@@ -98,13 +121,15 @@ function updateStudent($conn)
     if (isset($_POST['studentNo'])) {
         $studentNo = $_POST['studentNo'];
         $editStudentName = $_POST['updatedStudentName'];
-        $editAdmissionId = $_POST['updatedAdmissionId'];
-        $editUsername = $_POST['updatedUsername'];
-        $editEmail = $_POST['updatedEmail'];
+        // $editAdmissionId = $_POST['updatedAdmissionId'];
+        // $editUsername = $_POST['updatedUsername'];
+        // $editEmail = $_POST['updatedEmail'];
         $editClass = $_POST['updatedClass'];
 
-        $sql = "UPDATE students SET student_name = '$editStudentName', admission_id = '$editAdmissionId', 
-                username = '$editUsername', email = '$editEmail', class = '$editClass' WHERE student_no = '$studentNo'";
+        // $sql = "UPDATE students SET student_name = '$editStudentName', admission_id = '$editAdmissionId', 
+        //         username = '$editUsername', email = '$editEmail', class = '$editClass' WHERE student_no = '$studentNo'";
+
+        $sql = "UPDATE students SET student_name = '$editStudentName', class = '$editClass' WHERE student_no = '$studentNo'";
 
         $result = mysqli_query($conn, $sql);
 

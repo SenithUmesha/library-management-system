@@ -93,15 +93,15 @@ session_start();
 						</div>
 						<div class="mb-3">
 							<label for="editAdmissionId" class="form-label">Admission ID</label>
-							<input type="text" class="form-control" id="editAdmissionId" name="editAdmissionId" pattern="\d{6}" title="Admission ID must be 6 digits" required>
+							<input type="text" class="form-control" id="editAdmissionId" name="editAdmissionId" disabled>
 						</div>
 						<div class="mb-3">
 							<label for="editUsername" class="form-label">Username</label>
-							<input type="text" class="form-control" id="editUsername" name="editUsername" required>
+							<input type="text" class="form-control" id="editUsername" name="editUsername" disabled>
 						</div>
 						<div class="mb-3">
 							<label for="editEmail" class="form-label">Email</label>
-							<input type="text" class="form-control" id="editEmail" name="editEmail" required>
+							<input type="text" class="form-control" id="editEmail" name="editEmail" disabled>
 						</div>
 						<div class="mb-3">
 							<label for="editClass" class="form-label">Class</label>
@@ -181,16 +181,9 @@ session_start();
 
 		function validateEditForm() {
 			var updatedStudentName = document.getElementById('editStudentName').value;
-			var updatedAdmissionId = document.getElementById('editAdmissionId').value;
-			var updatedUsername = document.getElementById('editUsername').value;
-			var updatedEmail = document.getElementById('editEmail').value;
 			var updatedClass = document.getElementById('editClass').value;
 
-			if (!updatedStudentName || !updatedAdmissionId || !updatedUsername || !updatedEmail || !updatedClass) {
-				return false;
-			}
-
-			if (updatedAdmissionId.length !== 6) {
+			if (!updatedStudentName || !updatedClass) {
 				return false;
 			}
 
@@ -208,8 +201,9 @@ session_start();
 				return false;
 			}
 
-			if (newAdmissionId.length !== 6) {
-				alert('Admission ID should be a 6-digit number.');
+			var sixDigitNumberRegex = /^\d{6}$/;
+
+			if (!sixDigitNumberRegex.test(newAdmissionId)) {
 				return false;
 			}
 
@@ -248,14 +242,14 @@ session_start();
 					if (data.error) {
 						alert(data.error);
 						return;
+					} else {
+						console.log('New student added successfully:', data);
+
+						reloadDataTable();
+
+						var modal = new bootstrap.Modal(document.getElementById('addModal'));
+						modal.hide();
 					}
-
-					console.log('New student added successfully:', data);
-
-					reloadDataTable();
-
-					var modal = new bootstrap.Modal(document.getElementById('addModal'));
-					modal.hide();
 				},
 				error: function(xhr, status, error) {
 					console.error('AJAX Error:', status, error);
@@ -329,15 +323,9 @@ session_start();
 						alert(data.error);
 						return;
 					}
-
-					var row = $('#students_table').find('tr[data-student-no="' + studentNo + '"]');
-					row.find('td:eq(1)').text(updatedStudentName);
-					row.find('td:eq(2)').text(updatedAdmissionId);
-					row.find('td:eq(3)').text(updatedUsername);
-					row.find('td:eq(4)').text(updatedEmail);
-					row.find('td:eq(5)').text(updatedClass);
-
 					console.log('Changes saved successfully:', data);
+
+					reloadDataTable();
 
 					var modal = new bootstrap.Modal(document.getElementById('editModal'));
 					modal.hide();
