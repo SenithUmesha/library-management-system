@@ -45,6 +45,8 @@ function fetchAllStudents($conn)
     } else {
         echo json_encode(['data' => []]);
     }
+
+    mysqli_close($conn);
 }
 
 function fetchStudent($conn)
@@ -63,6 +65,8 @@ function fetchStudent($conn)
     } else {
         echo json_encode(['error' => 'Invalid request']);
     }
+
+    mysqli_close($conn);
 }
 
 function addStudent($conn)
@@ -85,6 +89,8 @@ function addStudent($conn)
     } else {
         echo json_encode(['error' => 'Error adding new student']);
     }
+
+    mysqli_close($conn);
 }
 
 function updateStudent($conn)
@@ -107,6 +113,8 @@ function updateStudent($conn)
         } else {
             echo json_encode(['error' => 'Error updating student']);
         }
+
+        mysqli_close($conn);
     } else {
         echo json_encode(['error' => 'Invalid request']);
     }
@@ -114,4 +122,35 @@ function updateStudent($conn)
 
 function deleteStudent($conn)
 {
+    if (isset($_POST['studentNo'])) {
+        $studentNo = $_POST['studentNo'];
+        $sql = "SELECT * FROM students WHERE student_no = ?";
+
+        $stmt = mysqli_prepare($conn, $sql);
+        mysqli_stmt_bind_param($stmt, 'i', $studentNo);
+        mysqli_stmt_execute($stmt);
+
+        $result = mysqli_stmt_get_result($stmt);
+
+        if ($result && mysqli_num_rows($result) > 0) {
+            $deleteSql = "DELETE FROM students WHERE student_no = ?";
+            $deleteStmt = mysqli_prepare($conn, $deleteSql);
+            mysqli_stmt_bind_param($deleteStmt, 'i', $studentNo);
+
+            if (mysqli_stmt_execute($deleteStmt)) {
+                echo json_encode(['success' => 'Student deleted successfully']);
+            } else {
+                echo json_encode(['error' => 'Error deleting student']);
+            }
+
+            mysqli_stmt_close($deleteStmt);
+        } else {
+            echo json_encode(['error' => 'Student not found']);
+        }
+
+        mysqli_stmt_close($stmt);
+        mysqli_close($conn);
+    } else {
+        echo json_encode(['error' => 'Invalid request']);
+    }
 }

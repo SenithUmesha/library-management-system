@@ -350,8 +350,30 @@ session_start();
 			});
 		}
 
-		function confirmDelete(studentId) {
-			if (confirm('Are you sure you want to delete this student?')) {}
+		function confirmDelete(studentNo) {
+			if (confirm('Are you sure you want to delete this student?')) {
+				$.ajax({
+					url: '../../api/api_students.php',
+					type: 'POST',
+					data: {
+						action: 'delete',
+						studentNo: studentNo
+					},
+					dataType: 'json',
+					success: function(data) {
+						if (data.error) {
+							alert(data.error);
+						} else if (data.success) {
+							reloadDataTable();
+						}
+					},
+					error: function(xhr, status, error) {
+						console.error('AJAX Error:', status, error);
+						console.log('Response:', xhr.responseText);
+						alert('Error confirming delete');
+					}
+				});
+			}
 		}
 	</script>
 </body>
