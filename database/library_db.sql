@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Feb 26, 2024 at 04:19 AM
+-- Generation Time: Feb 26, 2024 at 01:11 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -28,7 +28,7 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `admin` (
-  `admin_id` int(11) NOT NULL,
+  `admin_no` int(6) NOT NULL,
   `admin_name` varchar(60) NOT NULL,
   `password` varchar(150) NOT NULL,
   `username` varchar(60) NOT NULL,
@@ -40,7 +40,7 @@ CREATE TABLE `admin` (
 -- Dumping data for table `admin`
 --
 
-INSERT INTO `admin` (`admin_id`, `admin_name`, `password`, `username`, `email`, `profile_image`) VALUES
+INSERT INTO `admin` (`admin_no`, `admin_name`, `password`, `username`, `email`, `profile_image`) VALUES
 (1, 'admin', 'admin', 'admin', 'admin@gmail.com', '');
 
 -- --------------------------------------------------------
@@ -151,13 +151,12 @@ INSERT INTO `returned_books` (`ID`, `Book Name`, `Member Name`, `Matric Number`,
 --
 
 CREATE TABLE `students` (
-  `student_id` int(11) NOT NULL,
-  `admission_id` int(30) NOT NULL,
+  `student_no` int(6) NOT NULL,
+  `admission_id` int(6) NOT NULL,
   `password` varchar(150) NOT NULL,
   `username` varchar(150) NOT NULL,
   `email` varchar(60) NOT NULL,
   `class` varchar(60) NOT NULL,
-  `profile_image` text NOT NULL,
   `student_name` varchar(60) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
@@ -165,8 +164,10 @@ CREATE TABLE `students` (
 -- Dumping data for table `students`
 --
 
-INSERT INTO `students` (`student_id`, `admission_id`, `password`, `username`, `email`, `class`, `profile_image`, `student_name`) VALUES
-(1, 17321, 'student', 'student', 'student1gmail.com', 'Grade 09', '4477_1526321327.jpeg', 'Student One');
+INSERT INTO `students` (`student_no`, `admission_id`, `password`, `username`, `email`, `class`, `student_name`) VALUES
+(6, 823211, '$2y$10$/DuiPQOLaqf0Jm3LgvSCwOR5Bbh5Rea8mqB5Cp6XkK9niCM3Iv3T6', 'student1', '34senith@gmail.com', 'Grade 4', 'Senith'),
+(7, 321231, '$2y$10$iab103mqhsshopwaZxgUE.9kGF498MYAe6LXFCVwAGLz1MCT/V5ja', 'student2', 'thisara@gmail.com', 'Grade 1', 'Thisara'),
+(8, 231322, '$2y$10$1BTymq4eME7hRyz3GfShkuAF6206CVUu6xtinltamgPwUO.fGKpuK', 'student3', 'dasith@gmail.com', 'Grade 2', 'Dasith');
 
 --
 -- Indexes for dumped tables
@@ -176,7 +177,7 @@ INSERT INTO `students` (`student_id`, `admission_id`, `password`, `username`, `e
 -- Indexes for table `admin`
 --
 ALTER TABLE `admin`
-  ADD PRIMARY KEY (`admin_id`);
+  ADD PRIMARY KEY (`admin_no`);
 
 --
 -- Indexes for table `books`
@@ -212,7 +213,7 @@ ALTER TABLE `returned_books`
 -- Indexes for table `students`
 --
 ALTER TABLE `students`
-  ADD PRIMARY KEY (`student_id`);
+  ADD PRIMARY KEY (`student_no`);
 
 --
 -- AUTO_INCREMENT for dumped tables
@@ -222,7 +223,7 @@ ALTER TABLE `students`
 -- AUTO_INCREMENT for table `admin`
 --
 ALTER TABLE `admin`
-  MODIFY `admin_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `admin_no` int(6) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `books`
@@ -258,7 +259,7 @@ ALTER TABLE `returned_books`
 -- AUTO_INCREMENT for table `students`
 --
 ALTER TABLE `students`
-  MODIFY `student_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `student_no` int(6) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
