@@ -5,14 +5,17 @@ if (isset($_POST['action'])) {
     $action = $_POST['action'];
 
     switch ($action) {
-        case 'add':
-            addStudent();
+        case 'fetch':
+            fetchStudent($conn);
             break;
-        case 'edit':
-            editStudent($conn);
+        case 'add':
+            addStudent($conn);
+            break;
+        case 'update':
+            updateStudent($conn);
             break;
         case 'delete':
-            deleteStudent();
+            deleteStudent($conn);
             break;
         default:
             echo json_encode(['error' => 'Invalid action']);
@@ -22,12 +25,7 @@ if (isset($_POST['action'])) {
     echo json_encode(['error' => 'Action not specified']);
 }
 
-function addStudent()
-{
-    echo json_encode(['message' => 'Student added successfully']);
-}
-
-function editStudent($conn)
+function fetchStudent($conn)
 {
     if (isset($_POST['studentNo'])) {
         $studentNo = $_POST['studentNo'];
@@ -45,7 +43,35 @@ function editStudent($conn)
     }
 }
 
-function deleteStudent()
+function addStudent($conn)
 {
-    echo json_encode(['message' => 'Student deleted successfully']);
+}
+
+function updateStudent($conn)
+{
+    if (isset($_POST['studentNo'])) {
+        $studentNo = $_POST['studentNo'];
+        $editStudentName = $_POST['updatedStudentName'];
+        $editAdmissionId = $_POST['updatedAdmissionId'];
+        $editUsername = $_POST['updatedUsername'];
+        $editEmail = $_POST['updatedEmail'];
+        $editClass = $_POST['updatedClass'];
+
+        $sql = "UPDATE students SET student_name = '$editStudentName', admission_id = '$editAdmissionId', 
+                username = '$editUsername', email = '$editEmail', class = '$editClass' WHERE student_no = '$studentNo'";
+
+        $result = mysqli_query($conn, $sql);
+
+        if ($result) {
+            echo json_encode(['message' => 'Student updated successfully']);
+        } else {
+            echo json_encode(['error' => 'Error updating student']);
+        }
+    } else {
+        echo json_encode(['error' => 'Invalid request']);
+    }
+}
+
+function deleteStudent($conn)
+{
 }

@@ -4,16 +4,6 @@ require '../../includes/db_conn.php';
 include '../header.php';
 
 session_start();
-
-if (isset($_POST['submit'])) {
-	$id = trim($_POST['del_btn']);
-	$sql = "DELETE from students where studentId = '$id' ";
-	$query = mysqli_query($conn, $sql);
-
-	if ($query) {
-		echo "<script>alert('Student Deleted!')</script>";
-	}
-}
 ?>
 
 <style>
@@ -83,25 +73,25 @@ if (isset($_POST['submit'])) {
 					<form id="editForm">
 						<div class="mb-3">
 							<label for="editStudentName" class="form-label">Student Name</label>
-							<input type="text" class="form-control" id="editStudentName" name="editStudentName">
+							<input type="text" class="form-control" id="editStudentName" name="editStudentName" required>
 						</div>
 						<div class="mb-3">
 							<label for="editAdmissionId" class="form-label">Admission ID</label>
-							<input type="text" class="form-control" id="editAdmissionId" name="editAdmissionId">
+							<input type="text" class="form-control" id="editAdmissionId" name="editAdmissionId" required>
 						</div>
 						<div class="mb-3">
 							<label for="editUsername" class="form-label">Username</label>
-							<input type="text" class="form-control" id="editUsername" name="editUsername">
+							<input type="text" class="form-control" id="editUsername" name="editUsername" required>
 						</div>
 						<div class="mb-3">
 							<label for="editEmail" class="form-label">Email</label>
-							<input type="text" class="form-control" id="editEmail" name="editEmail">
+							<input type="text" class="form-control" id="editEmail" name="editEmail" required>
 						</div>
 						<div class="mb-3">
 							<label for="editClass" class="form-label">Class</label>
-							<input type="text" class="form-control" id="editClass" name="editClass">
+							<input type="text" class="form-control" id="editClass" name="editClass" required>
 						</div>
-						<button type="button" class="btn btn-primary" onclick="saveChanges()">Save</button>
+						<button type="submit" class="btn btn-primary" onclick="saveChanges()">Save</button>
 					</form>
 				</div>
 			</div>
@@ -112,14 +102,18 @@ if (isset($_POST['submit'])) {
 	<script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
 	<script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
 	<script>
+		var currentStudentNo;
+
 		new DataTable('#students_table');
 
 		function openEditModal(studentNo) {
+			currentStudentNo = studentNo;
+
 			$.ajax({
 				url: '../../api/api_students.php',
 				type: 'POST',
 				data: {
-					action: 'edit',
+					action: 'fetch',
 					studentNo: studentNo
 				},
 				dataType: 'json',
@@ -147,8 +141,46 @@ if (isset($_POST['submit'])) {
 		}
 
 		function saveChanges() {
-			var modal = new bootstrap.Modal(document.getElementById('editModal'));
-			modal.hide();
+			var studentNo = currentStudentNo;
+			var updatedStudentName = document.getElementById('editStudentName').value;
+			var updatedAdmissionId = document.getElementById('editAdmissionId').value;
+			var updatedUsername = document.getElementById('editUsername').value;
+			var updatedEmail = document.getElementById('editEmail').value;
+			var updatedClass = document.getElementById('editClass').value;
+
+			if (!updatedStudentName || !updatedAdmissionId || !updatedUsername || !updatedEmail || !updatedClass) {
+				return;
+			}
+
+			$.ajax({
+				url: '../../api/api_students.php',
+				type: 'POST',
+				data: {
+					action: 'update',
+					studentNo: studentNo,
+					updatedStudentName: updatedStudentName,
+					updatedAdmissionId: updatedAdmissionId,
+					updatedUsername: updatedUsername,
+					updatedEmail: updatedEmail,
+					updatedClass: updatedClass
+				},
+				dataType: 'json',
+				success: function(data) {
+					if (data.error) {
+						alert(data.error);
+						return;
+					}
+					console.log('Changes saved successfully:', data);
+
+					var modal = new bootstrap.Modal(document.getElementById('editModal'));
+					modal.hide();
+				},
+				error: function(xhr, status, error) {
+					console.error('AJAX Error:', status, error);
+					console.log('Response:', xhr.responseText);
+					alert('Error saving changes');
+				}
+			});
 		}
 
 		function confirmDelete(studentId) {
