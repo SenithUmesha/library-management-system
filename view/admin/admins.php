@@ -1,14 +1,18 @@
 <?php
-require 'includes/snippet.php';
-require 'includes/db-inc.php';
-include "includes/header_new.php";
+require '../../includes/snippet.php';
+require '../../includes/db-inc.php';
+include '../header.php';
 
 session_start();
 
 if (isset($_POST['del'])) {
+
 	$id = sanitize(trim($_POST['id']));
-	$sql_del = "DELETE from books where BookId = $id";
+	// echo $id;
+
+	$sql_del = "DELETE from admin where adminId = $id";
 	$error = false;
+
 	$result = mysqli_query($conn, $sql_del);
 	if ($result) {
 		$error = true;
@@ -26,44 +30,40 @@ if (isset($_POST['del'])) {
 
 <body>
 	<div class="wrapper">
-		<?php include "includes/side_navbar.php"; ?>
+		<?php include  '../side_navbar.php'; ?>
 		<div class="main p-3">
 			<div class="container">
 				<div style="display: flex; justify-content: space-between; align-items: center; margin-top: 18px;">
-					<h4 style=" font-weight: bold;">| Fines</h4>
+					<h4 style=" font-weight: bold;">| Admins</h4>
+					<button type="button" class="btn btn-success" onclick="addRow(this)"><span class="bi-plus"></span>&nbsp;Admin</button>
 				</div>
 				<div style="margin-top:30px">
 					<table id="students_table" class="table table-striped" style="width:100%">
 						<thead>
-							<th>ID</th>
-							<th>Member Name</th>
-							<th>Book Name</th>
-							<th>Borrow date</th>
-							<th>Return Date</th>
-							<th>Overdue Charges</th>
+							<th>AdminID</th>
+							<th>AdminName</th>
+							<th>Username</th>
+							<th>Email</th>
 							<th>Actions</th>
 						</thead>
 						<?php
-						$sql = "SELECT * FROM borrow";
+						$sql = "SELECT * from admin";
 						$query = mysqli_query($conn, $sql);
 						$counter = 1;
 						while ($row = mysqli_fetch_assoc($query)) {
 						?>
 							<tbody>
-								<tr>
-									<td><?php echo $row['borrowId']; ?></td>
-									<td><?php echo $row['memberName']; ?></td>
-									<td><?php echo $row['bookName']; ?></td>
-									<td><?php echo $row['borrowDate']; ?></td>
-									<td><?php echo $row['returnDate']; ?></td>
-									<td><?php echo $row['fine']; ?></td>
-									<td>
-										<form action="fines_new.php" method="post">
-											<input type="hidden" value="<?php echo $row['borrowId']; ?>" name="del-btn">
-											<button name="del" class="btn btn-warning"><span class="bi-check-lg"></span></button>
-										</form>
-									</td>
-								</tr>
+								<td> <?php echo $row['admin_id'] ?></td>
+								<td> <?php echo $row['admin_name'] ?></td>
+								<td> <?php echo $row['username'] ?></td>
+								<td> <?php echo $row['email'] ?></td>
+								<td>
+									<form method='post' action='view/admin/admins.php'>
+										<input type='hidden' value="<?php echo $row['admin_id']; ?>" name='id'>
+										<button class="btn btn-primary"><span class="bi-pencil"></span></button>
+										<button name="del" class="btn btn-danger"><span class="bi-trash"></span></button>
+									</form>
+								</td>
 							</tbody>
 						<?php } ?>
 					</table>

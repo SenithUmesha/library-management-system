@@ -1,6 +1,6 @@
 <?php
-require 'includes/snippet.php';
-require 'includes/db-inc.php';
+require  __DIR__ . '../../includes/snippet.php';
+require  __DIR__ . '../../includes/db-inc.php';
 
 session_start();
 
@@ -20,7 +20,7 @@ if (isset($_POST['submit'])) {
         $_SESSION['username'] = $row['username'];
         $_SESSION['name'] = $row['admin_name'];
         $_SESSION['account_type'] = "admin";
-        header("Location: viewstudents_new.php");
+        header("Location: admin/students.php");
         exit();
     } else {
         // Student Login
@@ -35,7 +35,7 @@ if (isset($_POST['submit'])) {
             $_SESSION['username'] = $row['username'];
             $_SESSION['name'] = $row['student_name'];
             $_SESSION['account_type'] = "student";
-            header("Location: profile_new.php");
+            header("Location: student/profile.php");
             exit();
         } else {
             echo '<script>alert("Login Failed. Please check your details.")</script>';
@@ -58,7 +58,7 @@ if (isset($_POST['submit'])) {
             <h4 style=" font-weight: bold;">| Login</h4>
         </div>
         <div style="margin-top:30px">
-            <form role="form" method="post" action="login.php" enctype="multipart/form-data">
+            <form role="form" method="post" action="view/login.php" enctype="multipart/form-data">
                 <div class="form-outline mb-4">
                     <label class="form-label">Username</label>
                     <input type="text" name="username" id="username" required class="form-control" />

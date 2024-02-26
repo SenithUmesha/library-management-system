@@ -1,7 +1,7 @@
 <?php
-require 'includes/snippet.php';
-require 'includes/db-inc.php';
-include "includes/header_new.php";
+require '../../includes/snippet.php';
+require '../../includes/db-inc.php';
+include '../header.php';
 
 session_start();
 
@@ -26,7 +26,7 @@ if (isset($_POST['submit'])) {
 
 <body>
 	<div class="wrapper">
-		<?php include "includes/side_navbar.php"; ?>
+		<?php include  '../side_navbar.php'; ?>
 		<div class="main p-3">
 			<div class="container">
 				<div style="display: flex; justify-content: space-between; align-items: center; margin-top: 18px;">
@@ -59,10 +59,10 @@ if (isset($_POST['submit'])) {
 									<td><?php echo $row['email']; ?></td>
 									<td><?php echo $row['class']; ?></td>
 									<td>
-										<form action="viewstudents_new.php" method="post">
+										<form action="view/admin/students.php" method="post">
 											<input type="hidden" value="<?php echo $row['student_id']; ?>" name="del_btn">
-											<button class="btn btn-primary"><span class="bi-pencil"></span></button>
-											<button name="submit" class="btn btn-danger"><span class="bi-trash"></span></button>
+											<button class="btn btn-primary"><span class="bi-pencil">&nbsp;Edit</span></button>
+											<button name="submit" class="btn btn-danger"><span class="bi-trash">&nbsp;Delete</span></button>
 									</td>
 								</tr>
 							</tbody>

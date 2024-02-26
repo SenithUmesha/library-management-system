@@ -1,17 +1,17 @@
 <?php
-require 'includes/snippet.php';
-require 'includes/db-inc.php';
-include "includes/header_new.php";
+require '../../includes/snippet.php';
+require '../../includes/db-inc.php';
+include '../header.php';
 
 session_start();
 
-if (isset($_POST['submit'])) {
-	$id = trim($_POST['del_btn']);
-	$sql = "DELETE from students where studentId = '$id' ";
-	$query = mysqli_query($conn, $sql);
-
-	if ($query) {
-		echo "<script>alert('Student Deleted!')</script>";
+if (isset($_POST['del'])) {
+	$id = sanitize(trim($_POST['id']));
+	$sql_del = "DELETE from books where BookId = $id";
+	$error = false;
+	$result = mysqli_query($conn, $sql_del);
+	if ($result) {
+		$error = true;
 	}
 }
 ?>
@@ -26,20 +26,22 @@ if (isset($_POST['submit'])) {
 
 <body>
 	<div class="wrapper">
-		<?php include "includes/side_navbar.php"; ?>
+		<?php include  '../side_navbar.php'; ?>
 		<div class="main p-3">
 			<div class="container">
 				<div style="display: flex; justify-content: space-between; align-items: center; margin-top: 18px;">
-					<h4 style=" font-weight: bold;">| Borrowed Books</h4>
-					<button type="button" class="btn btn-success" onclick="addRow(this)"><span class="bi-plus"></span>&nbsp;Student</button>
+					<h4 style=" font-weight: bold;">| Fines</h4>
 				</div>
 				<div style="margin-top:30px">
 					<table id="students_table" class="table table-striped" style="width:100%">
 						<thead>
 							<th>ID</th>
-							<th>Book Name</th>
 							<th>Member Name</th>
-							<th>Matric Number</th>
+							<th>Book Name</th>
+							<th>Borrow date</th>
+							<th>Return Date</th>
+							<th>Overdue Charges</th>
+							<th>Actions</th>
 						</thead>
 						<?php
 						$sql = "SELECT * FROM borrow";
@@ -49,10 +51,18 @@ if (isset($_POST['submit'])) {
 						?>
 							<tbody>
 								<tr>
-									<td><?php echo $counter++; ?></td>
-									<td><?php echo $row['bookName']; ?></td>
+									<td><?php echo $row['borrowId']; ?></td>
 									<td><?php echo $row['memberName']; ?></td>
-									<td><?php echo $row['matricNo']; ?></td>
+									<td><?php echo $row['bookName']; ?></td>
+									<td><?php echo $row['borrowDate']; ?></td>
+									<td><?php echo $row['returnDate']; ?></td>
+									<td><?php echo $row['fine']; ?></td>
+									<td>
+										<form action="view/admin/fines.php" method="post">
+											<input type="hidden" value="<?php echo $row['borrowId']; ?>" name="del-btn">
+											<button name="del" class="btn btn-warning"><span class="bi-check-lg"></span></button>
+										</form>
+									</td>
 								</tr>
 							</tbody>
 						<?php } ?>

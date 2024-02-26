@@ -1,7 +1,7 @@
 <?php
-require 'includes/snippet.php';
-require 'includes/db-inc.php';
-include "includes/header_new.php";
+require '../../includes/snippet.php';
+require '../../includes/db-inc.php';
+include '../header.php';
 
 session_start();
 
@@ -79,7 +79,7 @@ if (isset($_SESSION['username'])) {
 
 <body>
     <div class="wrapper">
-        <?php include "includes/side_navbar.php"; ?>
+        <?php include  '../side_navbar.php'; ?>
         <div class="main p-3">
             <div class="container">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 18px;">

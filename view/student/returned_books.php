@@ -1,7 +1,7 @@
 <?php
-require 'includes/snippet.php';
-require 'includes/db-inc.php';
-include "includes/header_new.php";
+require '../../includes/snippet.php';
+require '../../includes/db-inc.php';
+include '../header.php';
 
 session_start();
 
@@ -45,11 +45,11 @@ if (isset($_POST['submit'])) {
 
 <body>
     <div class="wrapper">
-        <?php include "includes/side_navbar.php"; ?>
+        <?php include  '../side_navbar.php'; ?>
         <div class="main p-3">
             <div class="container">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 18px;">
-                    <h4 style="font-weight: bold;">| Borrowed Books</h4>
+                    <h4 style="font-weight: bold;">| Returned Books</h4>
                 </div>
                 <div style="margin-top:30px">
                     <table id="students_table" class="table table-striped" style="width:100%">
@@ -58,8 +58,9 @@ if (isset($_POST['submit'])) {
                             <th>Book Name</th>
                             <th>Member Name</th>
                             <th>Matric Number</th>
-                            <th>Borrowed Date</th>
-                            <th>Actions</th>
+                            <th>Returned Date</th>
+                            <th>Rating</th>
+                            <th>Add Rating</th>
                         </thead>
                         <tbody>
                             <?php
@@ -74,8 +75,36 @@ if (isset($_POST['submit'])) {
                                     <td><?php echo $row['Member Name']; ?></td>
                                     <td><?php echo $row['Matric Number']; ?></td>
                                     <td><?php echo $row['Returned Date']; ?></td>
-                                    <td><button class="btn btn-primary" data-bs-toggle="modal">Return</button></td>
+                                    <td id="rating_<?php echo $row['ID']; ?>"><?php echo $row['Rating'] ? $row['Rating'] . ' stars' : 'Not rated'; ?></td>
+                                    <td><button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#ratingModal<?php echo $row['ID']; ?>">Add Rating</button></td>
                                 </tr>
+
+                                <!-- Rating Modal -->
+                                <div class="modal fade" id="ratingModal<?php echo $row['ID']; ?>" tabindex="-1" aria-labelledby="ratingModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="ratingModalLabel">Rate Book: <?php echo $row['Book Name']; ?></h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="rating" id="rating_<?php echo $row['ID']; ?>">
+                                                    <span class="star" data-rating="5">&#9733;</span>
+                                                    <span class="star" data-rating="4">&#9733;</span>
+                                                    <span class="star" data-rating="3">&#9733;</span>
+                                                    <span class="star" data-rating="2">&#9733;</span>
+                                                    <span class="star" data-rating="1">&#9733;</span>
+                                                    <input type="hidden" name="book_id" class="book-id" value="<?php echo $row['ID']; ?>">
+                                                    <input type="hidden" name="rating" class="rating-value" value="<?php echo $row['Rating']; ?>">
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                <button type="button" class="btn btn-primary" onclick="submitRating(<?php echo $row['ID']; ?>)">Submit Rating</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             <?php } ?>
                         </tbody>
                     </table>

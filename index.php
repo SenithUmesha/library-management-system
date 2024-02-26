@@ -1,5 +1,5 @@
 <?php
-include "includes/header_new.php";
+include "view/header.php";
 
 $current_page = isset($_GET['page']) ? $_GET['page'] : 'home.php';
 ?>
@@ -17,7 +17,7 @@ $current_page = isset($_GET['page']) ? $_GET['page'] : 'home.php';
             <a class="nav-link <?php echo $current_page == 'home.php' ? 'active' : ''; ?>" aria-current="page" href="?page=home.php">Home</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link <?php echo $current_page == 'login.php' ? 'active' : ''; ?>" aria-current="page" href="?page=login.php">Login</a>
+            <a class="nav-link <?php echo $current_page == 'view/login.php' ? 'active' : ''; ?>" aria-current="page" href="?page=view/login.php">Login</a>
           </li>
         </ul>
       </div>
@@ -44,14 +44,14 @@ $current_page = isset($_GET['page']) ? $_GET['page'] : 'home.php';
         </div>
         <div class="col-lg-8 align-self-baseline">
           <p class="text-white-75 mb-5">Efficiently manage your library resources with our user-friendly platform. Explore a world of organized information and seamless book transactions.</p>
-          <a class="btn btn-primary btn-xl" href="?page=login.php" id="getStartedBtn">Get Started</a>
+          <a class="btn btn-primary btn-xl" href="?page=view/login.php" id="getStartedBtn">Get Started</a>
         </div>
       </div>
     </div>
 
     <script>
       document.getElementById('getStartedBtn').addEventListener('click', function() {
-        window.location.href = 'login.php';
+        window.location.href = 'view/login.php';
       });
     </script>
   <?php

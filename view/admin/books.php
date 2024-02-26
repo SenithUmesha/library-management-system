@@ -1,7 +1,7 @@
 <?php
-require 'includes/snippet.php';
-require 'includes/db-inc.php';
-include "includes/header_new.php";
+require '../../includes/snippet.php';
+require '../../includes/db-inc.php';
+include '../header.php';
 
 session_start();
 
@@ -26,7 +26,7 @@ if (isset($_POST['del'])) {
 
 <body>
 	<div class="wrapper">
-		<?php include "includes/side_navbar.php"; ?>
+		<?php include  '../side_navbar.php'; ?>
 		<div class="main p-3">
 			<div class="container">
 				<div style="display: flex; justify-content: space-between; align-items: center; margin-top: 18px;">
@@ -65,7 +65,7 @@ if (isset($_POST['del'])) {
 									<!-- <td><?php echo $row['categories']; ?></td> -->
 									<!-- <td><?php echo $row['callNumber']; ?></td> -->
 									<td>
-										<form action="bookstable_new.php" method="post">
+										<form action="view/admin/books.php" method="post">
 											<input type="hidden" value="<?php echo $row['bookId']; ?>" name="id">
 											<button class="btn btn-primary"><span class="bi-pencil"></span></button>
 											<button name="del" class="btn btn-danger"><span class="bi-trash"></span></button>
