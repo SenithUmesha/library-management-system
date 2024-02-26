@@ -21,7 +21,7 @@ session_start();
 			<div class="container">
 				<div style="display: flex; justify-content: space-between; align-items: center; margin-top: 18px;">
 					<h4 style="font-weight: bold;">| Students</h4>
-					<button type="button" class="btn btn-success" onclick="addRow(this)"><span class="bi-plus"></span>&nbsp;Student</button>
+					<button class="btn btn-success" onclick="openAddModal()"><span class="bi-plus"></span>&nbsp;Student</button>
 				</div>
 				<div style="margin-top:30px">
 					<table id="students_table" class="table table-striped" style="width:100%">
@@ -34,28 +34,44 @@ session_start();
 							<th>Class</th>
 							<th>Actions</th>
 						</thead>
-						<?php
-						$sql = "SELECT * FROM students";
-						$query = mysqli_query($conn, $sql);
-						$counter = 1;
-						while ($row = mysqli_fetch_assoc($query)) {
-						?>
-							<tbody>
-								<tr data-student-no="<?php echo $row['student_no']; ?>">
-									<td><?php echo $row['student_no']; ?></td>
-									<td><?php echo $row['student_name']; ?></td>
-									<td><?php echo $row['admission_id']; ?></td>
-									<td><?php echo $row['username']; ?></td>
-									<td><?php echo $row['email']; ?></td>
-									<td><?php echo $row['class']; ?></td>
-									<td>
-										<button class="btn btn-primary" onclick="openEditModal(<?php echo $row['student_no']; ?>)"><span class="bi-pencil">&nbsp;Edit</span></button>
-										<button name="submit" class="btn btn-danger" onclick="confirmDelete(<?php echo $row['student_no']; ?>)"><span class="bi-trash">&nbsp;Delete</span></button>
-									</td>
-								</tr>
-							</tbody>
-						<?php } ?>
 					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Modal for Add -->
+	<div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="addModalLabel">Add Student Data</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<form id="addForm">
+						<div class="mb-3">
+							<label for="addStudentName" class="form-label">Student Name</label>
+							<input type="text" class="form-control" id="addStudentName" name="addStudentName" required>
+						</div>
+						<div class="mb-3">
+							<label for="addAdmissionId" class="form-label">Admission ID</label>
+							<input type="text" class="form-control" id="addAdmissionId" name="addAdmissionId" required>
+						</div>
+						<div class="mb-3">
+							<label for="addUsername" class="form-label">Username</label>
+							<input type="text" class="form-control" id="addUsername" name="addUsername" required>
+						</div>
+						<div class="mb-3">
+							<label for="addEmail" class="form-label">Email</label>
+							<input type="text" class="form-control" id="addEmail" name="addEmail" required>
+						</div>
+						<div class="mb-3">
+							<label for="addClass" class="form-label">Class</label>
+							<input type="text" class="form-control" id="addClass" name="addClass" required>
+						</div>
+						<button type="submit" class="btn btn-primary" onclick="saveAddChanges()">Save</button>
+					</form>
 				</div>
 			</div>
 		</div>
@@ -91,7 +107,7 @@ session_start();
 							<label for="editClass" class="form-label">Class</label>
 							<input type="text" class="form-control" id="editClass" name="editClass" required>
 						</div>
-						<button type="submit" class="btn btn-primary" onclick="saveChanges()">Save</button>
+						<button type="submit" class="btn btn-primary" onclick="saveEditChanges()">Save</button>
 					</form>
 				</div>
 			</div>
@@ -103,8 +119,114 @@ session_start();
 	<script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
 	<script>
 		var currentStudentNo;
+		var dataTable;
 
-		new DataTable('#students_table');
+		$(document).ready(function() {
+			fetchAllStudents();
+		});
+
+		function fetchAllStudents() {
+			dataTable = $('#students_table').DataTable({
+				ajax: {
+					url: '../../api/api_students.php',
+					type: 'POST',
+					data: {
+						action: 'fetch_all'
+					}
+				},
+				columns: [{
+						data: 'student_no',
+						title: 'Student No.'
+					},
+					{
+						data: 'student_name',
+						title: 'Student Name'
+					},
+					{
+						data: 'admission_id',
+						title: 'Admission ID'
+					},
+					{
+						data: 'username',
+						title: 'Username'
+					},
+					{
+						data: 'email',
+						title: 'Email'
+					},
+					{
+						data: 'class',
+						title: 'Class'
+					},
+					{
+						data: null,
+						title: 'Actions',
+						render: function(data, type, row) {
+							return `
+                                <button class="btn btn-primary" onclick="openEditModal(${row.student_no})">
+                                    <span class="bi-pencil">&nbsp;Edit
+                                </button>
+                                <button name="submit" class="btn btn-danger" onclick="confirmDelete(${row.student_no})">
+                                    <span class="bi-trash">&nbsp;Delete
+                                </button>`;
+						}
+					}
+				]
+			});
+		}
+
+		function reloadDataTable() {
+			dataTable.ajax.reload();
+		}
+
+		function openAddModal() {
+			var modal = new bootstrap.Modal(document.getElementById('addModal'));
+			modal.show();
+		}
+
+		function saveAddChanges() {
+			var newStudentName = document.getElementById('addStudentName').value;
+			var newAdmissionId = document.getElementById('addAdmissionId').value;
+			var newUsername = document.getElementById('addUsername').value;
+			var newEmail = document.getElementById('addEmail').value;
+			var newClass = document.getElementById('addClass').value;
+
+			if (!newStudentName || !newAdmissionId || !newUsername || !newEmail || !newClass) {
+				return;
+			}
+
+			$.ajax({
+				url: '../../api/api_students.php',
+				type: 'POST',
+				data: {
+					action: 'add',
+					newStudentName: newStudentName,
+					newAdmissionId: newAdmissionId,
+					newUsername: newUsername,
+					newEmail: newEmail,
+					newClass: newClass
+				},
+				dataType: 'json',
+				success: function(data) {
+					if (data.error) {
+						alert(data.error);
+						return;
+					}
+
+					console.log('New student added successfully:', data);
+
+					reloadDataTable();
+
+					var modal = new bootstrap.Modal(document.getElementById('addModal'));
+					modal.hide();
+				},
+				error: function(xhr, status, error) {
+					console.error('AJAX Error:', status, error);
+					console.log('Response:', xhr.responseText);
+					alert('Error adding new student');
+				}
+			});
+		}
 
 		function openEditModal(studentNo) {
 			currentStudentNo = studentNo;
@@ -140,7 +262,7 @@ session_start();
 			});
 		}
 
-		function saveChanges() {
+		function saveEditChanges() {
 			var studentNo = currentStudentNo;
 			var updatedStudentName = document.getElementById('editStudentName').value;
 			var updatedAdmissionId = document.getElementById('editAdmissionId').value;

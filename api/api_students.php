@@ -1,5 +1,6 @@
 <?php
 require '../includes/db_conn.php';
+require '../util/functions.php';
 
 if (isset($_POST['action'])) {
     $action = $_POST['action'];
@@ -7,6 +8,9 @@ if (isset($_POST['action'])) {
     switch ($action) {
         case 'fetch':
             fetchStudent($conn);
+            break;
+        case 'fetch_all':
+            fetchAllStudents($conn);
             break;
         case 'add':
             addStudent($conn);
@@ -23,6 +27,24 @@ if (isset($_POST['action'])) {
     }
 } else {
     echo json_encode(['error' => 'Action not specified']);
+}
+
+function fetchAllStudents($conn)
+{
+    $sql = "SELECT * FROM students";
+    $result = mysqli_query($conn, $sql);
+
+    if ($result && mysqli_num_rows($result) > 0) {
+        $studentsData = [];
+
+        while ($row = mysqli_fetch_assoc($result)) {
+            $studentsData[] = $row;
+        }
+
+        echo json_encode(['data' => $studentsData]);
+    } else {
+        echo json_encode(['data' => []]);
+    }
 }
 
 function fetchStudent($conn)
@@ -45,6 +67,24 @@ function fetchStudent($conn)
 
 function addStudent($conn)
 {
+
+    $randomNumber = generateRandomSixDigitNumber();
+    $hashedPassword = hashPassword($randomNumber);
+
+    $newStudentName = $_POST['newStudentName'];
+    $newAdmissionId = $_POST['newAdmissionId'];
+    $newUsername = $_POST['newUsername'];
+    $newEmail = $_POST['newEmail'];
+    $newClass = $_POST['newClass'];
+
+    $sql = "INSERT INTO students (student_name, admission_id, username, email, class, password) 
+            VALUES ('$newStudentName', '$newAdmissionId', '$newUsername', '$newEmail', '$newClass', '$hashedPassword')";
+
+    if (mysqli_query($conn, $sql)) {
+        echo json_encode(['message' => 'Student added successfully']);
+    } else {
+        echo json_encode(['error' => 'Error adding new student']);
+    }
 }
 
 function updateStudent($conn)
