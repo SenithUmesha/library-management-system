@@ -2,6 +2,12 @@
 require '../includes/db_conn.php';
 require '../util/functions.php';
 
+require_once '../vendor/autoload.php';
+
+use Symfony\Component\Mailer\Transport;
+use Symfony\Component\Mailer\Mailer;
+use Symfony\Component\Mime\Email;
+
 if (isset($_POST['action'])) {
     $action = $_POST['action'];
 
@@ -108,6 +114,7 @@ function addStudent($conn)
             VALUES ('$newStudentName', '$newAdmissionId', '$newUsername', '$newEmail', '$newClass', '$hashedPassword')";
 
     if (mysqli_query($conn, $sql)) {
+        sendWelcomeEmail($newStudentName, $newUsername, $newEmail, $randomNumber);
         echo json_encode(['message' => 'Student added successfully']);
     } else {
         echo json_encode(['error' => 'Error adding new student']);
@@ -121,13 +128,7 @@ function updateStudent($conn)
     if (isset($_POST['studentNo'])) {
         $studentNo = $_POST['studentNo'];
         $editStudentName = $_POST['updatedStudentName'];
-        // $editAdmissionId = $_POST['updatedAdmissionId'];
-        // $editUsername = $_POST['updatedUsername'];
-        // $editEmail = $_POST['updatedEmail'];
         $editClass = $_POST['updatedClass'];
-
-        // $sql = "UPDATE students SET student_name = '$editStudentName', admission_id = '$editAdmissionId', 
-        //         username = '$editUsername', email = '$editEmail', class = '$editClass' WHERE student_no = '$studentNo'";
 
         $sql = "UPDATE students SET student_name = '$editStudentName', class = '$editClass' WHERE student_no = '$studentNo'";
 
@@ -178,4 +179,47 @@ function deleteStudent($conn)
     } else {
         echo json_encode(['error' => 'Invalid request']);
     }
+}
+
+function sendWelcomeEmail($studentName, $username, $studentEmail, $password)
+{
+    $transport = Transport::fromDsn('smtp://34senith@gmail.com:osfiefvsuqxjgmhv@smtp.gmail.com:587');
+
+    $mailer = new Mailer($transport);
+
+    $email = (new Email());
+
+    $email->from('34senith@gmail.com');
+
+    $email->to('' . $studentEmail);
+
+    $email->subject('Welcome to Ananda College Library System!');
+
+    $email->html('
+    <html lang="en">
+    <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body style="font-family: Arial, sans-serif; line-height: 1.6; margin: 0; padding: 20px; background-color: #f4f4f4;">
+    <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
+    <h2 style="color: #333;">Welcome to Ananda College Library System</h2>
+    <p style="color: #555;">Dear ' . $studentName . ',</p>
+    <p style="color: #555;">We are delighted to welcome you to Ananda College Library System! Your student account has been successfully created, and we are excited to have you as a member of our library community.</p>
+    <div style="margin-top: 20px; padding: 10px; background-color: #f9f9f9; border-radius: 6px;" class="login-details">
+    <p><strong>Username:</strong> ' . $username . '</p>
+    <p><strong>Password:</strong> ' . $password . '</p>
+    </div>
+    <p style="color: #555; margin-top: 20px;">To access the library system, simply use the provided username and password at our Library Management System. Upon your first login, we recommend changing your password for security purposes.</p>
+    <p style="color: #555;">If you have any questions or encounter any issues, feel free to reach out to our support team or visit the library in person.</p>
+    <p style="color: #555; margin-top: 20px;">Happy reading!</p>
+    <div style="margin-top: 20px; font-size: 12px; color: #777;" class="footer">
+    <p>Best regards,<br>Library System Team<br>Ananda College</p>
+    </div>
+    </div>
+    </body>
+    </html>
+    ');
+
+    $mailer->send($email);
 }
