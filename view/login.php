@@ -1,7 +1,7 @@
 <?php
-require  __DIR__ . '../../util/snippet.php';
-require  __DIR__ . '../../includes/db_conn.php';
-require '../util/functions.php';
+require __DIR__ . '../../util/snippet.php';
+require __DIR__ . '../../includes/db_conn.php';
+require __DIR__ . '../../util/functions.php';
 
 session_start();
 
@@ -11,7 +11,7 @@ if (isset($_POST['submit'])) {
     $hashed_password = hashPassword($password);
 
     // Admin Login
-    $sql_admin = "SELECT * FROM admin WHERE username = ? AND password = ?";
+    $sql_admin = "SELECT * FROM admins WHERE username = ? AND password = ?";
     $stmt_admin = mysqli_prepare($conn, $sql_admin);
     mysqli_stmt_bind_param($stmt_admin, "ss", $username, $hashed_password);
     mysqli_stmt_execute($stmt_admin);
@@ -62,7 +62,7 @@ if (isset($_POST['submit'])) {
             <h4 style=" font-weight: bold;">| Login</h4>
         </div>
         <div style="margin-top:30px">
-            <form role="form" method="post" action="view/login.php" enctype="multipart/form-data">
+            <form role="form" method="post" action="index.php?page=view/login.php" enctype="multipart/form-data">
                 <div class="form-outline mb-4">
                     <label class="form-label">Username</label>
                     <input type="text" name="username" id="username" required class="form-control" />
