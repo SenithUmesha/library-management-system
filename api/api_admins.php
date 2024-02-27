@@ -31,7 +31,7 @@ if (isset($_POST['action'])) {
 
 function fetchAllAdmins($conn)
 {
-    $sql = "SELECT * FROM admin";
+    $sql = "SELECT * FROM admins";
     $result = mysqli_query($conn, $sql);
 
     if ($result && mysqli_num_rows($result) > 0) {
@@ -53,7 +53,7 @@ function fetchAdmin($conn)
 {
     if (isset($_POST['adminNo'])) {
         $adminNo = $_POST['adminNo'];
-        $sql = "SELECT * FROM admin WHERE admin_no = '$adminNo'";
+        $sql = "SELECT * FROM admins WHERE admin_no = '$adminNo'";
         $result = mysqli_query($conn, $sql);
 
         if ($result && mysqli_num_rows($result) > 0) {
@@ -75,10 +75,10 @@ function addAdmin($conn)
     $newUsername = $_POST['newUsername'];
     $newEmail = $_POST['newEmail'];
 
-    $checkUsernameQuery = "SELECT * FROM admin WHERE username = '$newUsername'";
+    $checkUsernameQuery = "SELECT * FROM admins WHERE username = '$newUsername'";
     $resultUsername = mysqli_query($conn, $checkUsernameQuery);
 
-    $checkEmailQuery = "SELECT * FROM admin WHERE email = '$newEmail'";
+    $checkEmailQuery = "SELECT * FROM admins WHERE email = '$newEmail'";
     $resultEmail = mysqli_query($conn, $checkEmailQuery);
 
     if (mysqli_num_rows($resultUsername) > 0) {
@@ -94,7 +94,7 @@ function addAdmin($conn)
     $randomNumber = generateRandomSixDigitNumber();
     $hashedPassword = hashPassword($randomNumber);
 
-    $sql = "INSERT INTO admin (admin_name, username, email, password) 
+    $sql = "INSERT INTO admins (admin_name, username, email, password) 
             VALUES ('$newAdminName', '$newUsername', '$newEmail', '$hashedPassword')";
 
     if (mysqli_query($conn, $sql)) {
@@ -112,7 +112,7 @@ function updateAdmin($conn)
         $adminNo = $_POST['adminNo'];
         $editAdminName = $_POST['updatedAdminName'];
 
-        $sql = "UPDATE admin SET admin_name = '$editAdminName' WHERE admin_no = '$adminNo'";
+        $sql = "UPDATE admins SET admin_name = '$editAdminName' WHERE admin_no = '$adminNo'";
 
         $result = mysqli_query($conn, $sql);
 
@@ -132,7 +132,7 @@ function deleteAdmin($conn)
 {
     if (isset($_POST['adminNo'])) {
         $adminNo = $_POST['adminNo'];
-        $sql = "SELECT * FROM admin WHERE admin_no = ?";
+        $sql = "SELECT * FROM admins WHERE admin_no = ?";
 
         $stmt = mysqli_prepare($conn, $sql);
         mysqli_stmt_bind_param($stmt, 'i', $adminNo);
@@ -141,7 +141,7 @@ function deleteAdmin($conn)
         $result = mysqli_stmt_get_result($stmt);
 
         if ($result && mysqli_num_rows($result) > 0) {
-            $deleteSql = "DELETE FROM admin WHERE admin_no = ?";
+            $deleteSql = "DELETE FROM admins WHERE admin_no = ?";
             $deleteStmt = mysqli_prepare($conn, $deleteSql);
             mysqli_stmt_bind_param($deleteStmt, 'i', $adminNo);
 
