@@ -1,17 +1,19 @@
 <?php
 require  __DIR__ . '../../util/snippet.php';
 require  __DIR__ . '../../includes/db_conn.php';
+require '../util/functions.php';
 
 session_start();
 
 if (isset($_POST['submit'])) {
     $username = sanitize(trim($_POST['username']));
     $password = sanitize(trim($_POST['password']));
+    $hashed_password = hashPassword($password);
 
     // Admin Login
     $sql_admin = "SELECT * FROM admin WHERE username = ? AND password = ?";
     $stmt_admin = mysqli_prepare($conn, $sql_admin);
-    mysqli_stmt_bind_param($stmt_admin, "ss", $username, $password);
+    mysqli_stmt_bind_param($stmt_admin, "ss", $username, $hashed_password);
     mysqli_stmt_execute($stmt_admin);
     $result_admin = mysqli_stmt_get_result($stmt_admin);
 
@@ -24,10 +26,11 @@ if (isset($_POST['submit'])) {
         header("Location: admin/students.php");
         exit();
     } else {
+
         // Student Login
         $sql_student = "SELECT * FROM students WHERE username = ? AND password = ?";
         $stmt_student = mysqli_prepare($conn, $sql_student);
-        mysqli_stmt_bind_param($stmt_student, "ss", $username, $password);
+        mysqli_stmt_bind_param($stmt_student, "ss", $username, $hashed_password);
         mysqli_stmt_execute($stmt_student);
         $result_student = mysqli_stmt_get_result($stmt_student);
 
