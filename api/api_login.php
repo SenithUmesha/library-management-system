@@ -27,7 +27,6 @@ function login($conn)
     $username = sanitize(trim($_POST['username']));
     $password = sanitize(trim($_POST['password']));
 
-    // Admin Login
     $sql_admin = "SELECT * FROM admins WHERE username = ?";
     $stmt_admin = mysqli_prepare($conn, $sql_admin);
     mysqli_stmt_bind_param($stmt_admin, "s", $username);
@@ -40,13 +39,21 @@ function login($conn)
             $_SESSION['username'] = $row['username'];
             $_SESSION['name'] = $row['admin_name'];
             $_SESSION['account_type'] = "admin";
-            $response['success'] = true;
-            $response['redirect'] = 'view/admin/students.php';
+
+            if ($row['last_accessed_date'] === null) {
+                $response['success'] = true;
+                $response['changePassword'] = true;
+                $response['redirect'] = 'view/change_password.php';
+            } else {
+                updateLastAccessedDate($conn, $_SESSION['id'], 'admins', 'admin');
+
+                $response['success'] = true;
+                $response['redirect'] = 'view/admin/students.php';
+            }
         } else {
             $response['message'] = 'Login Failed. Please check your details.';
         }
     } else {
-        // Student Login
         $sql_student = "SELECT * FROM students WHERE username = ?";
         $stmt_student = mysqli_prepare($conn, $sql_student);
         mysqli_stmt_bind_param($stmt_student, "s", $username);
@@ -59,8 +66,16 @@ function login($conn)
                 $_SESSION['username'] = $row['username'];
                 $_SESSION['name'] = $row['student_name'];
                 $_SESSION['account_type'] = "student";
-                $response['success'] = true;
-                $response['redirect'] = 'view/student/profile.php';
+
+                if ($row['last_accessed_date'] === null) {
+                    $response['success'] = true;
+                    $response['changePassword'] = true;
+                } else {
+                    updateLastAccessedDate($conn, $_SESSION['id'], 'students', 'student');
+
+                    $response['success'] = true;
+                    $response['redirect'] = 'view/student/profile.php';
+                }
             } else {
                 $response['message'] = 'Login Failed. Please check your details.';
             }
@@ -70,4 +85,13 @@ function login($conn)
     }
 
     echo json_encode($response);
+}
+
+function updateLastAccessedDate($conn, $id, $userType, $user)
+{
+    $currentDateTime = date('Y-m-d H:i:s');
+    $sql = "UPDATE $userType SET last_accessed_date = '$currentDateTime' WHERE {$user}_no = ?";
+    $stmt = mysqli_prepare($conn, $sql);
+    mysqli_stmt_bind_param($stmt, "i", $id);
+    mysqli_stmt_execute($stmt);
 }
