@@ -100,8 +100,8 @@ function addAdmin($conn)
     $randomNumber = generateRandomSixDigitNumber();
     $hashedPassword = hashPassword($randomNumber);
 
-    $sql = "INSERT INTO admins (admin_name, username, email, password) 
-            VALUES ('$newAdminName', '$newUsername', '$newEmail', '$hashedPassword')";
+    $sql = "INSERT INTO admins (admin_name, username, email, password, last_accessed_date) 
+            VALUES ('$newAdminName', '$newUsername', '$newEmail', '$hashedPassword', NULL)";
 
     if (mysqli_query($conn, $sql)) {
         sendWelcomeEmail($newAdminName, $newUsername, $newEmail, $randomNumber);

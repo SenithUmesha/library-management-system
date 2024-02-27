@@ -110,8 +110,8 @@ function addStudent($conn)
     $randomNumber = generateRandomSixDigitNumber();
     $hashedPassword = hashPassword($randomNumber);
 
-    $sql = "INSERT INTO students (student_name, admission_id, username, email, class, password) 
-            VALUES ('$newStudentName', '$newAdmissionId', '$newUsername', '$newEmail', '$newClass', '$hashedPassword')";
+    $sql = "INSERT INTO students (student_name, admission_id, username, email, class, password, last_accessed_date) 
+            VALUES ('$newStudentName', '$newAdmissionId', '$newUsername', '$newEmail', '$newClass', '$hashedPassword', NULL)";
 
     if (mysqli_query($conn, $sql)) {
         sendWelcomeEmail($newStudentName, $newUsername, $newEmail, $randomNumber);
