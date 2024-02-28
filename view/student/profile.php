@@ -1,7 +1,7 @@
 <?php
 session_start();
 require '../../util/snippet.php';
-require '../../util/db_conn.php';
+require '../../includes/db_conn.php';
 include '../header.php';
 include '../../ai_assistant/chatbot.php';
 
