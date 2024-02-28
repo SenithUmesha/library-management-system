@@ -82,7 +82,7 @@
 <script src="https://www.gstatic.com/dialogflow-console/fast/messenger/bootstrap.js?v=1"></script>
 <df-messenger
   intent="WELCOME"
-  chat-title="library_chatbot"
+  chat-title="Library chat Assistant"
   agent-id="48015862-84d3-4935-a93c-c28f5b3137be"
   language-code="en"
 ></df-messenger>
