@@ -74,22 +74,21 @@
         left: 10px;
         font-size: 20px;
     }
+
     df-messenger {
-          --df-messenger-bot-message:#87CEEB;
-          --df-messenger-button-titlebar-color: #0041C2;
-          --df-messenger-chat-background-color: #fafafa;
-          --df-messenger-font-color: #000;
-          --df-messenger-send-icon: #00adff;
-          --df-messenger-user-message: #7ec472;
-          --df-messenger-chip-border-color:#0041C2;
-        }
+        --df-messenger-bot-message: #87CEEB;
+        --df-messenger-button-titlebar-color: #0041C2;
+        --df-messenger-chat-background-color: #fafafa;
+        --df-messenger-font-color: #000;
+        --df-messenger-send-icon: #00adff;
+        --df-messenger-user-message: #7ec472;
+        --df-messenger-chip-border-color: #0041C2;
+    }
 </style>
 
 <body>
     <script src="https://www.gstatic.com/dialogflow-console/fast/messenger/bootstrap.js?v=1"></script>
-    <df-messenger 
-    chat-icon="chatbot2.png"
-    intent="Welcome" chat-title="Library Assistant" agent-id="48015862-84d3-4935-a93c-c28f5b3137be" language-code="en"></df-messenger>
+    <df-messenger chat-icon="../../assets/images/chatbot.png" intent="Welcome" chat-title="Library Assistant" agent-id="48015862-84d3-4935-a93c-c28f5b3137be" language-code="en"></df-messenger>
 </body>
 
 
