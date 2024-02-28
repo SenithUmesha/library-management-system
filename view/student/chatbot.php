@@ -75,7 +75,7 @@
         font-size: 20px;
     }
     df-messenger {
-          --df-messenger-bot-message: #fff;
+          --df-messenger-bot-message:#87CEEB;
           --df-messenger-button-titlebar-color: #0041C2;
           --df-messenger-chat-background-color: #fafafa;
           --df-messenger-font-color: #000;
