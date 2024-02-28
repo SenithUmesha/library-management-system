@@ -2,7 +2,7 @@
 require '../../util/snippet.php';
 require '../../includes/db_conn.php';
 include '../header.php';
-
+include '../../ai_assistant/chatbot.php';
 session_start();
 
 if (isset($_POST['submit'])) {
