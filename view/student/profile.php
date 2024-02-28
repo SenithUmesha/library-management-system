@@ -1,9 +1,11 @@
 <?php
+session_start();
 require '../../util/snippet.php';
 require '../../util/db_conn.php';
 include '../header.php';
+include '../../ai_assistant/chatbot.php';
 
-session_start();
+
 
 if (isset($_SESSION['name'])) {
     $name = $_SESSION['name'];
