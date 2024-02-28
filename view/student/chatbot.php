@@ -1,5 +1,3 @@
-<!-- chatbot.php -->
-
 <style>
     .chatbox-popup {
         position: fixed;
@@ -27,7 +25,7 @@
         border: 1px solid #ccc;
         border-radius: 5px;
         overflow: hidden;
-        display: none; /* Initially hidden */
+        display: none;
     }
 
     .chatbox-header {
@@ -37,7 +35,7 @@
         text-align: center;
         cursor: pointer;
     }
-    
+
     .chatbox-body {
         height: 200px;
         overflow-y: auto;
@@ -69,23 +67,18 @@
         border-radius: 3px;
         cursor: pointer;
     }
+
     .chatbox-header::before {
-    content: '\2190'; /* Unicode character for left arrow */
-    position: absolute;
-    left: 10px;
-    font-size: 20px;
-}
-   
+        content: '\2190';
+        position: absolute;
+        left: 10px;
+        font-size: 20px;
+    }
 </style>
 
-<body> 
-<script src="https://www.gstatic.com/dialogflow-console/fast/messenger/bootstrap.js?v=1"></script>
-<df-messenger
-  intent="WELCOME"
-  chat-title="library_chatbot"
-  agent-id="48015862-84d3-4935-a93c-c28f5b3137be"
-  language-code="en"
-></df-messenger>
+<body>
+    <script src="https://www.gstatic.com/dialogflow-console/fast/messenger/bootstrap.js?v=1"></script>
+    <df-messenger intent="Welcome" chat-title="Library Assistant" agent-id="48015862-84d3-4935-a93c-c28f5b3137be" language-code="en"></df-messenger>
 </body>
 
 
