@@ -7,16 +7,16 @@ if (isset($_POST['action'])) {
 
     switch ($action) {
         case 'fetch':
-            fetchStudent($conn);
+            fetchBorrowedBook($conn);
             break;
         case 'fetch_all':
-            fetchAllStudents($conn);
+            fetchAllBorrowedBooks($conn);
             break;
         case 'update':
-            updateStudent($conn);
+            updateBorrowedBook($conn);
             break;
         case 'delete':
-            deleteStudent($conn);
+            deleteBorrowedBook($conn);
             break;
         default:
             echo json_encode(['error' => 'Invalid action']);
@@ -26,19 +26,19 @@ if (isset($_POST['action'])) {
     echo json_encode(['error' => 'Action not specified']);
 }
 
-function fetchAllStudents($conn)
+function fetchAllBorrowedBooks($conn)
 {
-    $sql = "SELECT * FROM students";
+    $sql = "SELECT * FROM borrowed_books";
     $result = mysqli_query($conn, $sql);
 
     if ($result && mysqli_num_rows($result) > 0) {
-        $studentsData = [];
+        $borrowedBookData = [];
 
         while ($row = mysqli_fetch_assoc($result)) {
-            $studentsData[] = $row;
+            $borrowedBookData[] = $row;
         }
 
-        echo json_encode(['data' => $studentsData]);
+        echo json_encode(['data' => $borrowedBookData]);
     } else {
         echo json_encode(['data' => []]);
     }
@@ -46,18 +46,18 @@ function fetchAllStudents($conn)
     mysqli_close($conn);
 }
 
-function fetchStudent($conn)
+function fetchBorrowedBook($conn)
 {
-    if (isset($_POST['studentNo'])) {
-        $studentNo = $_POST['studentNo'];
-        $sql = "SELECT * FROM students WHERE student_no = '$studentNo'";
+    if (isset($_POST['borrowedBookNo'])) {
+        $borrowedBookNo = $_POST['borrowedBookNo'];
+        $sql = "SELECT * FROM borrowed_books WHERE borrowed_book_no = '$borrowedBookNo'";
         $result = mysqli_query($conn, $sql);
 
         if ($result && mysqli_num_rows($result) > 0) {
-            $studentData = mysqli_fetch_assoc($result);
-            echo json_encode($studentData);
+            $borrowedBookData = mysqli_fetch_assoc($result);
+            echo json_encode($borrowedBookData);
         } else {
-            echo json_encode(['error' => 'Student not found']);
+            echo json_encode(['error' => 'Borrowed book not found']);
         }
     } else {
         echo json_encode(['error' => 'Invalid request']);
@@ -66,21 +66,20 @@ function fetchStudent($conn)
     mysqli_close($conn);
 }
 
-function updateStudent($conn)
+function updateBorrowedBook($conn)
 {
-    if (isset($_POST['studentNo'])) {
-        $studentNo = $_POST['studentNo'];
-        $editStudentName = $_POST['updatedStudentName'];
-        $editClass = $_POST['updatedClass'];
+    if (isset($_POST['borrowedBookNo'])) {
+        $borrowedBookNo = $_POST['borrowedBookNo'];
+        $updatedBorrowedDate = $_POST['updatedBorrowedDate'];
 
-        $sql = "UPDATE students SET student_name = '$editStudentName', class = '$editClass' WHERE student_no = '$studentNo'";
+        $sql = "UPDATE borrowed_books SET borrowed_date = '$updatedBorrowedDate' WHERE borrowed_book_no = '$borrowedBookNo'";
 
         $result = mysqli_query($conn, $sql);
 
         if ($result) {
-            echo json_encode(['message' => 'Student updated successfully']);
+            echo json_encode(['message' => 'Borrowed book updated successfully']);
         } else {
-            echo json_encode(['error' => 'Error updating student']);
+            echo json_encode(['error' => 'Error updating borrowed book']);
         }
 
         mysqli_close($conn);
@@ -89,32 +88,32 @@ function updateStudent($conn)
     }
 }
 
-function deleteStudent($conn)
+function deleteBorrowedBook($conn)
 {
-    if (isset($_POST['studentNo'])) {
-        $studentNo = $_POST['studentNo'];
-        $sql = "SELECT * FROM students WHERE student_no = ?";
+    if (isset($_POST['borrowedBookNo'])) {
+        $borrowedBookNo = $_POST['borrowedBookNo'];
+        $sql = "SELECT * FROM borrowed_books WHERE borrowed_book_no = ?";
 
         $stmt = mysqli_prepare($conn, $sql);
-        mysqli_stmt_bind_param($stmt, 'i', $studentNo);
+        mysqli_stmt_bind_param($stmt, 'i', $borrowedBookNo);
         mysqli_stmt_execute($stmt);
 
         $result = mysqli_stmt_get_result($stmt);
 
         if ($result && mysqli_num_rows($result) > 0) {
-            $deleteSql = "DELETE FROM students WHERE student_no = ?";
+            $deleteSql = "DELETE FROM borrowed_books WHERE borrowed_book_no = ?";
             $deleteStmt = mysqli_prepare($conn, $deleteSql);
-            mysqli_stmt_bind_param($deleteStmt, 'i', $studentNo);
+            mysqli_stmt_bind_param($deleteStmt, 'i', $borrowedBookNo);
 
             if (mysqli_stmt_execute($deleteStmt)) {
-                echo json_encode(['success' => 'Student deleted successfully']);
+                echo json_encode(['success' => 'Borrowed book deleted successfully']);
             } else {
-                echo json_encode(['error' => 'Error deleting student']);
+                echo json_encode(['error' => 'Error deleting borrowed book']);
             }
 
             mysqli_stmt_close($deleteStmt);
         } else {
-            echo json_encode(['error' => 'Student not found']);
+            echo json_encode(['error' => 'Borrowed book not found']);
         }
 
         mysqli_stmt_close($stmt);
