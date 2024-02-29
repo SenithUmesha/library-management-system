@@ -3,10 +3,7 @@ require '../../util/snippet.php';
 require '../../includes/db_conn.php';
 include '../header.php';
 
-
 session_start();
-
-
 ?>
 
 <style>
@@ -23,61 +20,24 @@ session_start();
 		<div class="main p-3">
 			<div class="container">
 				<div style="display: flex; justify-content: space-between; align-items: center; margin-top: 18px;">
-					<h4 style=" font-weight: bold;">| Fines</h4>
-					<button class="btn btn-success" onclick="openAddModal()"><span class="bi-plus"></span>&nbsp;Add Fine</button>
+					<h4 style="font-weight: bold;">| Fines</h4>
 				</div>
 				<div style="margin-top:30px">
 					<table id="fines_table" class="table table-striped" style="width:100%">
 						<thead>
-							<th>ID</th>
+							<th>Fine No.</th>
+							<th>Student No.</th>
 							<th>Student Name</th>
-							<th>Book Name</th>
-							<th>Borrow date</th>
-							<th>Return Date</th>
-							<th>Overdue Charges</th>
+							<th>Book No.</th>
+							<th>Book Title</th>
+							<th>Fine Amount</th>
+							<th>Issued Date</th>
+							<th>Due Date</th>
+							<th>Payment Status</th>
+							<th>Paid Date</th>
 							<th>Actions</th>
-						</thead> 
+						</thead>
 					</table>
-				</div>
-			</div>
-		</div>
-	</div>
-
-		<!-- Modal for Add -->
-	<div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h5 class="modal-title" id="addModalLabel">Add Student Fine Data</h5>
-					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-				</div>
-				<div class="modal-body">
-					<form id="addForm" onsubmit="return validateAddForm()">
-						
-						 			
-						<div class="mb-3">
-							<label for="addStudentName" class="form-label">Student Name</label>
-							<input type="text" class="form-control" id="addStudentName" name="addStudentName" required>
-						</div>
-						<div class="mb-3">
-							<label for="addBookName" class="form-label">Book Name</label>
-							<input type="text" class="form-control" id="addBookName" name="addBookName"  required>
-						</div>
-						<div class="mb-3">
-							<label for="addBorrowdate" class="form-label">Borrow date</label>
-							<input type="date" class="form-control" id="addBorrowdate" name="addBorrowdate" required>
-						</div>
-						<div class="mb-3">
-							<label for="addReturndate" class="form-label">Return date</label>
-							<input type="date" class="form-control" id="addReturndate" name="addReturndate" required>
-						</div>
-						<div class="mb-3">
-							<label for="addoverduecharge" class="form-label">Overdue charge</label>
-							<input type="number" class="form-control" id="addoverduecharge" name="addoverduecharge" required>
-						</div>
-						 
-						<button type="submit" class="btn btn-primary" onclick="saveAddChanges()">Save</button>
-					</form>
 				</div>
 			</div>
 		</div>
@@ -93,27 +53,41 @@ session_start();
 				</div>
 				<div class="modal-body">
 					<form id="editForm" onsubmit="return validateEditForm()">
-
-					 
+						<div class="mb-3">
+							<label for="editStudentNo" class="form-label">Student No.</label>
+							<input type="text" class="form-control" id="editStudentNo" name="editStudentNo" disabled>
+						</div>
 						<div class="mb-3">
 							<label for="editStudentName" class="form-label">Student Name</label>
-							<input type="text" class="form-control" id="editStudentName" name="editStudentName" >
+							<input type="text" class="form-control" id="editStudentName" name="editStudentName" disabled>
 						</div>
 						<div class="mb-3">
-							<label for="editBookName" class="form-label">Book Name</label>
-							<input type="text" class="form-control" id="editBookName" name="editBookName" >
+							<label for="editBookNo" class="form-label">Book No.</label>
+							<input type="text" class="form-control" id="editBookNo" name="editBookNo" disabled>
 						</div>
 						<div class="mb-3">
-							<label for="editBorrowdate" class="form-label">Borrow date</label>
-							<input type="date" class="form-control" id="editBorrowdate" name="editBorrowdate" disabled>
+							<label for="editBookTitle" class="form-label">Book Title</label>
+							<input type="text" class="form-control" id="editBookTitle" name="editBookTitle" disabled>
 						</div>
 						<div class="mb-3">
-							<label for="editReturndate" class="form-label">Return date</label>
-							<input type="date" class="form-control" id="editReturndate" name="editReturndate" disabled>
+							<label for="editFineAmount" class="form-label">Fine Amount</label>
+							<input type="text" class="form-control" id="editFineAmount" name="editFineAmount" required>
 						</div>
 						<div class="mb-3">
-							<label for="editoverduecharge" class="form-label">Overdue charge</label>
-							<input type="number" class="form-control" id="editoverduecharge" name="editoverduecharge">
+							<label for="editIssuedDate" class="form-label">Issued Date</label>
+							<input type="text" class="form-control" id="editIssuedDate" name="editIssuedDate" disabled>
+						</div>
+						<div class="mb-3">
+							<label for="editDueDate" class="form-label">Due Date</label>
+							<input type="text" class="form-control" id="editDueDate" name="editDueDate" disabled>
+						</div>
+						<div class="mb-3">
+							<label for="editPaymentStatus" class="form-label">Payment Status</label>
+							<input type="text" class="form-control" id="editPaymentStatus" name="editPaymentStatus" disabled>
+						</div>
+						<div class="mb-3">
+							<label for="editPaidDate" class="form-label">Paid Date</label>
+							<input type="text" class="form-control" id="editPaidDate" name="editPaidDate" disabled>
 						</div>
 						<button type="submit" class="btn btn-primary" onclick="saveEditChanges()">Save</button>
 					</form>
@@ -127,113 +101,148 @@ session_start();
 	<script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
 	<script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
 	<script>
-	   var currentStudentNo;
-	   var dataTable;
+		var currentFineNo;
+		var dataTable;
 
-$(document).ready(function() {
-	fetchAllStudents();
-});
+		$(document).ready(function() {
+			fetchAllFines();
+		});
 
-function fetchAllStudents() {
-	dataTable = $('#fines_table').DataTable({
-		ajax: {
-			url: '../../api/api_fines.php',
-			type: 'POST',
-			data: {
-				action: 'fetch_all'
-			}
-		},
-		columns: [{
-				data: 'id',
-				title: 'id'
-			},
-			{
-				data: 'student_name',
-				title: 'Student Name',
-				searchable: true
-			},
-			{
-				data: 'book_Name',
-				title: 'Book Name'
-			},
-			{
-				data: 'borrow_date',
-				title: 'Borrow date'
-			},
-			{
-				data: 'return_date',
-				title: 'Return date'
-			},
-			{
-				data: 'overdue_charge',
-				title: 'Overdue charge'
-			},
-			{
-				data: null,
-				title: 'Actions',
-				render: function(data, type, row) {
-					return `
-						<button class="btn btn-primary" onclick="openEditModal(${row.id})">
-							<span class="bi-pencil">&nbsp;Edit
-						</button>
-						<button name="submit" class="btn btn-danger" onclick="confirmDelete(${row.id})">
-							<span class="bi-trash">&nbsp;Delete
-						</button>`;
-				}
-			}
-		],
-		lengthMenu: [8, 25, 50, 100],
-		paging: true,
-		pageLength: 8,
-		pagingType: 'full_numbers'
-	});
-}
+		function fetchAllFines() {
+			dataTable = $('#fines_table').DataTable({
+				ajax: {
+					url: '../../api/api_fines.php',
+					type: 'POST',
+					data: {
+						action: 'fetch_all'
+					}
+				},
+				columns: [{
+						data: 'fine_no',
+						title: 'Fine No.'
+					},
+					{
+						data: 'student_no',
+						title: 'Student No.'
+					},
+					{
+						data: 'student_name',
+						title: 'Student Name',
+						searchable: true
+					},
+					{
+						data: 'book_no',
+						title: 'Book No.'
+					},
+					{
+						data: 'book_title',
+						title: 'Book Title',
+						searchable: true
+					},
+					{
+						data: 'fine_amount',
+						title: 'Fine Amount'
+					},
+					{
+						data: 'issued_date',
+						title: 'Issued Date'
+					},
+					{
+						data: 'due_date',
+						title: 'Due Date'
+					},
+					{
+						data: 'payment_status',
+						title: 'Payment Status'
+					},
+					{
+						data: 'paid_date',
+						title: 'Paid Date',
+						render: function(data) {
+							return data ? data : '<center>-</center>';
+						}
+					},
+					{
+						data: null,
+						title: 'Actions',
+						render: function(data, type, row) {
+							var paidButton = row.payment_status !== 'Paid' ? `<button class="btn btn-primary" onclick="markPaid(${row.fine_no})"><span class="bi bi-currency-dollar">&nbsp;Paid</button>` : '';
 
+							return `
+                                <button class="btn btn-primary" onclick="openEditModal(${row.fine_no})">
+                                    <span class="bi-pencil">&nbsp;Edit
+                                </button>
+                                <button name="submit" class="btn btn-danger" onclick="confirmDelete(${row.fine_no})">
+                                    <span class="bi-trash">&nbsp;Delete
+                                </button>
+								${paidButton}`;
+						}
+					}
+				],
+				lengthMenu: [8, 25, 50, 100],
+				paging: true,
+				pageLength: 8,
+				pagingType: 'full_numbers'
+			});
+		}
 
 		function reloadDataTable() {
 			dataTable.ajax.reload();
 		}
 
 		function validateEditForm() {
-			var updatedStudentName = document.getElementById('editStudentName').value;
-			var updatedBookName = document.getElementById('editBookName').value;
-			var updateOverdueCharge = document.getElementById('editoverduecharge').value;
+			var updatedFineAmount = document.getElementById('editFineAmount').value;
 
-			if (!updatedStudentName || !updatedBookName || !updateOverdueCharge) {
+			if (!updatedFineAmount) {
 				return false;
 			}
 
 			return true;
 		}
 
-		function validateAddForm() {
-			var newStudentName = document.getElementById('addStudentName').value;
-			var newBookName = document.getElementById('addBookName').value;
-			var newBorrowdate = document.getElementById('addBorrowdate').value;
-			var newReturndate = document.getElementById('addReturndate').value;
-			var newoverduecharge = document.getElementById('addoverduecharge').value;
+		function openEditModal(fineNo) {
+			currentFineNo = fineNo;
 
-			if (!newStudentName || !newBookName || !newBorrowdate || !newReturndate || !newoverduecharge) {
-				return false;
-			}
+			$.ajax({
+				url: '../../api/api_fines.php',
+				type: 'POST',
+				data: {
+					action: 'fetch',
+					fineNo: fineNo
+				},
+				dataType: 'json',
+				success: function(data) {
+					if (data.error) {
+						alert(data.error);
+						return;
+					}
 
-		
-			return true;
+					document.getElementById('editStudentNo').value = data.student_no;
+					document.getElementById('editStudentName').value = data.student_name;
+					document.getElementById('editBookNo').value = data.book_no;
+					document.getElementById('editBookTitle').value = data.book_title;
+					document.getElementById('editFineAmount').value = data.fine_amount;
+					document.getElementById('editIssuedDate').value = data.issued_date;
+					document.getElementById('editDueDate').value = data.due_date;
+					document.getElementById('editPaymentStatus').value = data.payment_status;
+					document.getElementById('editPaidDate').value = data.paid_date;
+
+					var modal = new bootstrap.Modal(document.getElementById('editModal'));
+					modal.show();
+				},
+				error: function(xhr, status, error) {
+					console.error('AJAX Error:', status, error);
+					console.log('Response:', xhr.responseText);
+					alert('Error fetching fine data');
+				}
+			});
 		}
 
-		function openAddModal() {
-			var modal = new bootstrap.Modal(document.getElementById('addModal'));
-			modal.show();
-		}
+		function saveEditChanges() {
+			var fineNo = currentFineNo;
+			var updatedFineAmount = document.getElementById('editFineAmount').value;
 
-		function saveAddChanges() {
-			var newStudentName = document.getElementById('addStudentName').value;
-			var newBookName = document.getElementById('addBookName').value;
-			var newBorrowdate = document.getElementById('addBorrowdate').value;
-			var newReturndate = document.getElementById('addReturndate').value;
-			var newoverduecharge = document.getElementById('addoverduecharge').value;
-
-			if (!validateAddForm()) {
+			if (!validateEditForm()) {
 				return;
 			}
 
@@ -241,144 +250,81 @@ function fetchAllStudents() {
 				url: '../../api/api_fines.php',
 				type: 'POST',
 				data: {
-					action: 'add',
-					newStudentName: newStudentName,
-					newBookName: newBookName,
-					newBorrowdate: newBorrowdate,
-					newReturndate: newReturndate,
-					newoverduecharge: newoverduecharge
+					action: 'update',
+					fineNo: fineNo,
+					updatedFineAmount: updatedFineAmount,
 				},
 				dataType: 'json',
 				success: function(data) {
 					if (data.error) {
 						alert(data.error);
 						return;
-					} else {
-						console.log('New student added successfully:', data);
-
-						reloadDataTable();
-
-						var modal = new bootstrap.Modal(document.getElementById('addModal'));
-						modal.hide();
 					}
+					console.log('Changes saved successfully:', data);
+
+					reloadDataTable();
+
+					var modal = new bootstrap.Modal(document.getElementById('editModal'));
+					modal.hide();
 				},
 				error: function(xhr, status, error) {
 					console.error('AJAX Error:', status, error);
 					console.log('Response:', xhr.responseText);
-					alert('Error adding new fine');
+					alert('Error saving changes');
 				}
 			});
 		}
 
-		function openEditModal(id) {
-    		currentStudentNo = id;
+		function confirmDelete(fineNo) {
+			if (confirm('Are you sure you want to delete this fine?')) {
+				$.ajax({
+					url: '../../api/api_fines.php',
+					type: 'POST',
+					data: {
+						action: 'delete',
+						fineNo: fineNo
+					},
+					dataType: 'json',
+					success: function(data) {
+						if (data.error) {
+							alert(data.error);
+						} else if (data.success) {
+							reloadDataTable();
+						}
+					},
+					error: function(xhr, status, error) {
+						console.error('AJAX Error:', status, error);
+						console.log('Response:', xhr.responseText);
+						alert('Error confirming delete');
+					}
+				});
+			}
+		}
 
-    		$.ajax({
-    			    url: '../../api/api_fines.php',
-       				 type: 'POST',
-       				 data: {
-        					    action: 'fetch',
-         						   id: id
-   	     },
-        dataType: 'json',
-        success: function (data) {
-            if (data.error) {
-                alert(data.error);
-                return;
-            }
+		function markPaid(fineNo) {
+			$.ajax({
+				url: '../../api/api_fines.php',
+				type: 'POST',
+				data: {
+					action: 'paid',
+					fineNo: fineNo,
+				},
+				dataType: 'json',
+				success: function(data) {
+					if (data.error) {
+						alert(data.error);
+						return;
+					}
+					console.log('Changes saved successfully:', data);
 
-            document.getElementById('editStudentName').value = data.student_name;
-            document.getElementById('editBookName').value = data.book_Name;
-            document.getElementById('editBorrowdate').value = data.borrow_date;
-            document.getElementById('editReturndate').value = data.return_date;
-            document.getElementById('editoverduecharge').value = data.overdue_charge;
-
-            var modal = new bootstrap.Modal(document.getElementById('editModal'));
-            modal.show();
-        },
-        error: function (xhr, status, error) {
-            console.error('AJAX Error:', status, error);
-            console.log('Response:', xhr.responseText);
-            alert('Error fetching fine data');
-        }
-    });
-}
- 
-function saveEditChanges() {
-    var id = currentStudentNo;
-    var updatedStudentName = document.getElementById('editStudentName').value;
-    var updatedBookName = document.getElementById('editBookName').value;
-    var updatedBorrowdate = document.getElementById('editBorrowdate').value;
-    var updatedReturndate = document.getElementById('editReturndate').value;
-    var updatedOverdueCharge = document.getElementById('editoverduecharge').value;
-
-    if (!validateEditForm()) {
-        return;
-    }
-
-    $.ajax({
-        url: '../../api/api_fines.php',
-        type: 'POST',
-        data: {
-            action: 'update',
-            id: id,
-            updatedStudentName: updatedStudentName,
-            updatedBookName: updatedBookName,
-            updatedBorrowdate: updatedBorrowdate,
-            updatedReturndate: updatedReturndate,
-            updatedOverdueCharge: updatedOverdueCharge  // Fixed variable name
-        },
-        dataType: 'json',
-        success: function (data) {
-            if (data.error) {
-                alert(data.error);
-                return;
-            }
-            console.log('Changes saved successfully:', data);
-
-            reloadDataTable();
-
-            var modal = new bootstrap.Modal(document.getElementById('editModal'));
-            modal.hide();
-        },
-        error: function (xhr, status, error) {
-            console.error('AJAX Error:', status, error);
-            console.log('Response:', xhr.responseText);
-            alert('Error saving changes');
-        }
-    });
-}
-
- 
-
-
-// In the confirmDelete function
-function confirmDelete(studentNo) {
-    if (confirm('Are you sure you want to delete this fine data?')) {
-        $.ajax({
-            url: '../../api/api_fines.php',
-            type: 'POST',
-            data: {
-                action: 'delete',
-                id: studentNo // Corrected parameter name
-            },
-            dataType: 'json',
-            success: function(data) {
-                if (data.error) {
-                    alert(data.error);
-                } else if (data.success) {
-                    reloadDataTable();
-                }
-            },
-            error: function(xhr, status, error) {
-                console.error('AJAX Error:', status, error);
-                console.log('Response:', xhr.responseText);
-                alert('Error confirming delete');
-            }
-        });
-    }
-}
-
+					reloadDataTable();
+				},
+				error: function(xhr, status, error) {
+					console.error('AJAX Error:', status, error);
+					console.log('Response:', xhr.responseText);
+					alert('Error saving changes');
+				}
+			});
+		}
 	</script>
-
 </body>
