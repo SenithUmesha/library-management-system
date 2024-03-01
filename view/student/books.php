@@ -2,18 +2,9 @@
 require '../../util/snippet.php';
 require '../../includes/db_conn.php';
 include '../header.php';
-include 'chatbot.php';
 
 session_start();
 ?>
-
-<style>
-	body {
-		padding: 0;
-		margin: 0;
-		width: 100%;
-	}
-</style>
 
 <style>
 	body {
@@ -30,7 +21,6 @@ session_start();
 			<div class="container">
 				<div style="display: flex; justify-content: space-between; align-items: center; margin-top: 18px;">
 					<h4 style="font-weight: bold;">| Books</h4>
-					<button class="btn btn-success" onclick="openAddModal()"><span class="bi-plus"></span>&nbsp;Book</button>
 				</div>
 				<div style="margin-top:30px; max-width: 100%; overflow-x: auto;">
 					<table id="books_table" class="table table-striped" style="width:100%">
@@ -95,8 +85,14 @@ session_start();
 						title: 'Publisher'
 					},
 					{
-						data: 'availability',
-						title: 'Availability'
+						data: 'no_of_copies',
+						title: 'Availability',
+						render: function(data, type, row) {
+							var availability = data >= 1 ? 'Available' : 'Not Available';
+							var statusClass = data >= 1 ? 'text-success' : 'text-danger';
+
+							return `<span class="${statusClass}">${availability}</span>`;
+						}
 					},
 					{
 						data: 'categories',
@@ -123,12 +119,8 @@ session_start();
 						title: 'Actions',
 						render: function(data, type, row) {
 							return `
-                                <button class="btn btn-primary" onclick="openEditModal(${row.book_no})">
-                                    <span class="bi-pencil">&nbsp;Edit
-                                </button>
-                                <button name="submit" class="btn btn-danger" onclick="confirmDelete(${row.book_no})">
-                                    <span class="bi-trash">&nbsp;Delete
-                                </button>`;
+                                <button class="btn btn-success" onclick="openEditModal(${row.book_no})">
+								<i class="bi bi-plus"></i>&nbsp;Borrow</button>`;
 						}
 					}
 				],
