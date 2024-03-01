@@ -131,9 +131,6 @@ session_start();
                             return `
                             <button class="btn btn-primary" onclick="openViewModal(${row.book_no})">
                             <i class="bi bi-question-lg"></i>&nbsp;Details
-                                </button>
-                                <button name="submit" class="btn btn-success" onclick="borrowBook(${row.book_no})">
-                                <i class="bi bi-plus"></i>&nbsp;Borrow
                                 </button>`;
                         }
                     }

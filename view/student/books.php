@@ -118,9 +118,17 @@ session_start();
 						data: null,
 						title: 'Actions',
 						render: function(data, type, row) {
-							return `
-                                <button class="btn btn-success" onclick="borrowBook(${row.book_no})">
-								<i class="bi bi-plus"></i>&nbsp;Borrow</button>`;
+							if (row.no_of_copies >= 1) {
+								return `
+                            <button class="btn btn-success" onclick="borrowBook(${row.book_no})">
+                                <i class="bi bi-plus"></i>&nbsp;Borrow
+                            </button>`;
+							} else {
+								return `
+                            <button class="btn btn-danger" onclick="reserveBook(${row.book_no})">
+                                <i class="bi bi-plus"></i>&nbsp;Reserve
+                            </button>`;
+							}
 						}
 					}
 				],
@@ -135,6 +143,10 @@ session_start();
 			dataTable.ajax.reload();
 		}
 
-		function borrowBook(bookNo) {}
+		function borrowBook(bookNo) {
+
+		}
+
+		function reserveBook(bookNo) {}
 	</script>
 </body>
