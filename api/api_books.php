@@ -76,11 +76,9 @@ function addBook($conn)
     $newISBN = $_POST['newISBN'];
     $newNoOfCopies = $_POST['newNoOfCopies'];
     $newPublisher = $_POST['newPublisher'];
-    $newAvailability = $_POST['newAvailability'];
     $newCategories = $_POST['newCategories'];
     $newLanguage = $_POST['newLanguage'];
     $newDescription = $_POST['newDescription'];
-    $newBookCondition = $_POST['newBookCondition'];
     $newLocation = $_POST['newLocation'];
 
     $checkISBNQuery = "SELECT * FROM books WHERE isbn_no = '$newISBN'";
@@ -93,8 +91,8 @@ function addBook($conn)
 
     $currentDateTime = date('Y-m-d H:i:s');
 
-    $sql = "INSERT INTO books (book_title, author_name, isbn_no, no_of_copies, publisher, availability, categories, language, description, book_condition, location, added_date, user_ratings) 
-            VALUES ('$newBookTitle', '$newAuthorName', '$newISBN', '$newNoOfCopies', '$newPublisher', '$newAvailability', '$newCategories', '$newLanguage', '$newDescription', '$newBookCondition', '$newLocation', '$currentDateTime', 0.0)";
+    $sql = "INSERT INTO books (book_title, author_name, isbn_no, no_of_copies, publisher, categories, language, description, location, added_date, user_ratings) 
+            VALUES ('$newBookTitle', '$newAuthorName', '$newISBN', '$newNoOfCopies', '$newPublisher', '$newCategories', '$newLanguage', '$newDescription', '$newLocation', '$currentDateTime', 0.0)";
 
     if (mysqli_query($conn, $sql)) {
         echo json_encode(['message' => 'Book added successfully']);
@@ -114,11 +112,9 @@ function updateBook($conn)
         $updatedISBN = $_POST['updatedISBN'];
         $updatedNoOfCopies = $_POST['updatedNoOfCopies'];
         $updatedPublisher = $_POST['updatedPublisher'];
-        $updatedAvailability = $_POST['updatedAvailability'];
         $updatedCategories = $_POST['updatedCategories'];
         $updatedLanguage = $_POST['updatedLanguage'];
         $updatedDescription = $_POST['updatedDescription'];
-        $updatedBookCondition = $_POST['updatedBookCondition'];
         $updatedLocation = $_POST['updatedLocation'];
 
         $checkISBNQuery = "SELECT * FROM books WHERE isbn_no = '$updatedISBN' AND book_no != '$bookNo'";
@@ -129,7 +125,7 @@ function updateBook($conn)
             return;
         }
 
-        $sql = "UPDATE books SET book_title = '$updatedBookTitle', author_name = '$updatedAuthorName', isbn_no = '$updatedISBN', no_of_copies = '$updatedNoOfCopies', publisher = '$updatedPublisher', availability = '$updatedAvailability', categories = '$updatedCategories', language = '$updatedLanguage', description = '$updatedDescription', book_condition = '$updatedBookCondition', location = '$updatedLocation' WHERE book_no = '$bookNo'";
+        $sql = "UPDATE books SET book_title = '$updatedBookTitle', author_name = '$updatedAuthorName', isbn_no = '$updatedISBN', no_of_copies = '$updatedNoOfCopies', publisher = '$updatedPublisher', categories = '$updatedCategories', language = '$updatedLanguage', description = '$updatedDescription', location = '$updatedLocation' WHERE book_no = '$bookNo'";
 
         $result = mysqli_query($conn, $sql);
 

@@ -37,7 +37,6 @@ session_start();
 							<th>Added Date</th>
 							<th>Language</th>
 							<th>Description</th>
-							<th>Book Condition</th>
 							<th>Location</th>
 							<th>User Ratings</th>
 							<th>Actions</th>
@@ -79,10 +78,6 @@ session_start();
 							<input type="text" class="form-control" id="addPublisher" name="addPublisher" required>
 						</div>
 						<div class="mb-3">
-							<label for="addAvailability" class="form-label">Availability</label>
-							<input type="text" class="form-control" id="addAvailability" name="addAvailability" required>
-						</div>
-						<div class="mb-3">
 							<label for="addCategories" class="form-label">Categories</label>
 							<input type="text" class="form-control" id="addCategories" name="addCategories" required>
 						</div>
@@ -93,10 +88,6 @@ session_start();
 						<div class="mb-3">
 							<label for="addDescription" class="form-label">Description</label>
 							<textarea class="form-control" id="addDescription" name="addDescription" required></textarea>
-						</div>
-						<div class="mb-3">
-							<label for="addBookCondition" class="form-label">Book Condition</label>
-							<input type="text" class="form-control" id="addBookCondition" name="addBookCondition">
 						</div>
 						<div class="mb-3">
 							<label for="addLocation" class="form-label">Location</label>
@@ -140,10 +131,6 @@ session_start();
 							<input type="text" class="form-control" id="editPublisher" name="editPublisher" required>
 						</div>
 						<div class="mb-3">
-							<label for="editAvailability" class="form-label">Availability</label>
-							<input type="text" class="form-control" id="editAvailability" name="editAvailability" required>
-						</div>
-						<div class="mb-3">
 							<label for="editCategories" class="form-label">Categories</label>
 							<input type="text" class="form-control" id="editCategories" name="editCategories" required>
 						</div>
@@ -158,10 +145,6 @@ session_start();
 						<div class="mb-3">
 							<label for="editDescription" class="form-label">Description</label>
 							<textarea class="form-control" id="editDescription" name="editDescription" required></textarea>
-						</div>
-						<div class="mb-3">
-							<label for="editBookCondition" class="form-label">Book Condition</label>
-							<input type="text" class="form-control" id="editBookCondition" name="editBookCondition" required>
 						</div>
 						<div class="mb-3">
 							<label for="editLocation" class="form-label">Location</label>
@@ -225,8 +208,14 @@ session_start();
 						title: 'Publisher'
 					},
 					{
-						data: 'availability',
-						title: 'Availability'
+						data: 'no_of_copies',
+						title: 'Availability',
+						render: function(data, type, row) {
+							var availability = data >= 1 ? 'Available' : 'Not Available';
+							var statusClass = data >= 1 ? 'text-success' : 'text-danger';
+
+							return `<span class="${statusClass}">${availability}</span>`;
+						}
 					},
 					{
 						data: 'categories',
@@ -243,10 +232,6 @@ session_start();
 					{
 						data: 'description',
 						title: 'Description'
-					},
-					{
-						data: 'book_condition',
-						title: 'Book Condition'
 					},
 					{
 						data: 'location',
@@ -287,16 +272,12 @@ session_start();
 			var updatedISBN = document.getElementById('editISBN').value;
 			var updatedNoOfCopies = document.getElementById('editNoOfCopies').value;
 			var updatedPublisher = document.getElementById('editPublisher').value;
-			var updatedAvailability = document.getElementById('editAvailability').value;
 			var updatedCategories = document.getElementById('editCategories').value;
 			var updatedLanguage = document.getElementById('editLanguage').value;
 			var updatedDescription = document.getElementById('editDescription').value;
-			var updatedBookCondition = document.getElementById('editBookCondition').value;
 			var updatedLocation = document.getElementById('editLocation').value;
 
-			if (!updatedBookTitle || !updatedAuthorName || !updatedISBN || !updatedNoOfCopies || !updatedPublisher ||
-				!updatedAvailability || !updatedCategories || !updatedLanguage || !updatedDescription ||
-				!updatedBookCondition || !updatedLocation) {
+			if (!updatedBookTitle || !updatedAuthorName || !updatedISBN || !updatedNoOfCopies || !updatedPublisher || !updatedCategories || !updatedLanguage || !updatedDescription || !updatedLocation) {
 				return false;
 			}
 
@@ -309,15 +290,13 @@ session_start();
 			var newISBN = document.getElementById('addISBN').value;
 			var newNoOfCopies = document.getElementById('addNoOfCopies').value;
 			var newPublisher = document.getElementById('addPublisher').value;
-			var newAvailability = document.getElementById('addAvailability').value;
 			var newCategories = document.getElementById('addCategories').value;
 			var newLanguage = document.getElementById('addLanguage').value;
 			var newDescription = document.getElementById('addDescription').value;
-			var newBookCondition = document.getElementById('addBookCondition').value;
 			var newLocation = document.getElementById('addLocation').value;
 
 			if (!newBookTitle || !newAuthorName || !newISBN || !newNoOfCopies || !newPublisher ||
-				!newAvailability || !newCategories || !newLanguage || !newDescription) {
+				!newCategories || !newLanguage || !newDescription || !newLocation) {
 				return false;
 			}
 
@@ -335,11 +314,9 @@ session_start();
 			var newISBN = document.getElementById('addISBN').value;
 			var newNoOfCopies = document.getElementById('addNoOfCopies').value;
 			var newPublisher = document.getElementById('addPublisher').value;
-			var newAvailability = document.getElementById('addAvailability').value;
 			var newCategories = document.getElementById('addCategories').value;
 			var newLanguage = document.getElementById('addLanguage').value;
 			var newDescription = document.getElementById('addDescription').value;
-			var newBookCondition = document.getElementById('addBookCondition').value;
 			var newLocation = document.getElementById('addLocation').value;
 
 			if (!validateAddForm()) {
@@ -356,11 +333,9 @@ session_start();
 					newISBN: newISBN,
 					newNoOfCopies: newNoOfCopies,
 					newPublisher: newPublisher,
-					newAvailability: newAvailability,
 					newCategories: newCategories,
 					newLanguage: newLanguage,
 					newDescription: newDescription,
-					newBookCondition: newBookCondition,
 					newLocation: newLocation,
 				},
 				dataType: 'json',
@@ -407,12 +382,10 @@ session_start();
 					document.getElementById('editISBN').value = data.isbn_no;
 					document.getElementById('editNoOfCopies').value = data.no_of_copies;
 					document.getElementById('editPublisher').value = data.publisher;
-					document.getElementById('editAvailability').value = data.availability;
 					document.getElementById('editCategories').value = data.categories;
 					document.getElementById('editAddedDate').value = data.added_date;
 					document.getElementById('editLanguage').value = data.language;
 					document.getElementById('editDescription').value = data.description;
-					document.getElementById('editBookCondition').value = data.book_condition;
 					document.getElementById('editLocation').value = data.location;
 					document.getElementById('editUserRatings').value = data.user_ratings;
 
@@ -434,11 +407,9 @@ session_start();
 			var updatedISBN = document.getElementById('editISBN').value;
 			var updatedNoOfCopies = document.getElementById('editNoOfCopies').value;
 			var updatedPublisher = document.getElementById('editPublisher').value;
-			var updatedAvailability = document.getElementById('editAvailability').value;
 			var updatedCategories = document.getElementById('editCategories').value;
 			var updatedLanguage = document.getElementById('editLanguage').value;
 			var updatedDescription = document.getElementById('editDescription').value;
-			var updatedBookCondition = document.getElementById('editBookCondition').value;
 			var updatedLocation = document.getElementById('editLocation').value;
 
 			if (!validateEditForm()) {
@@ -456,11 +427,9 @@ session_start();
 					updatedISBN: updatedISBN,
 					updatedNoOfCopies: updatedNoOfCopies,
 					updatedPublisher: updatedPublisher,
-					updatedAvailability: updatedAvailability,
 					updatedCategories: updatedCategories,
 					updatedLanguage: updatedLanguage,
 					updatedDescription: updatedDescription,
-					updatedBookCondition: updatedBookCondition,
 					updatedLocation: updatedLocation
 				},
 				dataType: 'json',
