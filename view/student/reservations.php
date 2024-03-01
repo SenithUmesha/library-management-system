@@ -2,7 +2,6 @@
 require '../../util/snippet.php';
 require '../../includes/db_conn.php';
 include '../header.php';
-include 'chatbot.php';
 
 session_start();
 

@@ -119,7 +119,7 @@ session_start();
 						title: 'Actions',
 						render: function(data, type, row) {
 							return `
-                                <button class="btn btn-success" onclick="openEditModal(${row.book_no})">
+                                <button class="btn btn-success" onclick="borrowBook(${row.book_no})">
 								<i class="bi bi-plus"></i>&nbsp;Borrow</button>`;
 						}
 					}
@@ -134,5 +134,7 @@ session_start();
 		function reloadDataTable() {
 			dataTable.ajax.reload();
 		}
+
+		function borrowBook(bookNo) {}
 	</script>
 </body>
