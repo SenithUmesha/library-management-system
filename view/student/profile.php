@@ -6,11 +6,14 @@ include 'chatbot.php';
 
 session_start();
 
+if (!isset($_SESSION['id']) || $_SESSION['id'] === null) {
+    header("Location: ../../index.php");
+    exit();
+}
 
 if (isset($_SESSION['name'])) {
     $name = $_SESSION['name'];
 }
-
 
 if (isset($_SESSION['username'])) {
     $username = $_SESSION['username'];

@@ -4,6 +4,11 @@ require '../../includes/db_conn.php';
 include '../header.php';
 
 session_start();
+
+if (!isset($_SESSION['id']) || $_SESSION['id'] === null) {
+    header("Location: ../../index.php");
+    exit();
+}
 ?>
 
 <style>

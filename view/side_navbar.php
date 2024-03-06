@@ -249,7 +249,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
             <?php } ?>
         </ul>
         <div class="sidebar-footer">
-            <a href="../../index.php" class="sidebar-link">
+            <a href="../logout.php" class="sidebar-link">
                 <i class="lni lni-exit"></i>
                 <span>Logout</span>
             </a>
