@@ -2,7 +2,6 @@
 require '../../util/snippet.php';
 require '../../includes/db_conn.php';
 include '../header.php';
-include 'chatbot.php';
 
 session_start();
 ?>
@@ -21,39 +20,24 @@ session_start();
 		<div class="main p-3">
 			<div class="container">
 				<div style="display: flex; justify-content: space-between; align-items: center; margin-top: 18px;">
-					<h4 style=" font-weight: bold;">| Books</h4>
+					<h4 style="font-weight: bold;">| Books</h4>
 				</div>
-				<div style="margin-top:30px">
-					<table id="students_table" class="table table-striped" style="width:100%">
+				<div style="margin-top:30px; max-width: 100%; overflow-x: auto;">
+					<table id="books_table" class="table table-striped" style="width:100%">
 						<thead>
-							<th>ID</th>
-							<th>Book</th>
-							<th>Available</th>
+							<th>Book No.</th>
+							<th>Book Title</th>
+							<th>Author Name</th>
+							<th>ISBN No.</th>
+							<th>Publisher</th>
+							<th>Availability</th>
+							<th>Categories</th>
+							<th>Language</th>
+							<th>Description</th>
+							<th>Location</th>
+							<th>Ratings</th>
 							<th>Actions</th>
 						</thead>
-						<?php
-						$sql = "SELECT * FROM books";
-						$query = mysqli_query($conn, $sql);
-						$counter = 1;
-						while ($row = mysqli_fetch_array($query)) {
-							$_SESSION['book_Title'] = $row['bookTitle'];
-						?>
-							<tbody>
-								<tr>
-									<td><?php echo $counter++; ?></td>
-									<td><?php echo $row['bookTitle']; ?></td>
-									<td><?php echo $row['available']; ?></td>
-									<td>
-										<input type="hidden" class="book-id" value="<?php echo $row['bookId']; ?>">
-										<input type="hidden" class="book-name" value="<?php echo $row['bookTitle']; ?>">
-										<input type="hidden" class="purpose" value="show">
-										<a href="lend-student.php" id="show" class="show-in">
-											<button class="btn btn-success"><span class="bi-book"></span></button>
-										</a>
-									</td>
-								</tr>
-							</tbody>
-						<?php } ?>
 					</table>
 				</div>
 			</div>
@@ -64,7 +48,105 @@ session_start();
 	<script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
 	<script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
 	<script>
-		new DataTable('#students_table');
-	</script>
+		var dataTable;
 
+		$(document).ready(function() {
+			fetchAllBooks();
+		});
+
+		function fetchAllBooks() {
+			dataTable = $('#books_table').DataTable({
+				ajax: {
+					url: '../../api/api_books.php',
+					type: 'POST',
+					data: {
+						action: 'fetch_all'
+					}
+				},
+				columns: [{
+						data: 'book_no',
+						title: 'Book No.'
+					},
+					{
+						data: 'book_title',
+						title: 'Book Title',
+						searchable: true
+					},
+					{
+						data: 'author_name',
+						title: 'Author Name'
+					},
+					{
+						data: 'isbn_no',
+						title: 'ISBN No.'
+					},
+					{
+						data: 'publisher',
+						title: 'Publisher'
+					},
+					{
+						data: 'no_of_copies',
+						title: 'Availability',
+						render: function(data, type, row) {
+							var availability = data >= 1 ? 'Available' : 'Not Available';
+							var statusClass = data >= 1 ? 'text-success' : 'text-danger';
+
+							return `<span class="${statusClass}">${availability}</span>`;
+						}
+					},
+					{
+						data: 'categories',
+						title: 'Categories'
+					},
+					{
+						data: 'language',
+						title: 'Language'
+					},
+					{
+						data: 'description',
+						title: 'Description'
+					},
+					{
+						data: 'location',
+						title: 'Location'
+					},
+					{
+						data: 'user_ratings',
+						title: 'Ratings'
+					},
+					{
+						data: null,
+						title: 'Actions',
+						render: function(data, type, row) {
+							if (row.no_of_copies >= 1) {
+								return `
+                            <button class="btn btn-success" onclick="borrowBook(${row.book_no})">
+                                <i class="bi bi-plus"></i>&nbsp;Borrow
+                            </button>`;
+							} else {
+								return `
+                            <button class="btn btn-danger" onclick="reserveBook(${row.book_no})">
+                                <i class="bi bi-plus"></i>&nbsp;Reserve
+                            </button>`;
+							}
+						}
+					}
+				],
+				lengthMenu: [8, 25, 50, 100],
+				paging: true,
+				pageLength: 8,
+				pagingType: 'full_numbers'
+			});
+		}
+
+		function reloadDataTable() {
+			dataTable.ajax.reload();
+		}
+
+		function borrowBook(bookNo) {
+
+		}
+
+		function reserveBook(bookNo) {}
+	</script>
 </body>
