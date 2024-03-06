@@ -21,7 +21,7 @@ session_start();
 			<div class="container">
 				<div style="display: flex; justify-content: space-between; align-items: center; margin-top: 18px;">
 					<h4 style="font-weight: bold;">| Students</h4>
-					<button class="btn btn-success" onclick="openAddModal()"><span class="bi-plus"></span>&nbsp;Student</button>
+					<button class="btn btn-success"id="addstudent" onclick="openAddModal()"><span class="bi-plus"></span>&nbsp;Student</button>
 				</div>
 				<div style="margin-top:30px">
 					<table id="students_table" class="table table-striped" style="width:100%">
@@ -70,7 +70,7 @@ session_start();
 							<label for="addClass" class="form-label">Class</label>
 							<input type="text" class="form-control" id="addClass" name="addClass" required>
 						</div>
-						<button type="submit" class="btn btn-primary" onclick="saveAddChanges()">Save</button>
+						<button type="submit" class="btn btn-primary" id="addstudentsavebtn" onclick="saveAddChanges()">Save</button>
 					</form>
 				</div>
 			</div>
@@ -107,7 +107,7 @@ session_start();
 							<label for="editClass" class="form-label">Class</label>
 							<input type="text" class="form-control" id="editClass" name="editClass" required>
 						</div>
-						<button type="submit" class="btn btn-primary" onclick="saveEditChanges()">Save</button>
+						<button type="submit" class="btn btn-primary" id="editedsavedata" onclick="saveEditChanges()">Save</button>
 					</form>
 				</div>
 			</div>
@@ -164,10 +164,10 @@ session_start();
 						title: 'Actions',
 						render: function(data, type, row) {
 							return `
-                                <button class="btn btn-primary" onclick="openEditModal(${row.student_no})">
+                                <button class="btn btn-primary" id="editdata" onclick="openEditModal(${row.student_no})">
                                     <span class="bi-pencil">&nbsp;Edit
                                 </button>
-                                <button name="submit" class="btn btn-danger" onclick="confirmDelete(${row.student_no})">
+                                <button name="submit" class="btn btn-danger" id="deletebtn" onclick="confirmDelete(${row.student_no})">
                                     <span class="bi-trash">&nbsp;Delete
                                 </button>`;
 						}
