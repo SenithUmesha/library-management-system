@@ -30,6 +30,7 @@ session_start();
                             <th>Student Name</th>
                             <th>Email</th>
                             <th>Reserved Date</th>
+                            <th>Actions</th>
                         </thead>
                     </table>
                 </div>
@@ -41,7 +42,6 @@ session_start();
     <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
     <script>
-        var currentReservationNo;
         var dataTable;
 
         $(document).ready(function() {
@@ -51,7 +51,7 @@ session_start();
         function fetchAllReservations() {
             dataTable = $('#reservations_table').DataTable({
                 ajax: {
-                    url: '../../api/api_reservations.php',
+                    url: '../../api/student/api_reservations.php',
                     type: 'POST',
                     data: {
                         action: 'fetch_all'
@@ -78,6 +78,16 @@ session_start();
                         data: 'reserved_date',
                         title: 'Reserved Date'
                     },
+                    {
+                        data: null,
+                        title: 'Actions',
+                        render: function(data, type, row) {
+                            return `
+                                <button name="submit" class="btn btn-danger" onclick="confirmDelete(${row.reservation_no})">
+                                    <span class="bi-trash">&nbsp;Delete
+                                </button>`;
+                        }
+                    }
                 ],
                 lengthMenu: [8, 25, 50, 100],
                 paging: true,
@@ -88,6 +98,32 @@ session_start();
 
         function reloadDataTable() {
             dataTable.ajax.reload();
+        }
+
+        function confirmDelete(reservationNo) {
+            if (confirm('Are you sure you want to delete this reservation?')) {
+                $.ajax({
+                    url: '../../api/student/api_reservations.php',
+                    type: 'POST',
+                    data: {
+                        action: 'delete',
+                        reservationNo: reservationNo
+                    },
+                    dataType: 'json',
+                    success: function(data) {
+                        if (data.error) {
+                            alert(data.error);
+                        } else if (data.success) {
+                            reloadDataTable();
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('AJAX Error:', status, error);
+                        console.log('Response:', xhr.responseText);
+                        alert('Error confirming delete');
+                    }
+                });
+            }
         }
     </script>
 </body>
