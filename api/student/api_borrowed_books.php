@@ -83,7 +83,7 @@ function returnBook($conn)
     $updateStmt = mysqli_prepare($conn, $updateSql);
     mysqli_stmt_bind_param($updateStmt, 'i', $bookNo);
 
-    $checkReservationsSql = "SELECT email, book_title, reserved_date FROM reservations WHERE book_no = ?";
+    $checkReservationsSql = "SELECT email, book_title, reserved_date, reservation_no FROM reservations WHERE book_no = ?";
     $checkReservationsStmt = mysqli_prepare($conn, $checkReservationsSql);
     mysqli_stmt_bind_param($checkReservationsStmt, 'i', $bookNo);
 
@@ -100,11 +100,24 @@ function returnBook($conn)
                 $email = $row['email'];
                 $bookTitle = $row['book_title'];
                 $reservedDate = $row['reserved_date'];
+                $reservationNo = $row['reservation_no'];
 
                 sendEmail($email, $bookTitle, $reservedDate);
 
                 $emails[] = $email;
+
+                $reservationsToDelete[] = $reservationNo;
             }
+
+            $deleteReservationsSql = "DELETE FROM reservations WHERE reservation_no = ?";
+            $deleteReservationsStmt = mysqli_prepare($conn, $deleteReservationsSql);
+
+            foreach ($reservationsToDelete as $reservationNo) {
+                mysqli_stmt_bind_param($deleteReservationsStmt, 'i', $reservationNo);
+                mysqli_stmt_execute($deleteReservationsStmt);
+            }
+
+            mysqli_stmt_close($deleteReservationsStmt);
 
             $success = true;
             echo json_encode(['message' => 'Book returned successfully and email sent']);
