@@ -111,6 +111,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
 
     .sidebar-item {
         position: relative;
+        height: 50px;
     }
 
     #sidebar:not(.expand) .sidebar-item .sidebar-dropdown {
@@ -125,7 +126,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
 
     #sidebar:not(.expand) .sidebar-item:hover .has-dropdown+.sidebar-dropdown {
         display: block;
-        max-height: 15em;
+        max-height: 50px;
         width: 100%;
         opacity: 1;
     }
