@@ -17,6 +17,39 @@ if (!isset($_SESSION['id']) || $_SESSION['id'] === null) {
         margin: 0;
         width: 100%;
     }
+
+    #loading-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(255, 255, 255, 0.8);
+        z-index: 900;
+        display: none;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+    }
+
+    #loading-spinner {
+        border: 6px solid #f3f3f3;
+        border-top: 6px solid #0e2238;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+        0% {
+            transform: rotate(0deg);
+        }
+
+        100% {
+            transform: rotate(360deg);
+        }
+    }
 </style>
 
 <body>
@@ -90,6 +123,10 @@ if (!isset($_SESSION['id']) || $_SESSION['id'] === null) {
                 </div>
             </div>
         </div>
+    </div>
+
+    <div id="loading-overlay">
+        <div id="loading-spinner"></div>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
@@ -190,6 +227,7 @@ if (!isset($_SESSION['id']) || $_SESSION['id'] === null) {
         }
 
         function returnBook(bookNo, bookTitle, studentNo, studentName, borrowedBookNo) {
+            showLoadingOverlay();
             $.ajax({
                 url: '../../api/student/api_borrowed_books.php',
                 type: 'POST',
@@ -203,6 +241,7 @@ if (!isset($_SESSION['id']) || $_SESSION['id'] === null) {
                 },
                 dataType: 'json',
                 success: function(data) {
+                    hideLoadingOverlay();
                     if (data.error) {
                         alert(data.error);
                     }
@@ -210,11 +249,20 @@ if (!isset($_SESSION['id']) || $_SESSION['id'] === null) {
                     reloadDataTable();
                 },
                 error: function(xhr, status, error) {
+                    hideLoadingOverlay();
                     console.error('AJAX Error:', status, error);
                     console.log('Response:', xhr.responseText);
                     alert('Error returning book');
                 }
             });
+        }
+
+        function showLoadingOverlay() {
+            $('#loading-overlay').css('display', 'flex');
+        }
+
+        function hideLoadingOverlay() {
+            $('#loading-overlay').css('display', 'none');
         }
     </script>
 </body>
