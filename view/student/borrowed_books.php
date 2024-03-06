@@ -100,7 +100,7 @@ session_start();
         function fetchAllBorrowedBooks() {
             dataTable = $('#borrowed_books_table').DataTable({
                 ajax: {
-                    url: '../../api/api_borrowed_books.php',
+                    url: '../../api/student/api_borrowed_books.php',
                     type: 'POST',
                     data: {
                         action: 'fetch_all'
@@ -128,12 +128,12 @@ session_start();
                         title: 'Actions',
                         render: function(data, type, row) {
                             return `
-                            <button class="btn btn-primary" onclick="openViewModal(${row.book_no})">
-                            <i class="bi bi-question-lg"></i>&nbsp;Details
-                                </button>
-                                <button name="submit" class="btn btn-danger" onclick="returnBook(${row.book_no})">
-                                <i class="bi bi-arrow-return-right"></i>&nbsp;Return
-                                </button>`;
+            <button class="btn btn-primary" onclick="openViewModal(${row.book_no})">
+                <i class="bi bi-question-lg"></i>&nbsp;Details
+            </button>
+            <button name="submit" class="btn btn-danger" onclick="returnBook(${row.book_no}, '${row.book_title}', '${row.student_no}', '${row.student_name}', '${row.borrowed_book_no}')">
+                <i class="bi bi-arrow-return-right"></i>&nbsp;Return
+            </button>`;
                         }
                     }
                 ],
@@ -184,6 +184,32 @@ session_start();
             });
         }
 
-        function returnBook(bookNo) {}
+        function returnBook(bookNo, bookTitle, studentNo, studentName, borrowedBookNo) {
+            $.ajax({
+                url: '../../api/student/api_borrowed_books.php',
+                type: 'POST',
+                data: {
+                    action: 'return',
+                    bookNo: bookNo,
+                    bookTitle: bookTitle,
+                    studentNo: studentNo,
+                    studentName: studentName,
+                    borrowedBookNo: borrowedBookNo
+                },
+                dataType: 'json',
+                success: function(data) {
+                    if (data.error) {
+                        alert(data.error);
+                    }
+
+                    reloadDataTable();
+                },
+                error: function(xhr, status, error) {
+                    console.error('AJAX Error:', status, error);
+                    console.log('Response:', xhr.responseText);
+                    alert('Error returning book');
+                }
+            });
+        }
     </script>
 </body>
