@@ -106,7 +106,7 @@ if (!isset($_SESSION['id']) || $_SESSION['id'] === null) {
         function fetchAllReturnedBooks() {
             dataTable = $('#returned_books_table').DataTable({
                 ajax: {
-                    url: '../../api/api_returned_books.php',
+                    url: '../../api/student/api_returned_books.php',
                     type: 'POST',
                     data: {
                         action: 'fetch_all'
@@ -186,7 +186,5 @@ if (!isset($_SESSION['id']) || $_SESSION['id'] === null) {
                 }
             });
         }
-
-        function borrowBook(bookNo) {}
     </script>
 </body>

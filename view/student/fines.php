@@ -59,7 +59,7 @@ if (!isset($_SESSION['id']) || $_SESSION['id'] === null) {
 		function fetchAllFines() {
 			dataTable = $('#fines_table').DataTable({
 				ajax: {
-					url: '../../api/api_fines.php',
+					url: '../../api/student/api_fines.php',
 					type: 'POST',
 					data: {
 						action: 'fetch_all'

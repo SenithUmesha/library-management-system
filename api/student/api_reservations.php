@@ -2,6 +2,8 @@
 require '../../includes/db_conn.php';
 require '../../util/functions.php';
 
+session_start();
+
 if (isset($_POST['action'])) {
     $action = $_POST['action'];
 
@@ -22,19 +24,31 @@ if (isset($_POST['action'])) {
 
 function fetchAllReservations($conn)
 {
-    $sql = "SELECT * FROM reservations";
-    $result = mysqli_query($conn, $sql);
+    if (isset($_SESSION['id'])) {
+        $studentNo = $_SESSION['id'];
 
-    if ($result && mysqli_num_rows($result) > 0) {
-        $reservationsData = [];
+        $sql = "SELECT * FROM reservations WHERE student_no = ?";
+        $stmt = mysqli_prepare($conn, $sql);
+        mysqli_stmt_bind_param($stmt, 'i', $studentNo);
+        mysqli_stmt_execute($stmt);
 
-        while ($row = mysqli_fetch_assoc($result)) {
-            $reservationsData[] = $row;
+        $result = mysqli_stmt_get_result($stmt);
+
+        if ($result && mysqli_num_rows($result) > 0) {
+            $reservationsData = [];
+
+            while ($row = mysqli_fetch_assoc($result)) {
+                $reservationsData[] = $row;
+            }
+
+            echo json_encode(['data' => $reservationsData]);
+        } else {
+            echo json_encode(['data' => []]);
         }
 
-        echo json_encode(['data' => $reservationsData]);
+        mysqli_stmt_close($stmt);
     } else {
-        echo json_encode(['data' => []]);
+        echo json_encode(['error' => 'Student ID not found in session']);
     }
 
     mysqli_close($conn);
