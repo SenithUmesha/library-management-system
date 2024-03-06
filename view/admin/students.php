@@ -21,7 +21,7 @@ session_start();
 			<div class="container">
 				<div style="display: flex; justify-content: space-between; align-items: center; margin-top: 18px;">
 					<h4 style="font-weight: bold;">| Students</h4>
-					<button class="btn btn-success"id="addstudent" onclick="openAddModal()"><span class="bi-plus"></span>&nbsp;Student</button>
+					<button class="btn btn-success" id="addstudent" onclick="openAddModal()"><span class="bi-plus"></span>&nbsp;Student</button>
 				</div>
 				<div style="margin-top:30px">
 					<table id="students_table" class="table table-striped" style="width:100%">
@@ -356,7 +356,7 @@ session_start();
 					success: function(data) {
 						if (data.error) {
 							alert(data.error);
-						} else if (data.success) {
+						} else {
 							reloadDataTable();
 						}
 					},

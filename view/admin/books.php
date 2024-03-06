@@ -93,7 +93,7 @@ session_start();
 							<label for="addLocation" class="form-label">Location</label>
 							<input type="text" class="form-control" id="addLocation" name="addLocation">
 						</div>
-						<button type="submit" class="btn btn-primary" id="addsavebook"  onclick="saveAddChanges()">Save</button>
+						<button type="submit" class="btn btn-primary" id="addsavebook" onclick="saveAddChanges()">Save</button>
 					</form>
 				</div>
 			</div>
@@ -466,7 +466,7 @@ session_start();
 					success: function(data) {
 						if (data.error) {
 							alert(data.error);
-						} else if (data.success) {
+						} else {
 							reloadDataTable();
 						}
 					},

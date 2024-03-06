@@ -78,7 +78,7 @@ session_start();
                             <label for="editReservedDate" class="form-label">Reserved Date</label>
                             <input type="text" class="form-control" id="editReservedDate" name="editReservedDate" required>
                         </div>
-                        <button type="submit" class="btn btn-primary" id="saveeditbtn"onclick="saveEditChanges()">Save</button>
+                        <button type="submit" class="btn btn-primary" id="saveeditbtn" onclick="saveEditChanges()">Save</button>
                     </form>
                 </div>
             </div>
@@ -269,7 +269,7 @@ session_start();
                     success: function(data) {
                         if (data.error) {
                             alert(data.error);
-                        } else if (data.success) {
+                        } else {
                             reloadDataTable();
                         }
                     },

@@ -241,7 +241,7 @@ session_start();
                     success: function(data) {
                         if (data.error) {
                             alert(data.error);
-                        } else if (data.success) {
+                        } else {
                             reloadDataTable();
                         }
                     },
