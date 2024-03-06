@@ -21,7 +21,7 @@ session_start();
 			<div class="container">
 				<div style="display: flex; justify-content: space-between; align-items: center; margin-top: 18px;">
 					<h4 style="font-weight: bold;">| Books</h4>
-					<button class="btn btn-success" onclick="openAddModal()"><span class="bi-plus"></span>&nbsp;Book</button>
+					<button class="btn btn-success" id="addbook" onclick="openAddModal()"><span class="bi-plus"></span>&nbsp;Book</button>
 				</div>
 				<div style="margin-top:30px; max-width: 100%; overflow-x: auto;">
 					<table id="books_table" class="table table-striped" style="width:100%">
@@ -93,7 +93,7 @@ session_start();
 							<label for="addLocation" class="form-label">Location</label>
 							<input type="text" class="form-control" id="addLocation" name="addLocation">
 						</div>
-						<button type="submit" class="btn btn-primary" onclick="saveAddChanges()">Save</button>
+						<button type="submit" class="btn btn-primary" id="addsavebook"  onclick="saveAddChanges()">Save</button>
 					</form>
 				</div>
 			</div>

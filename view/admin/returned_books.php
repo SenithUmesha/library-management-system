@@ -69,7 +69,7 @@ session_start();
                             <label for="editReturnedDate" class="form-label">Returned Date</label>
                             <input type="datetime-local" class="form-control" id="editReturnedDate" name="editReturnedDate" required>
                         </div>
-                        <button type="submit" class="btn btn-primary" onclick="saveEditChanges()">Save</button>
+                        <button type="submit" class="btn btn-primary" id="saveedit" onclick="saveEditChanges()">Save</button>
                     </form>
                 </div>
             </div>
@@ -127,10 +127,10 @@ session_start();
                         title: 'Actions',
                         render: function(data, type, row) {
                             return `
-                                <button class="btn btn-primary" onclick="openEditModal(${row.returned_book_no})">
+                                <button class="btn btn-primary" id="openEditModalbtn" onclick="openEditModal(${row.returned_book_no})">
                                     <span class="bi-pencil">&nbsp;Edit
                                 </button>
-                                <button name="submit" class="btn btn-danger" onclick="confirmDelete(${row.returned_book_no})">
+                                <button name="submit" class="btn btn-danger" id="deletebtn" onclick="confirmDelete(${row.returned_book_no})">
                                     <span class="bi-trash">&nbsp;Delete
                                 </button>`;
                         }

@@ -78,7 +78,7 @@ session_start();
                             <label for="editReservedDate" class="form-label">Reserved Date</label>
                             <input type="text" class="form-control" id="editReservedDate" name="editReservedDate" required>
                         </div>
-                        <button type="submit" class="btn btn-primary" onclick="saveEditChanges()">Save</button>
+                        <button type="submit" class="btn btn-primary" id="saveeditbtn"onclick="saveEditChanges()">Save</button>
                     </form>
                 </div>
             </div>
@@ -141,10 +141,10 @@ session_start();
                         title: 'Actions',
                         render: function(data, type, row) {
                             return `
-                                <button class="btn btn-primary" onclick="openEditModal(${row.reservation_no})">
+                                <button class="btn btn-primary" id="openEditModalbtn" onclick="openEditModal(${row.reservation_no})">
                                     <span class="bi-pencil">&nbsp;Edit
                                 </button>
-                                <button name="submit" class="btn btn-danger" onclick="confirmDelete(${row.reservation_no})">
+                                <button name="submit" class="btn btn-danger" id="deletebtn" onclick="confirmDelete(${row.reservation_no})">
                                     <span class="bi-trash">&nbsp;Delete
                                 </button>`;
                         }

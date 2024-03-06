@@ -89,7 +89,7 @@ session_start();
 							<label for="editPaidDate" class="form-label">Paid Date</label>
 							<input type="text" class="form-control" id="editPaidDate" name="editPaidDate" disabled>
 						</div>
-						<button type="submit" class="btn btn-primary" onclick="saveEditChanges()">Save</button>
+						<button type="submit" class="btn btn-primary" id="savebtn" onclick="saveEditChanges()">Save</button>
 					</form>
 				</div>
 			</div>
@@ -169,10 +169,10 @@ session_start();
 							var paidButton = row.payment_status !== 'Paid' ? `<button class="btn btn-primary" onclick="markPaid(${row.fine_no})"><span class="bi bi-currency-dollar">&nbsp;Paid</button>` : '';
 
 							return `
-                                <button class="btn btn-primary" onclick="openEditModal(${row.fine_no})">
+                                <button class="btn btn-primary" id="openEditModelbtn" onclick="openEditModal(${row.fine_no})">
                                     <span class="bi-pencil">&nbsp;Edit
                                 </button>
-                                <button name="submit" class="btn btn-danger" onclick="confirmDelete(${row.fine_no})">
+                                <button name="submit" class="btn btn-danger" id="deletebtn" onclick="confirmDelete(${row.fine_no})">
                                     <span class="bi-trash">&nbsp;Delete
                                 </button>
 								${paidButton}`;
