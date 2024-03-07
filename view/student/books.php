@@ -133,7 +133,7 @@ if (!isset($_SESSION['id']) || $_SESSION['id'] === null) {
                             </button>`;
 							} else {
 								return `
-                            <button class="btn btn-danger" onclick="reserveBook(${row.book_no})">
+                            <button class="btn btn-danger" onclick="reserveBook(${row.book_no},'${row.book_title}')">
                                 <i class="bi bi-plus"></i>&nbsp;Reserve
                             </button>`;
 							}
@@ -155,6 +155,31 @@ if (!isset($_SESSION['id']) || $_SESSION['id'] === null) {
 
 		}
 
-		function reserveBook(bookNo) {}
+		function reserveBook(bookNo, bookTitle) {
+			$.ajax({
+				url: '../../api/student/api_books.php',
+				type: 'POST',
+				data: {
+					action: 'reserve',
+					bookNo: bookNo,
+					bookTitle: bookTitle
+				},
+				dataType: 'json',
+				success: function(data) {
+					if (data.error) {
+						alert(data.error);
+						return;
+					}
+
+					alert(data.message);
+					reloadDataTable();
+				},
+				error: function(xhr, status, error) {
+					console.error('AJAX Error:', status, error);
+					console.log('Response:', xhr.responseText);
+					alert('Error reserving book');
+				}
+			});
+		}
 	</script>
 </body>
