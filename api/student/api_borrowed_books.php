@@ -105,7 +105,6 @@ function returnBook($conn)
                 sendEmail($email, $bookTitle, $reservedDate);
 
                 $emails[] = $email;
-
                 $reservationsToDelete[] = $reservationNo;
             }
 
@@ -116,8 +115,6 @@ function returnBook($conn)
                 mysqli_stmt_bind_param($deleteReservationsStmt, 'i', $reservationNo);
                 mysqli_stmt_execute($deleteReservationsStmt);
             }
-
-            mysqli_stmt_close($deleteReservationsStmt);
 
             $success = true;
             echo json_encode(['message' => 'Book returned successfully and email sent']);
@@ -133,6 +130,7 @@ function returnBook($conn)
     mysqli_stmt_close($deleteStmt);
     mysqli_stmt_close($updateStmt);
     mysqli_stmt_close($checkReservationsStmt);
+    mysqli_stmt_close($deleteReservationsStmt);
 
     mysqli_close($conn);
 

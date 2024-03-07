@@ -17,6 +17,32 @@ if (!isset($_SESSION['id']) || $_SESSION['id'] === null) {
         margin: 0;
         width: 100%;
     }
+
+    .rating {
+        text-align: center;
+        position: relative;
+        display: flex;
+        flex-direction: row-reverse;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .rating .star {
+        display: inline-block;
+        font-size: 2em;
+        cursor: pointer;
+        color: #ccc;
+        transition: color 0.3s;
+    }
+
+    .rating .star:hover,
+    .rating .star:hover~.star {
+        color: gold;
+    }
+
+    .rating .star.rated {
+        color: gold;
+    }
 </style>
 
 <body>
@@ -92,11 +118,32 @@ if (!isset($_SESSION['id']) || $_SESSION['id'] === null) {
         </div>
     </div>
 
+    <!-- Modal for Rating -->
+    <div class="modal fade" id="ratingModal" tabindex="-1" aria-labelledby="ratingModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="ratingModalLabel">Rate Book:</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="rating" id="rating" onclick="selectRating(event)">
+                        <span class="star" data-rating="5">&#9733;</span>
+                        <span class="star" data-rating="4">&#9733;</span>
+                        <span class="star" data-rating="3">&#9733;</span>
+                        <span class="star" data-rating="2">&#9733;</span>
+                        <span class="star" data-rating="1">&#9733;</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
     <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
     <script>
-        var currentReturnedBookNo;
+        var currentBookNo;
         var dataTable;
 
         $(document).ready(function() {
@@ -133,10 +180,22 @@ if (!isset($_SESSION['id']) || $_SESSION['id'] === null) {
                         data: null,
                         title: 'Actions',
                         render: function(data, type, row) {
-                            return `
+                            if (row.is_rated == 1) {
+                                return `
                             <button class="btn btn-primary" onclick="openViewModal(${row.book_no})">
                             <i class="bi bi-question-lg"></i>&nbsp;Details
                                 </button>`;
+                            } else {
+                                return `
+                            <button class="btn btn-primary" onclick="openViewModal(${row.book_no})">
+                            <i class="bi bi-question-lg"></i>&nbsp;Details
+                                </button>
+                                
+                                <button class="btn btn-success" onclick="openRatingModal(${row.book_no})">
+                            <i class="bi bi-star"></i>&nbsp;Rate
+                                </button>`;
+                            }
+
                         }
                     }
                 ],
@@ -183,6 +242,42 @@ if (!isset($_SESSION['id']) || $_SESSION['id'] === null) {
                     console.error('AJAX Error:', status, error);
                     console.log('Response:', xhr.responseText);
                     alert('Error fetching book data');
+                }
+            });
+        }
+
+        function openRatingModal(bookNo) {
+            currentBookNo = bookNo;
+            var modal = new bootstrap.Modal(document.getElementById('ratingModal'));
+            modal.show();
+        }
+
+        function selectRating(event) {
+            var selectedRating = event.target.getAttribute('data-rating');
+            console.log('Selected Rating:', selectedRating);
+            $('#ratingModal').modal('hide');
+
+            $.ajax({
+                url: '../../api/student/api_returned_books.php',
+                type: 'POST',
+                data: {
+                    action: 'rate',
+                    selectedRating: selectedRating,
+                    currentBookNo: currentBookNo
+                },
+                dataType: 'json',
+                success: function(data) {
+                    if (data.error) {
+                        alert(data.error);
+                        return;
+                    }
+
+                    reloadDataTable();
+                },
+                error: function(xhr, status, error) {
+                    console.error('AJAX Error:', status, error);
+                    console.log('Response:', xhr.responseText);
+                    alert('Error rating book');
                 }
             });
         }
