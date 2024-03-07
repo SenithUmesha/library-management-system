@@ -62,7 +62,7 @@ if (!isset($_SESSION['id']) || $_SESSION['id'] === null) {
 		function fetchAllBooks() {
 			dataTable = $('#books_table').DataTable({
 				ajax: {
-					url: '../../api/api_books.php',
+					url: '../../api/student/api_books.php',
 					type: 'POST',
 					data: {
 						action: 'fetch_all'
@@ -117,7 +117,10 @@ if (!isset($_SESSION['id']) || $_SESSION['id'] === null) {
 					},
 					{
 						data: 'user_ratings',
-						title: 'Ratings'
+						title: 'Ratings',
+						render: function(data, type, row) {
+							return `<span>${row.user_ratings} (${row.no_of_ratings})</span>`;
+						}
 					},
 					{
 						data: null,
