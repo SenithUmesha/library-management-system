@@ -293,9 +293,8 @@ if (!isset($_SESSION['id']) || $_SESSION['id'] === null) {
 					success: function(data) {
 						if (data.error) {
 							alert(data.error);
-						} else {
-							reloadDataTable();
 						}
+						reloadDataTable();
 					},
 					error: function(xhr, status, error) {
 						console.error('AJAX Error:', status, error);

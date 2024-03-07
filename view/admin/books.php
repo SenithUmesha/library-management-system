@@ -348,14 +348,13 @@ if (!isset($_SESSION['id']) || $_SESSION['id'] === null) {
 					if (data.error) {
 						alert(data.error);
 						return;
-					} else {
-						console.log('New book added successfully:', data);
-
-						reloadDataTable();
-
-						var modal = new bootstrap.Modal(document.getElementById('addModal'));
-						modal.hide();
 					}
+					console.log('New book added successfully:', data);
+
+					reloadDataTable();
+
+					var modal = new bootstrap.Modal(document.getElementById('addModal'));
+					modal.hide();
 				},
 				error: function(xhr, status, error) {
 					console.error('AJAX Error:', status, error);
@@ -471,9 +470,8 @@ if (!isset($_SESSION['id']) || $_SESSION['id'] === null) {
 					success: function(data) {
 						if (data.error) {
 							alert(data.error);
-						} else {
-							reloadDataTable();
 						}
+						reloadDataTable();
 					},
 					error: function(xhr, status, error) {
 						console.error('AJAX Error:', status, error);
