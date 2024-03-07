@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 06, 2024 at 07:57 PM
+-- Generation Time: Mar 07, 2024 at 07:39 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -41,7 +41,7 @@ CREATE TABLE `admins` (
 --
 
 INSERT INTO `admins` (`admin_no`, `admin_name`, `password`, `username`, `email`, `last_accessed_date`) VALUES
-(12, 'Admin', '$2y$10$dUvIWKuLHMmjjq6kNoyrdebme.Ci2tIwJ/ScniWrwVobhBBRbOZVe', 'admin', 'umesha.pms@gmail.com', '2024-03-06 19:55:09');
+(12, 'Admin', '$2y$10$dUvIWKuLHMmjjq6kNoyrdebme.Ci2tIwJ/ScniWrwVobhBBRbOZVe', 'admin', 'umesha.pms@gmail.com', '2024-03-07 06:15:01');
 
 -- --------------------------------------------------------
 
@@ -61,18 +61,19 @@ CREATE TABLE `books` (
   `language` varchar(20) NOT NULL,
   `description` varchar(200) NOT NULL,
   `location` varchar(50) NOT NULL,
-  `user_ratings` double NOT NULL
+  `user_ratings` double NOT NULL,
+  `no_of_ratings` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
 -- Dumping data for table `books`
 --
 
-INSERT INTO `books` (`book_no`, `book_title`, `author_name`, `isbn_no`, `no_of_copies`, `publisher`, `categories`, `added_date`, `language`, `description`, `location`, `user_ratings`) VALUES
-(8, 'Book 1', 'Author 1', 'ISBN001', 9, 'Publisher C', 'Fiction', '2024-02-15 00:00:00', 'English', 'Description 1', 'Library Section A', 4.5),
-(9, 'Book 2', 'Author 2', 'ISBN002', 1, 'Publisher B', 'Non-Fiction', '2024-02-16 00:00:00', 'English', 'Description 2', 'Library Section B', 4.8),
-(10, 'Book 3', 'Author 3', 'ISBN003', 7, 'Publisher C', 'Science', '2024-02-17 00:00:00', 'English', 'Description 3', 'Library Section C', 3.2),
-(11, 'Book 4', 'Author 4', 'ISBN020', 10, 'Publisher D', 'Mystery', '2024-03-01 00:00:00', 'English', 'Description 20', 'Library Section D', 4);
+INSERT INTO `books` (`book_no`, `book_title`, `author_name`, `isbn_no`, `no_of_copies`, `publisher`, `categories`, `added_date`, `language`, `description`, `location`, `user_ratings`, `no_of_ratings`) VALUES
+(8, 'Book 1', 'Author 1', 'ISBN001', 14, 'Publisher C', 'Fiction', '2024-02-15 00:00:00', 'English', 'Description 1', 'Library Section A', 2.5, 2),
+(9, 'Book 2', 'Author 2', 'ISBN002', 1, 'Publisher B', 'Non-Fiction', '2024-02-16 00:00:00', 'English', 'Description 2', 'Library Section B', 3, 1),
+(10, 'Book 3', 'Author 3', 'ISBN003', 7, 'Publisher C', 'Science', '2024-02-17 00:00:00', 'English', 'Description 3', 'Library Section C', 0, 0),
+(11, 'Book 4', 'Author 4', 'ISBN020', 0, 'Publisher D', 'Mystery', '2024-03-01 00:00:00', 'English', 'Description 20', 'Library Section D', 0, 0);
 
 -- --------------------------------------------------------
 
@@ -95,7 +96,7 @@ CREATE TABLE `borrowed_books` (
 
 INSERT INTO `borrowed_books` (`borrowed_book_no`, `book_no`, `book_title`, `student_no`, `student_name`, `borrowed_date`) VALUES
 (12, 8, 'Book 1', 8, 'Umesha', '2024-03-06 19:04:54'),
-(16, 8, 'Book 1', 24, 'Umesha', '2024-03-06 19:04:54');
+(21, 8, 'Book 1', 24, 'Umesha', '2024-03-06 19:04:54');
 
 -- --------------------------------------------------------
 
@@ -121,7 +122,9 @@ CREATE TABLE `fines` (
 --
 
 INSERT INTO `fines` (`fine_no`, `student_no`, `student_name`, `book_no`, `book_title`, `fine_amount`, `issued_date`, `due_date`, `payment_status`, `paid_date`) VALUES
-(2, 2, 'Jane Smith', 1, 'To Kill a Mockingbird', 7.80, '2024-02-10 00:00:00', '2024-03-05 00:00:00', 'Paid', '2024-03-06 13:52:47');
+(2, 24, 'Umesha', 8, 'Book 1', 7.80, '2024-02-10 00:00:00', '2024-03-05 00:00:00', 'Paid', '2024-03-06 13:52:47'),
+(5, 25, 'Thisara', 9, 'Book 2', 7.80, '2024-02-10 00:00:00', '2024-03-05 00:00:00', 'Paid', '2024-03-06 13:52:47'),
+(6, 25, 'Thisara', 9, 'Book 2', 7.80, '2024-02-10 00:00:00', '2024-03-05 00:00:00', 'Unpaid', NULL);
 
 -- --------------------------------------------------------
 
@@ -144,7 +147,8 @@ CREATE TABLE `reservations` (
 --
 
 INSERT INTO `reservations` (`reservation_no`, `book_no`, `book_title`, `student_no`, `student_name`, `reserved_date`, `email`) VALUES
-(2, 8, 'Book 1', 24, 'Umesha', '2024-02-16 00:00:00', 'umesha.pms@gmail.com');
+(24, 9, 'Book 2', 24, 'Umesha', '2024-03-06 20:41:31', 'umesha.pms@gmail.com'),
+(25, 8, 'Book 1', 25, 'Thisara', '2024-03-06 20:41:31', 'umesha.pms@gmail.com');
 
 -- --------------------------------------------------------
 
@@ -158,18 +162,19 @@ CREATE TABLE `returned_books` (
   `book_title` varchar(150) NOT NULL,
   `student_no` int(11) NOT NULL,
   `student_name` varchar(60) NOT NULL,
-  `returned_date` datetime NOT NULL
+  `returned_date` datetime NOT NULL,
+  `is_rated` tinyint(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `returned_books`
 --
 
-INSERT INTO `returned_books` (`returned_book_no`, `book_no`, `book_title`, `student_no`, `student_name`, `returned_date`) VALUES
-(1, 8, 'Book 1', 24, 'Umesha', '2024-02-07 04:00:00'),
-(2, 9, 'Book 2', 24, 'Umesha', '2024-02-08 00:00:00'),
-(3, 10, 'Book 3', 25, 'Thisara', '2024-02-09 00:00:00'),
-(4, 11, 'Book 4', 25, 'Thisara', '2024-02-10 00:00:00');
+INSERT INTO `returned_books` (`returned_book_no`, `book_no`, `book_title`, `student_no`, `student_name`, `returned_date`, `is_rated`) VALUES
+(1, 8, 'Book 1', 24, 'Umesha', '2024-02-07 04:00:00', 1),
+(2, 9, 'Book 2', 24, 'Umesha', '2024-02-08 00:00:00', 0),
+(3, 8, 'Book 1', 24, 'Umesha', '2024-02-09 00:00:00', 0),
+(4, 11, 'Book 4', 25, 'Thisara', '2024-02-10 00:00:00', 0);
 
 -- --------------------------------------------------------
 
@@ -193,8 +198,9 @@ CREATE TABLE `students` (
 --
 
 INSERT INTO `students` (`student_no`, `admission_id`, `password`, `username`, `email`, `class`, `student_name`, `last_accessed_date`) VALUES
-(24, 424112, '$2y$10$RdvbmzE7Obg8KCrksIvR7ORb/OOzpP3wPYIPyQIJvXJipJhcBG/nS', 'umesha', 'umesha.pms@gmail.com', 'Grade 11', 'Umesha', '2024-03-06 19:55:02'),
-(25, 575343, '$2y$10$dX84LdRlT1gQwQ7UAUu/AeGsLfH5rHR0cdLzMz0SoqXsOeEESPKV2', 'thisara', 'thisarasadesh4@gmail.com', 'Grade 1', 'Thisara', '2024-03-01 14:54:47');
+(24, 424112, '$2y$10$RdvbmzE7Obg8KCrksIvR7ORb/OOzpP3wPYIPyQIJvXJipJhcBG/nS', 'umesha', 'umesha.pms@gmail.com', 'Grade 11', 'Umesha', '2024-03-07 06:15:14'),
+(25, 575343, '$2y$10$dX84LdRlT1gQwQ7UAUu/AeGsLfH5rHR0cdLzMz0SoqXsOeEESPKV2', 'thisara', 'thisarasadesh4@gmail.com', 'Grade 01', 'Thisara', '2024-03-01 14:54:47'),
+(26, 342343, '$2y$10$QWbz5zgY2GXUBRJuN5fmGOyL78aE1bA.5VbJwcS33bv8pSBcHyAEO', 'amila', 'amilaramesh1998@gmail.com', 'Grade 03', 'Amila', NULL);
 
 --
 -- Indexes for dumped tables
@@ -262,31 +268,31 @@ ALTER TABLE `books`
 -- AUTO_INCREMENT for table `borrowed_books`
 --
 ALTER TABLE `borrowed_books`
-  MODIFY `borrowed_book_no` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+  MODIFY `borrowed_book_no` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
 -- AUTO_INCREMENT for table `fines`
 --
 ALTER TABLE `fines`
-  MODIFY `fine_no` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `fine_no` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `reservations`
 --
 ALTER TABLE `reservations`
-  MODIFY `reservation_no` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `reservation_no` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
 
 --
 -- AUTO_INCREMENT for table `returned_books`
 --
 ALTER TABLE `returned_books`
-  MODIFY `returned_book_no` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
+  MODIFY `returned_book_no` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
 
 --
 -- AUTO_INCREMENT for table `students`
 --
 ALTER TABLE `students`
-  MODIFY `student_no` int(6) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
+  MODIFY `student_no` int(6) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
