@@ -158,7 +158,13 @@ if (!isset($_SESSION['id']) || $_SESSION['id'] === null) {
 					},
 					{
 						data: 'payment_status',
-						title: 'Payment Status'
+						title: 'Payment Status',
+						render: function(data, type, row) {
+							var statusText = data === 'Paid' ? 'Paid' : 'Unpaid';
+							var statusClass = data === 'Paid' ? 'text-success' : 'text-danger';
+
+							return `<span class="${statusClass}">${statusText}</span>`;
+						}
 					},
 					{
 						data: 'paid_date',
