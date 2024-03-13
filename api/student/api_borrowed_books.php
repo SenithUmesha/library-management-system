@@ -88,6 +88,7 @@ function returnBook($conn)
     mysqli_stmt_bind_param($checkReservationsStmt, 'i', $bookNo);
 
     $success = false;
+    $deleteReservationsStmt = mysqli_prepare($conn, "DELETE FROM reservations WHERE reservation_no = ?");
 
     if (mysqli_stmt_execute($returnStmt) && mysqli_stmt_execute($deleteStmt) && mysqli_stmt_execute($updateStmt)) {
         mysqli_stmt_execute($checkReservationsStmt);
@@ -95,6 +96,7 @@ function returnBook($conn)
 
         if ($resultReservations && mysqli_num_rows($resultReservations) > 0) {
             $emails = [];
+            $reservationsToDelete = [];
 
             while ($row = mysqli_fetch_assoc($resultReservations)) {
                 $email = $row['email'];
@@ -107,9 +109,6 @@ function returnBook($conn)
                 $emails[] = $email;
                 $reservationsToDelete[] = $reservationNo;
             }
-
-            $deleteReservationsSql = "DELETE FROM reservations WHERE reservation_no = ?";
-            $deleteReservationsStmt = mysqli_prepare($conn, $deleteReservationsSql);
 
             foreach ($reservationsToDelete as $reservationNo) {
                 mysqli_stmt_bind_param($deleteReservationsStmt, 'i', $reservationNo);

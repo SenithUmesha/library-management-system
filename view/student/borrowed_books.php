@@ -246,6 +246,7 @@ if (!isset($_SESSION['id']) || $_SESSION['id'] === null) {
                         alert(data.error);
                     }
 
+                    alert(data.message);
                     reloadDataTable();
                 },
                 error: function(xhr, status, error) {
