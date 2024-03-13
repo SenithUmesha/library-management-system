@@ -128,7 +128,7 @@ if (!isset($_SESSION['id']) || $_SESSION['id'] === null) {
 						render: function(data, type, row) {
 							if (row.no_of_copies >= 1) {
 								return `
-                            <button class="btn btn-success" onclick="borrowBook(${row.book_no})">
+                            <button class="btn btn-success" onclick="borrowBook(${row.book_no},'${row.book_title}')">
                                 <i class="bi bi-plus"></i>&nbsp;Borrow
                             </button>`;
 							} else {
@@ -151,8 +151,31 @@ if (!isset($_SESSION['id']) || $_SESSION['id'] === null) {
 			dataTable.ajax.reload();
 		}
 
-		function borrowBook(bookNo) {
+		function borrowBook(bookNo, bookTitle) {
+			$.ajax({
+				url: '../../api/student/api_books.php',
+				type: 'POST',
+				data: {
+					action: 'borrow',
+					bookNo: bookNo,
+					bookTitle: bookTitle
+				},
+				dataType: 'json',
+				success: function(data) {
+					if (data.error) {
+						alert(data.error);
+						return;
+					}
 
+					alert(data.message);
+					reloadDataTable();
+				},
+				error: function(xhr, status, error) {
+					console.error('AJAX Error:', status, error);
+					console.log('Response:', xhr.responseText);
+					alert('Error borrowing book');
+				}
+			});
 		}
 
 		function reserveBook(bookNo, bookTitle) {

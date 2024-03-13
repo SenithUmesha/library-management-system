@@ -93,12 +93,79 @@ function reserveBook($conn)
 
         mysqli_stmt_close($insertReservationStmt);
         mysqli_stmt_close($getStudentInfoStmt);
-        mysqli_stmt_close($checkReservationStmt);
     } else {
         echo json_encode(['error' => 'Invalid request']);
     }
+
+    mysqli_close($conn);
 }
 
 function borrowBooks($conn)
 {
+    if (isset($_POST['bookNo'])) {
+        $bookNo = $_POST['bookNo'];
+        $bookTitle = $_POST['bookTitle'];
+        $studentNo = $_SESSION['id'];
+
+        $checkEmptyBorrowedSql = "SELECT * FROM borrowed_books WHERE student_no = ?";
+        $checkEmptyBorrowedStmt = mysqli_prepare($conn, $checkEmptyBorrowedSql);
+        mysqli_stmt_bind_param($checkEmptyBorrowedStmt, 'i', $studentNo);
+        mysqli_stmt_execute($checkEmptyBorrowedStmt);
+        $resultCheckEmptyBorrowed = mysqli_stmt_get_result($checkEmptyBorrowedStmt);
+
+        if ($resultCheckEmptyBorrowed && mysqli_num_rows($resultCheckEmptyBorrowed) > 0) {
+            echo json_encode(['error' => 'You have already borrowed a book but havent returned it yet.']);
+            mysqli_stmt_close($checkEmptyBorrowedStmt);
+            return;
+        }
+
+        $checkBorrowedSql = "SELECT * FROM borrowed_books WHERE book_no = ? AND student_no = ?";
+        $checkBorrowedStmt = mysqli_prepare($conn, $checkBorrowedSql);
+        mysqli_stmt_bind_param($checkBorrowedStmt, 'ii', $bookNo, $studentNo);
+        mysqli_stmt_execute($checkBorrowedStmt);
+        $resultCheckBorrowed = mysqli_stmt_get_result($checkBorrowedStmt);
+
+        if ($resultCheckBorrowed && mysqli_num_rows($resultCheckBorrowed) > 0) {
+            echo json_encode(['error' => 'You have already borrowed this book.']);
+            mysqli_stmt_close($checkBorrowedStmt);
+            return;
+        }
+
+        $updateSql = "UPDATE books SET no_of_copies = no_of_copies - 1 WHERE book_no = ?";
+        $updateStmt = mysqli_prepare($conn, $updateSql);
+        mysqli_stmt_bind_param($updateStmt, 'i', $bookNo);
+
+        $getStudentInfoSql = "SELECT student_name FROM students WHERE student_no = ?";
+        $getStudentInfoStmt = mysqli_prepare($conn, $getStudentInfoSql);
+        mysqli_stmt_bind_param($getStudentInfoStmt, 'i', $studentNo);
+        mysqli_stmt_execute($getStudentInfoStmt);
+        $resultStudentInfo = mysqli_stmt_get_result($getStudentInfoStmt);
+
+        if ($resultStudentInfo && $rowStudentInfo = mysqli_fetch_assoc($resultStudentInfo)) {
+            $studentName = $rowStudentInfo['student_name'];
+
+            $borrowedDate = date('Y-m-d H:i:s');
+            $insertBorrowedSql = "INSERT INTO borrowed_books (book_no, book_title, student_no, student_name, borrowed_date) 
+                            VALUES (?, ?, ?, ?, ?)";
+            $insertBorrowedStmt = mysqli_prepare($conn, $insertBorrowedSql);
+
+            mysqli_stmt_bind_param($insertBorrowedStmt, 'isiss', $bookNo, $bookTitle, $studentNo, $studentName, $borrowedDate);
+
+            if (mysqli_stmt_execute($insertBorrowedStmt) && mysqli_stmt_execute($updateStmt)) {
+                echo json_encode(['message' => 'Book borrowed successfully']);
+            } else {
+                echo json_encode(['error' => 'Error borrowing book']);
+            }
+        } else {
+            echo json_encode(['error' => 'Student information not found']);
+        }
+
+        mysqli_stmt_close($updateStmt);
+        mysqli_stmt_close($insertBorrowedStmt);
+        mysqli_stmt_close($getStudentInfoStmt);
+    } else {
+        echo json_encode(['error' => 'Invalid request']);
+    }
+
+    mysqli_close($conn);
 }
