@@ -107,6 +107,8 @@ function borrowBooks($conn)
         $bookTitle = $_POST['bookTitle'];
         $studentNo = $_SESSION['id'];
 
+        $dueDate = date('Y-m-d H:i:s', strtotime('+1 week'));
+
         $checkEmptyBorrowedSql = "SELECT * FROM borrowed_books WHERE student_no = ?";
         $checkEmptyBorrowedStmt = mysqli_prepare($conn, $checkEmptyBorrowedSql);
         mysqli_stmt_bind_param($checkEmptyBorrowedStmt, 'i', $studentNo);
@@ -145,11 +147,11 @@ function borrowBooks($conn)
             $studentName = $rowStudentInfo['student_name'];
 
             $borrowedDate = date('Y-m-d H:i:s');
-            $insertBorrowedSql = "INSERT INTO borrowed_books (book_no, book_title, student_no, student_name, borrowed_date) 
-                            VALUES (?, ?, ?, ?, ?)";
+            $insertBorrowedSql = "INSERT INTO borrowed_books (book_no, book_title, student_no, student_name, borrowed_date, due_date) 
+                         VALUES (?, ?, ?, ?, ?, ?)";
             $insertBorrowedStmt = mysqli_prepare($conn, $insertBorrowedSql);
 
-            mysqli_stmt_bind_param($insertBorrowedStmt, 'isiss', $bookNo, $bookTitle, $studentNo, $studentName, $borrowedDate);
+            mysqli_stmt_bind_param($insertBorrowedStmt, 'isisss', $bookNo, $bookTitle, $studentNo, $studentName, $borrowedDate, $dueDate);
 
             if (mysqli_stmt_execute($insertBorrowedStmt) && mysqli_stmt_execute($updateStmt)) {
                 echo json_encode(['message' => 'Book borrowed successfully']);
