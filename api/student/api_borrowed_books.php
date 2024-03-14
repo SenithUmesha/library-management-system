@@ -67,8 +67,24 @@ function returnBook($conn)
     $studentNo = $_POST['studentNo'];
     $studentName = $_POST['studentName'];
     $borrowedBookNo = $_POST['borrowedBookNo'];
+    $dueDate = $_POST['dueDate'];
+    $borrowedDate = $_POST['borrowedDate'];
 
     $currentDateTime = date('Y-m-d H:i:s');
+
+    $dueDateTime = strtotime($dueDate);
+    $currentDate = strtotime(date('Y-m-d H:i:s'));
+
+    if ($dueDateTime < $currentDate) {
+        $fineAmount = 50.00;
+
+        $addFineSql = "INSERT INTO fines (student_no, student_name, book_no, book_title, fine_amount, issued_date, due_date, payment_status, paid_date) 
+                        VALUES (?, ?, ?, ?, ?, ?, ?, 'Unpaid', NULL)";
+        $addFineStmt = mysqli_prepare($conn, $addFineSql);
+        mysqli_stmt_bind_param($addFineStmt, 'isisdss', $studentNo, $studentName, $bookNo, $bookTitle, $fineAmount, $currentDateTime, $dueDate);
+        mysqli_stmt_execute($addFineStmt);
+        mysqli_stmt_close($addFineStmt);
+    }
 
     $returnSql = "INSERT INTO returned_books (book_no, book_title, student_no, student_name, returned_date) 
                   VALUES (?, ?, ?, ?, ?)";

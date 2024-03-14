@@ -178,7 +178,7 @@ if (!isset($_SESSION['id']) || $_SESSION['id'] === null) {
             <button class="btn btn-primary" onclick="openViewModal(${row.book_no})">
                 <i class="bi bi-question-lg"></i>&nbsp;Details
             </button>
-            <button name="submit" class="btn btn-danger" onclick="returnBook(${row.book_no}, '${row.book_title}', '${row.student_no}', '${row.student_name}', '${row.borrowed_book_no}')">
+            <button name="submit" class="btn btn-danger" onclick="returnBook(${row.book_no}, '${row.book_title}', '${row.student_no}', '${row.student_name}', '${row.borrowed_book_no}', '${row.due_date}', '${row.borrowed_date}')">
                 <i class="bi bi-arrow-return-right"></i>&nbsp;Return
             </button>`;
                         }
@@ -231,7 +231,7 @@ if (!isset($_SESSION['id']) || $_SESSION['id'] === null) {
             });
         }
 
-        function returnBook(bookNo, bookTitle, studentNo, studentName, borrowedBookNo) {
+        function returnBook(bookNo, bookTitle, studentNo, studentName, borrowedBookNo, dueDate, borrowedDate) {
             showLoadingOverlay();
             $.ajax({
                 url: '../../api/student/api_borrowed_books.php',
@@ -242,7 +242,9 @@ if (!isset($_SESSION['id']) || $_SESSION['id'] === null) {
                     bookTitle: bookTitle,
                     studentNo: studentNo,
                     studentName: studentName,
-                    borrowedBookNo: borrowedBookNo
+                    borrowedBookNo: borrowedBookNo,
+                    dueDate: dueDate,
+                    borrowedDate: borrowedDate
                 },
                 dataType: 'json',
                 success: function(data) {
