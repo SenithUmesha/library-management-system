@@ -54,7 +54,7 @@ if (!isset($_SESSION['id']) || $_SESSION['id'] === null) {
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="editForm" onsubmit="return validateEditForm()">
+                    <form id="editForm" novalidate>
                         <div class="mb-3">
                             <label for="editBookNo" class="form-label">Book No.</label>
                             <input type="text" class="form-control" id="editBookNo" name="editBookNo" disabled>
@@ -153,16 +153,6 @@ if (!isset($_SESSION['id']) || $_SESSION['id'] === null) {
             dataTable.ajax.reload();
         }
 
-        function validateEditForm() {
-            var updatedReturnedDate = document.getElementById('editReturnedDate').value;
-
-            if (!updatedReturnedDate) {
-                return false;
-            }
-
-            return true;
-        }
-
         function openEditModal(returnedBookNo) {
             currentReturnedBookNo = returnedBookNo;
 
@@ -200,10 +190,6 @@ if (!isset($_SESSION['id']) || $_SESSION['id'] === null) {
         function saveEditChanges() {
             var returnedBookNo = currentReturnedBookNo;
             var updatedReturnedDate = document.getElementById('editReturnedDate').value;
-
-            if (!validateEditForm()) {
-                return;
-            }
 
             $.ajax({
                 url: '../../api/api_returned_books.php',

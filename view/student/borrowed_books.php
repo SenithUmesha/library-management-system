@@ -67,6 +67,7 @@ if (!isset($_SESSION['id']) || $_SESSION['id'] === null) {
                             <th>Book Title</th>
                             <th>Borrowed By</th>
                             <th>Borrowed Date</th>
+                            <th>Due Date</th>
                             <th>Actions</th>
                         </thead>
                     </table>
@@ -164,6 +165,10 @@ if (!isset($_SESSION['id']) || $_SESSION['id'] === null) {
                     {
                         data: 'borrowed_date',
                         title: 'Borrowed Date'
+                    },
+                    {
+                        data: 'due_date',
+                        title: 'Due Date'
                     },
                     {
                         data: null,

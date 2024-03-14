@@ -37,6 +37,7 @@ if (!isset($_SESSION['id']) || $_SESSION['id'] === null) {
 							<th>Student No.</th>
 							<th>Student Name</th>
 							<th>Borrowed Date</th>
+							<th>Due Date</th>
 							<th>Actions</th>
 						</thead>
 					</table>
@@ -54,7 +55,7 @@ if (!isset($_SESSION['id']) || $_SESSION['id'] === null) {
 					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 				</div>
 				<div class="modal-body">
-					<form id="editForm" onsubmit="return validateEditForm()">
+					<form id="editForm" novalidate>
 						<div class="mb-3">
 							<label for="editBookNo" class="form-label">Book No.</label>
 							<input type="text" class="form-control" id="editBookNo" name="editBookNo" disabled>
@@ -74,6 +75,10 @@ if (!isset($_SESSION['id']) || $_SESSION['id'] === null) {
 						<div class="mb-3">
 							<label for="editBorrowedDate" class="form-label">Borrowed Date</label>
 							<input type="datetime-local" class="form-control" id="editBorrowedDate" name="editBorrowedDate" required>
+						</div>
+						<div class="mb-3">
+							<label for="editDueDate" class="form-label">Due Date</label>
+							<input type="datetime-local" class="form-control" id="editDueDate" name="editDueDate" required>
 						</div>
 						<button type="submit" class="btn btn-primary" id="saveeditbtn" onclick="saveEditChanges()">Save</button>
 					</form>
@@ -129,6 +134,10 @@ if (!isset($_SESSION['id']) || $_SESSION['id'] === null) {
 						title: 'Borrowed Date'
 					},
 					{
+						data: 'due_date',
+						title: 'Due Date'
+					},
+					{
 						data: null,
 						title: 'Actions',
 						render: function(data, type, row) {
@@ -153,16 +162,6 @@ if (!isset($_SESSION['id']) || $_SESSION['id'] === null) {
 			dataTable.ajax.reload();
 		}
 
-		function validateEditForm() {
-			var updatedBorrowedDate = document.getElementById('editBorrowedDate').value;
-
-			if (!updatedBorrowedDate) {
-				return false;
-			}
-
-			return true;
-		}
-
 		function openEditModal(borrowedBookNo) {
 			currentBorrowedBookNo = borrowedBookNo;
 
@@ -185,6 +184,7 @@ if (!isset($_SESSION['id']) || $_SESSION['id'] === null) {
 					document.getElementById('editStudentNo').value = data.student_no;
 					document.getElementById('editStudentName').value = data.student_name;
 					document.getElementById('editBorrowedDate').value = data.borrowed_date;
+					document.getElementById('editDueDate').value = data.due_date;
 
 					var modal = new bootstrap.Modal(document.getElementById('editModal'));
 					modal.show();
@@ -200,10 +200,7 @@ if (!isset($_SESSION['id']) || $_SESSION['id'] === null) {
 		function saveEditChanges() {
 			var borrowedBookNo = currentBorrowedBookNo;
 			var updatedBorrowedDate = document.getElementById('editBorrowedDate').value;
-
-			if (!validateEditForm()) {
-				return;
-			}
+			var updatedDueDate = document.getElementById('editDueDate').value;
 
 			$.ajax({
 				url: '../../api/api_borrowed_books.php',
@@ -211,7 +208,8 @@ if (!isset($_SESSION['id']) || $_SESSION['id'] === null) {
 				data: {
 					action: 'update',
 					borrowedBookNo: borrowedBookNo,
-					updatedBorrowedDate: updatedBorrowedDate
+					updatedBorrowedDate: updatedBorrowedDate,
+					updatedDueDate: updatedDueDate
 				},
 				dataType: 'json',
 				success: function(data) {

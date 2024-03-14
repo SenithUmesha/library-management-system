@@ -71,8 +71,9 @@ function updateBorrowedBook($conn)
     if (isset($_POST['borrowedBookNo'])) {
         $borrowedBookNo = $_POST['borrowedBookNo'];
         $updatedBorrowedDate = $_POST['updatedBorrowedDate'];
+        $updatedDueDate = $_POST['updatedDueDate'];
 
-        $sql = "UPDATE borrowed_books SET borrowed_date = '$updatedBorrowedDate' WHERE borrowed_book_no = '$borrowedBookNo'";
+        $sql = "UPDATE borrowed_books SET borrowed_date = '$updatedBorrowedDate', due_date = '$updatedDueDate' WHERE borrowed_book_no = '$borrowedBookNo'";
 
         $result = mysqli_query($conn, $sql);
 
