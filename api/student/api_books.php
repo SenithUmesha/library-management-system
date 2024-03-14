@@ -109,6 +109,18 @@ function borrowBooks($conn)
 
         $dueDate = date('Y-m-d H:i:s', strtotime('+1 week'));
 
+        $checkFinesSql = "SELECT * FROM fines WHERE student_no = ? AND payment_status = 'Unpaid'";
+        $checkFinesStmt = mysqli_prepare($conn, $checkFinesSql);
+        mysqli_stmt_bind_param($checkFinesStmt, 'i', $studentNo);
+        mysqli_stmt_execute($checkFinesStmt);
+        $resultFines = mysqli_stmt_get_result($checkFinesStmt);
+
+        if ($resultFines && mysqli_num_rows($resultFines) > 0) {
+            echo json_encode(['error' => 'You have unpaid fines. Please clear your fines before borrowing a book.']);
+            mysqli_stmt_close($checkFinesStmt);
+            return;
+        }
+
         $checkEmptyBorrowedSql = "SELECT * FROM borrowed_books WHERE student_no = ?";
         $checkEmptyBorrowedStmt = mysqli_prepare($conn, $checkEmptyBorrowedSql);
         mysqli_stmt_bind_param($checkEmptyBorrowedStmt, 'i', $studentNo);
