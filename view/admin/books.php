@@ -26,7 +26,10 @@ if (!isset($_SESSION['id']) || $_SESSION['id'] === null) {
 			<div class="container">
 				<div style="display: flex; justify-content: space-between; align-items: center; margin-top: 18px;">
 					<h4 style="font-weight: bold;">| Books</h4>
-					<button class="btn btn-success" id="addbook" onclick="openAddModal()"><span class="bi-plus"></span>&nbsp;Book</button>
+					<div>
+						<button class="btn btn-primary" id="report" onclick="generatePDF()"><span class="lni lni-printer"></span>&nbsp;Print</button>
+						<button class="btn btn-success" id="addbook" onclick="openAddModal()"><span class="bi-plus"></span>&nbsp;Book</button>
+					</div>
 				</div>
 				<div style="margin-top:30px; max-width: 100%; overflow-x: auto;">
 					<table id="books_table" class="table table-striped" style="width:100%">
@@ -43,7 +46,7 @@ if (!isset($_SESSION['id']) || $_SESSION['id'] === null) {
 							<th>Language</th>
 							<th>Description</th>
 							<th>Location</th>
-							<th>User Ratings</th>
+							<th>Ratings</th>
 							<th>Actions</th>
 						</thead>
 					</table>
@@ -244,7 +247,10 @@ if (!isset($_SESSION['id']) || $_SESSION['id'] === null) {
 					},
 					{
 						data: 'user_ratings',
-						title: 'User Ratings'
+						title: 'Ratings',
+						render: function(data, type, row) {
+							return `<span>${row.user_ratings} (${row.no_of_ratings})</span>`;
+						}
 					},
 					{
 						data: null,
@@ -480,6 +486,23 @@ if (!isset($_SESSION['id']) || $_SESSION['id'] === null) {
 					}
 				});
 			}
+		}
+
+		function generatePDF() {
+			$.ajax({
+				url: 'generate_pdf.php',
+				type: 'POST',
+				data: {
+					action: 'books'
+				},
+				success: function(response) {
+					window.open(response, '_blank');
+				},
+				error: function(xhr, status, error) {
+					console.error('AJAX Error:', status, error);
+					alert('Error generating PDF: ' + error);
+				}
+			});
 		}
 	</script>
 </body>

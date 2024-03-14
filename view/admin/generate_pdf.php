@@ -4,19 +4,125 @@ require_once '../../vendor/autoload.php';
 
 if (isset($_POST['action']) && $_POST['action'] === 'students') {
     generateStudents($conn);
+} else if ($_POST['action'] === 'admins') {
+    generateAdmins($conn);
+} else if ($_POST['action'] === 'books') {
+    generateBooks($conn);
+} else if ($_POST['action'] === 'borrowed_books') {
+    generateBorrowedBooks($conn);
 } else {
     echo 'Invalid action';
 }
+
 function generateStudents($conn)
 {
     $sql = "SELECT * FROM students";
     $result = mysqli_query($conn, $sql);
 
-    $studentsData = [];
+    $data = [];
 
     if ($result && mysqli_num_rows($result) > 0) {
         while ($row = mysqli_fetch_assoc($result)) {
-            $studentsData[] = $row;
+            $data[] = $row;
+        }
+    }
+
+    mysqli_close($conn);
+
+    $html = '
+    <html>
+    <head>
+        <title>Library Management System Report - Ananda College, Galle</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+            }
+            table {
+                width: 100%;
+                border-collapse: collapse;
+            }
+            th, td {
+                border: 1px solid #ddd;
+                padding: 8px;
+                text-align: left;
+            }
+            th {
+                background-color: #f2f2f2;
+            }
+            h2 {
+                text-align: center;
+            }
+            h4 {
+                font-weight: normal;
+                text-align: center;
+                margin-bottom: 40px;
+                margin-top: -10px;
+            }
+            .container {
+                max-width: 800px;
+                margin: 0 auto;
+                padding: 20px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h2>LMS Report - Students</h2>
+            <h4>Ananda College, Galle</h4>
+            <table>
+                <thead>
+                    <tr>
+                            <th>Student No.</th>
+                            <th>Student Name</th>
+                            <th>Admission ID</th>
+                            <th>Username</th>
+                            <th>Email</th>
+                            <th>Class</th>
+                        </tr>
+                    </thead>
+                    <tbody>';
+
+    foreach ($data as $item) {
+        $html .= '
+            <tr>
+                <td>' . $item['student_no'] . '</td>
+                <td>' . $item['student_name'] . '</td>
+                <td>' . $item['admission_id'] . '</td>
+                <td>' . $item['username'] . '</td>
+                <td>' . $item['email'] . '</td>
+                <td>' . $item['class'] . '</td>
+            </tr>';
+    }
+
+    $html .= '
+                    </tbody>
+                </table>
+            </div>
+        </body>
+        </html>';
+
+    $dompdf = new Dompdf\Dompdf();
+    $dompdf->loadHtml($html);
+    $dompdf->setPaper('A4', 'portrait');
+    $dompdf->render();
+
+    $pdfOutput = $dompdf->output();
+    $pdfFilePath = '../../downloads/students_report.pdf';
+    file_put_contents($pdfFilePath, $pdfOutput);
+
+    echo $pdfFilePath;
+}
+
+function generateAdmins($conn)
+{
+    $sql = "SELECT * FROM admins";
+    $result = mysqli_query($conn, $sql);
+
+    $data = [];
+
+    if ($result && mysqli_num_rows($result) > 0) {
+        while ($row = mysqli_fetch_assoc($result)) {
+            $data[] = $row;
         }
     }
 
@@ -42,9 +148,14 @@ function generateStudents($conn)
                 th {
                     background-color: #f2f2f2;
                 }
-                h1 {
+                h2 {
                     text-align: center;
-                    margin-bottom: 60px;
+                }
+                h4 {
+                    font-weight: normal;
+                    text-align: center;
+                    margin-bottom: 40px;
+                    margin-top: -10px;
                 }
                 .container {
                     max-width: 800px;
@@ -55,29 +166,26 @@ function generateStudents($conn)
         </head>
         <body>
             <div class="container">
-                <h1>Library Management System Report</h1>
+                <h2>LMS Report - Admins</h2>
+                <h4>Ananda College, Galle</h4>
                 <table>
                     <thead>
                         <tr>
-                            <th>Student No.</th>
-                            <th>Student Name</th>
-                            <th>Admission ID</th>
+                            <th>Admin No.</th>
+                            <th>Admin Name</th>
                             <th>Username</th>
                             <th>Email</th>
-                            <th>Class</th>
                         </tr>
                     </thead>
                     <tbody>';
 
-    foreach ($studentsData as $student) {
+    foreach ($data as $item) {
         $html .= '
             <tr>
-                <td>' . $student['student_no'] . '</td>
-                <td>' . $student['student_name'] . '</td>
-                <td>' . $student['admission_id'] . '</td>
-                <td>' . $student['username'] . '</td>
-                <td>' . $student['email'] . '</td>
-                <td>' . $student['class'] . '</td>
+                <td>' . $item['admin_no'] . '</td>
+                <td>' . $item['admin_name'] . '</td>
+                <td>' . $item['username'] . '</td>
+                <td>' . $item['email'] . '</td>
             </tr>';
     }
 
@@ -94,7 +202,217 @@ function generateStudents($conn)
     $dompdf->render();
 
     $pdfOutput = $dompdf->output();
-    $pdfFilePath = '../../downloads/students_report.pdf';
+    $pdfFilePath = '../../downloads/admins_report.pdf';
+    file_put_contents($pdfFilePath, $pdfOutput);
+
+    echo $pdfFilePath;
+}
+
+function generateBooks($conn)
+{
+    $sql = "SELECT * FROM books";
+    $result = mysqli_query($conn, $sql);
+
+    $data = [];
+
+    if ($result && mysqli_num_rows($result) > 0) {
+        while ($row = mysqli_fetch_assoc($result)) {
+            $data[] = $row;
+        }
+    }
+
+    mysqli_close($conn);
+
+    $html = '
+        <html>
+        <head>
+            <title>Library Management System Report - Ananda College, Galle</title>
+            <style>
+                body {
+                    font-family: Arial, sans-serif;
+                }
+                table {
+                    width: 100%;
+                    border-collapse: collapse;
+                }
+                th, td {
+                    border: 1px solid #ddd;
+                    padding: 8px;
+                    text-align: left;
+                }
+                th {
+                    background-color: #f2f2f2;
+                }
+                h2 {
+                    text-align: center;
+                }
+                h4 {
+                    font-weight: normal;
+                    text-align: center;
+                    margin-bottom: 40px;
+                    margin-top: -10px;
+                }
+                .container {
+                    max-width: 100%;
+                    margin: 0 auto;
+                    padding: 20px;
+                }
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <h2>LMS Report - Books</h2>
+                <h4>Ananda College, Galle</h4>
+                <table>
+                    <thead>
+                        <tr>
+                        <th>Book No.</th>
+                        <th>Book Title</th>
+                        <th>Author Name</th>
+                        <th>ISBN No.</th>
+                        <th>No. of Copies</th>
+                        <th>Publisher</th>
+                        <th>Categories</th>
+                        <th>Added Date</th>
+                        <th>Language</th>
+                        <th>Description</th>
+                        <th>Location</th>
+                        <th>User Ratings</th>
+                        </tr>
+                    </thead>
+                    <tbody>';
+
+    foreach ($data as $item) {
+        $html .= '
+            <tr>
+                <td>' . $item['book_no'] . '</td>
+                <td>' . $item['book_title'] . '</td>
+                <td>' . $item['author_name'] . '</td>
+                <td>' . $item['isbn_no'] . '</td>
+                <td>' . $item['no_of_copies'] . '</td>
+                <td>' . $item['publisher'] . '</td>
+                <td>' . $item['categories'] . '</td>
+                <td>' . $item['added_date'] . '</td>
+                <td>' . $item['language'] . '</td>
+                <td>' . $item['description'] . '</td>
+                <td>' . $item['location'] . '</td>
+                <td>' . $item['user_ratings'] . '</td>
+            </tr>';
+    }
+
+    $html .= '
+                    </tbody>
+                </table>
+            </div>
+        </body>
+        </html>';
+
+    $dompdf = new Dompdf\Dompdf();
+    $dompdf->loadHtml($html);
+    $dompdf->setPaper('A4', 'landscape');
+    $dompdf->render();
+
+    $pdfOutput = $dompdf->output();
+    $pdfFilePath = '../../downloads/books_report.pdf';
+    file_put_contents($pdfFilePath, $pdfOutput);
+
+    echo $pdfFilePath;
+}
+
+function generateBorrowedBooks($conn)
+{
+    $sql = "SELECT * FROM borrowed_books";
+    $result = mysqli_query($conn, $sql);
+
+    $data = [];
+
+    if ($result && mysqli_num_rows($result) > 0) {
+        while ($row = mysqli_fetch_assoc($result)) {
+            $data[] = $row;
+        }
+    }
+
+    mysqli_close($conn);
+
+    $html = '
+        <html>
+        <head>
+            <title>Library Management System Report - Ananda College, Galle</title>
+            <style>
+                body {
+                    font-family: Arial, sans-serif;
+                }
+                table {
+                    width: 100%;
+                    border-collapse: collapse;
+                }
+                th, td {
+                    border: 1px solid #ddd;
+                    padding: 8px;
+                    text-align: left;
+                }
+                th {
+                    background-color: #f2f2f2;
+                }
+                h2 {
+                    text-align: center;
+                }
+                h4 {
+                    font-weight: normal;
+                    text-align: center;
+                    margin-bottom: 40px;
+                    margin-top: -10px;
+                }
+                .container {
+                    max-width: 800px;
+                    margin: 0 auto;
+                    padding: 20px;
+                }
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <h2>LMS Report - Borrowed Books</h2>
+                <h4>Ananda College, Galle</h4>
+                <table>
+                    <thead>
+                        <tr>
+                        <th>Borrowed Book No.</th>
+                        <th>Book No.</th>
+                        <th>Book Title</th>
+                        <th>Student No.</th>
+                        <th>Student Name</th>
+                        <th>Borrowed Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>';
+
+    foreach ($data as $item) {
+        $html .= '
+            <tr>
+                <td>' . $item['borrowed_book_no'] . '</td>
+                <td>' . $item['book_no'] . '</td>
+                <td>' . $item['book_title'] . '</td>
+                <td>' . $item['student_no'] . '</td>
+                <td>' . $item['student_name'] . '</td>
+                <td>' . $item['borrowed_date'] . '</td>
+            </tr>';
+    }
+
+    $html .= '
+                    </tbody>
+                </table>
+            </div>
+        </body>
+        </html>';
+
+    $dompdf = new Dompdf\Dompdf();
+    $dompdf->loadHtml($html);
+    $dompdf->setPaper('A4', 'portrait');
+    $dompdf->render();
+
+    $pdfOutput = $dompdf->output();
+    $pdfFilePath = '../../downloads/borrowed_books_report.pdf';
     file_put_contents($pdfFilePath, $pdfOutput);
 
     echo $pdfFilePath;

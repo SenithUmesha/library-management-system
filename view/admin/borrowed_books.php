@@ -26,6 +26,7 @@ if (!isset($_SESSION['id']) || $_SESSION['id'] === null) {
 			<div class="container">
 				<div style="display: flex; justify-content: space-between; align-items: center; margin-top: 18px;">
 					<h4 style="font-weight: bold;">| Borrowed Books</h4>
+					<button class="btn btn-primary" id="report" onclick="generatePDF()"><span class="lni lni-printer"></span>&nbsp;Print</button>
 				</div>
 				<div style="margin-top:30px">
 					<table id="borrowed_books_table" class="table table-striped" style="width:100%">
@@ -256,6 +257,23 @@ if (!isset($_SESSION['id']) || $_SESSION['id'] === null) {
 					}
 				});
 			}
+		}
+
+		function generatePDF() {
+			$.ajax({
+				url: 'generate_pdf.php',
+				type: 'POST',
+				data: {
+					action: 'borrowed_books'
+				},
+				success: function(response) {
+					window.open(response, '_blank');
+				},
+				error: function(xhr, status, error) {
+					console.error('AJAX Error:', status, error);
+					alert('Error generating PDF: ' + error);
+				}
+			});
 		}
 	</script>
 </body>
