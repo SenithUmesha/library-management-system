@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 07, 2024 at 07:39 AM
+-- Generation Time: Mar 14, 2024 at 09:08 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -41,7 +41,7 @@ CREATE TABLE `admins` (
 --
 
 INSERT INTO `admins` (`admin_no`, `admin_name`, `password`, `username`, `email`, `last_accessed_date`) VALUES
-(12, 'Admin', '$2y$10$dUvIWKuLHMmjjq6kNoyrdebme.Ci2tIwJ/ScniWrwVobhBBRbOZVe', 'admin', 'umesha.pms@gmail.com', '2024-03-07 06:15:01');
+(12, 'Admin', '$2y$10$dUvIWKuLHMmjjq6kNoyrdebme.Ci2tIwJ/ScniWrwVobhBBRbOZVe', 'admin', 'umesha.pms@gmail.com', '2024-03-14 09:04:25');
 
 -- --------------------------------------------------------
 
@@ -70,8 +70,8 @@ CREATE TABLE `books` (
 --
 
 INSERT INTO `books` (`book_no`, `book_title`, `author_name`, `isbn_no`, `no_of_copies`, `publisher`, `categories`, `added_date`, `language`, `description`, `location`, `user_ratings`, `no_of_ratings`) VALUES
-(8, 'Book 1', 'Author 1', 'ISBN001', 14, 'Publisher C', 'Fiction', '2024-02-15 00:00:00', 'English', 'Description 1', 'Library Section A', 2.5, 2),
-(9, 'Book 2', 'Author 2', 'ISBN002', 1, 'Publisher B', 'Non-Fiction', '2024-02-16 00:00:00', 'English', 'Description 2', 'Library Section B', 3, 1),
+(8, 'Book 1', 'Author 1', 'ISBN001', 22, 'Publisher C', 'Fiction', '2024-02-15 00:00:00', 'English', 'Description 1', 'Library Section A', 2.5, 2),
+(9, 'Book 2', 'Author 2', 'ISBN002', 0, 'Publisher B', 'Non-Fiction', '2024-02-16 00:00:00', 'English', 'Description 2', 'Library Section B', 3, 1),
 (10, 'Book 3', 'Author 3', 'ISBN003', 7, 'Publisher C', 'Science', '2024-02-17 00:00:00', 'English', 'Description 3', 'Library Section C', 0, 0),
 (11, 'Book 4', 'Author 4', 'ISBN020', 0, 'Publisher D', 'Mystery', '2024-03-01 00:00:00', 'English', 'Description 20', 'Library Section D', 0, 0);
 
@@ -87,16 +87,17 @@ CREATE TABLE `borrowed_books` (
   `book_title` varchar(150) NOT NULL,
   `student_no` int(11) NOT NULL,
   `student_name` varchar(60) NOT NULL,
-  `borrowed_date` datetime NOT NULL
+  `borrowed_date` datetime NOT NULL,
+  `due_date` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `borrowed_books`
 --
 
-INSERT INTO `borrowed_books` (`borrowed_book_no`, `book_no`, `book_title`, `student_no`, `student_name`, `borrowed_date`) VALUES
-(12, 8, 'Book 1', 8, 'Umesha', '2024-03-06 19:04:54'),
-(21, 8, 'Book 1', 24, 'Umesha', '2024-03-06 19:04:54');
+INSERT INTO `borrowed_books` (`borrowed_book_no`, `book_no`, `book_title`, `student_no`, `student_name`, `borrowed_date`, `due_date`) VALUES
+(34, 9, 'Book 2', 24, 'Umesha', '2024-03-13 18:43:16', '2024-03-20 18:43:16'),
+(35, 9, 'Book 2', 8, 'Umesha', '2024-03-13 18:43:16', '2024-03-20 18:43:16');
 
 -- --------------------------------------------------------
 
@@ -147,8 +148,7 @@ CREATE TABLE `reservations` (
 --
 
 INSERT INTO `reservations` (`reservation_no`, `book_no`, `book_title`, `student_no`, `student_name`, `reserved_date`, `email`) VALUES
-(24, 9, 'Book 2', 24, 'Umesha', '2024-03-06 20:41:31', 'umesha.pms@gmail.com'),
-(25, 8, 'Book 1', 25, 'Thisara', '2024-03-06 20:41:31', 'umesha.pms@gmail.com');
+(33, 9, 'Book 2', 24, 'Umesha', '2024-03-14 09:04:18', 'umesha.pms@gmail.com');
 
 -- --------------------------------------------------------
 
@@ -174,7 +174,20 @@ INSERT INTO `returned_books` (`returned_book_no`, `book_no`, `book_title`, `stud
 (1, 8, 'Book 1', 24, 'Umesha', '2024-02-07 04:00:00', 1),
 (2, 9, 'Book 2', 24, 'Umesha', '2024-02-08 00:00:00', 0),
 (3, 8, 'Book 1', 24, 'Umesha', '2024-02-09 00:00:00', 0),
-(4, 11, 'Book 4', 25, 'Thisara', '2024-02-10 00:00:00', 0);
+(4, 11, 'Book 4', 25, 'Thisara', '2024-02-10 00:00:00', 0),
+(34, 8, 'Book 1', 24, 'Umesha', '2024-03-07 08:40:50', 0),
+(35, 8, 'Book 1', 24, 'Umesha', '2024-03-13 17:44:48', 0),
+(36, 8, 'Book 1', 24, 'Umesha', '2024-03-13 17:49:34', 0),
+(37, 8, 'Book 1', 24, 'Umesha', '2024-03-13 17:52:33', 0),
+(38, 8, 'Book 1', 24, 'Umesha', '2024-03-13 17:55:39', 0),
+(39, 8, 'Book 1', 24, 'Umesha', '2024-03-13 17:56:18', 0),
+(40, 8, 'Book 1', 24, 'Umesha', '2024-03-13 17:58:38', 0),
+(41, 8, 'Book 1', 24, 'Umesha', '2024-03-13 18:00:13', 0),
+(42, 9, 'Book 2', 24, 'Umesha', '2024-03-13 18:04:08', 0),
+(43, 9, 'Book 2', 24, 'Umesha', '2024-03-13 18:04:13', 0),
+(44, 9, 'Book 2', 24, 'Umesha', '2024-03-13 18:10:07', 0),
+(45, 9, 'Book 2', 24, 'Umesha', '2024-03-13 18:10:57', 0),
+(46, 9, 'Book 2', 24, 'Umesha', '2024-03-13 18:26:23', 0);
 
 -- --------------------------------------------------------
 
@@ -198,7 +211,7 @@ CREATE TABLE `students` (
 --
 
 INSERT INTO `students` (`student_no`, `admission_id`, `password`, `username`, `email`, `class`, `student_name`, `last_accessed_date`) VALUES
-(24, 424112, '$2y$10$RdvbmzE7Obg8KCrksIvR7ORb/OOzpP3wPYIPyQIJvXJipJhcBG/nS', 'umesha', 'umesha.pms@gmail.com', 'Grade 11', 'Umesha', '2024-03-07 06:15:14'),
+(24, 424112, '$2y$10$RdvbmzE7Obg8KCrksIvR7ORb/OOzpP3wPYIPyQIJvXJipJhcBG/nS', 'umesha', 'umesha.pms@gmail.com', 'Grade 11', 'Umesha', '2024-03-14 09:04:16'),
 (25, 575343, '$2y$10$dX84LdRlT1gQwQ7UAUu/AeGsLfH5rHR0cdLzMz0SoqXsOeEESPKV2', 'thisara', 'thisarasadesh4@gmail.com', 'Grade 01', 'Thisara', '2024-03-01 14:54:47'),
 (26, 342343, '$2y$10$QWbz5zgY2GXUBRJuN5fmGOyL78aE1bA.5VbJwcS33bv8pSBcHyAEO', 'amila', 'amilaramesh1998@gmail.com', 'Grade 03', 'Amila', NULL);
 
@@ -268,7 +281,7 @@ ALTER TABLE `books`
 -- AUTO_INCREMENT for table `borrowed_books`
 --
 ALTER TABLE `borrowed_books`
-  MODIFY `borrowed_book_no` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
+  MODIFY `borrowed_book_no` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
 
 --
 -- AUTO_INCREMENT for table `fines`
@@ -280,13 +293,13 @@ ALTER TABLE `fines`
 -- AUTO_INCREMENT for table `reservations`
 --
 ALTER TABLE `reservations`
-  MODIFY `reservation_no` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
+  MODIFY `reservation_no` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
 
 --
 -- AUTO_INCREMENT for table `returned_books`
 --
 ALTER TABLE `returned_books`
-  MODIFY `returned_book_no` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
+  MODIFY `returned_book_no` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=47;
 
 --
 -- AUTO_INCREMENT for table `students`
