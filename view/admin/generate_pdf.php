@@ -12,6 +12,10 @@ if (isset($_POST['action']) && $_POST['action'] === 'students') {
     generateBorrowedBooks($conn);
 } else if ($_POST['action'] === 'returned_books') {
     generateReturnedBooks($conn);
+} else if ($_POST['action'] === 'fines') {
+    generateFines($conn);
+} else if ($_POST['action'] === 'reservations') {
+    generateReservations($conn);
 } else {
     echo 'Invalid action';
 }
@@ -514,6 +518,212 @@ function generateReturnedBooks($conn)
 
     $pdfOutput = $dompdf->output();
     $pdfFilePath = '../../downloads/returned_books_report.pdf';
+    file_put_contents($pdfFilePath, $pdfOutput);
+
+    echo $pdfFilePath;
+}
+
+function generateFines($conn)
+{
+    $sql = "SELECT * FROM fines";
+    $result = mysqli_query($conn, $sql);
+
+    $data = [];
+
+    if ($result && mysqli_num_rows($result) > 0) {
+        while ($row = mysqli_fetch_assoc($result)) {
+            $data[] = $row;
+        }
+    }
+
+    mysqli_close($conn);
+
+    $html = '
+        <html>
+        <head>
+            <title>Library Management System Report - Ananda College, Galle</title>
+            <style>
+                body {
+                    font-family: Arial, sans-serif;
+                }
+                table {
+                    width: 100%;
+                    border-collapse: collapse;
+                }
+                th, td {
+                    border: 1px solid #ddd;
+                    padding: 8px;
+                    text-align: left;
+                }
+                th {
+                    background-color: #f2f2f2;
+                }
+                h2 {
+                    text-align: center;
+                }
+                h4 {
+                    font-weight: normal;
+                    text-align: center;
+                    margin-bottom: 40px;
+                    margin-top: -10px;
+                }
+                .container {
+                    max-width: 100%;
+                    margin: 0 auto;
+                    padding: 20px;
+                }
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <h2>LMS Report - Fines</h2>
+                <h4>Ananda College, Galle</h4>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Fine No.</th>
+							<th>Student No.</th>
+							<th>Student Name</th>
+							<th>Book No.</th>
+							<th>Book Title</th>
+							<th>Fine Amount</th>
+							<th>Issued Date</th>
+							<th>Due Date</th>
+							<th>Paid Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>';
+
+    foreach ($data as $item) {
+        $html .= '
+            <tr>
+                <td>' . $item['fine_no'] . '</td>
+                <td>' . $item['student_no'] . '</td>
+                <td>' . $item['student_name'] . '</td>
+                <td>' . $item['book_no'] . '</td>
+                <td>' . $item['book_title'] . '</td>
+                <td>' . $item['fine_amount'] . '</td>
+                <td>' . $item['issued_date'] . '</td>
+                <td>' . $item['due_date'] . '</td>
+                <td>' . $item['paid_date'] . '</td>
+            </tr>';
+    }
+
+    $html .= '
+                    </tbody>
+                </table>
+            </div>
+        </body>
+        </html>';
+
+    $dompdf = new Dompdf\Dompdf();
+    $dompdf->loadHtml($html);
+    $dompdf->setPaper('A4', 'landscape');
+    $dompdf->render();
+
+    $pdfOutput = $dompdf->output();
+    $pdfFilePath = '../../downloads/fines_report.pdf';
+    file_put_contents($pdfFilePath, $pdfOutput);
+
+    echo $pdfFilePath;
+}
+
+function generateReservations($conn)
+{
+    $sql = "SELECT * FROM reservations";
+    $result = mysqli_query($conn, $sql);
+
+    $data = [];
+
+    if ($result && mysqli_num_rows($result) > 0) {
+        while ($row = mysqli_fetch_assoc($result)) {
+            $data[] = $row;
+        }
+    }
+
+    mysqli_close($conn);
+
+    $html = '
+        <html>
+        <head>
+            <title>Library Management System Report - Ananda College, Galle</title>
+            <style>
+                body {
+                    font-family: Arial, sans-serif;
+                }
+                table {
+                    width: 100%;
+                    border-collapse: collapse;
+                }
+                th, td {
+                    border: 1px solid #ddd;
+                    padding: 8px;
+                    text-align: left;
+                }
+                th {
+                    background-color: #f2f2f2;
+                }
+                h2 {
+                    text-align: center;
+                }
+                h4 {
+                    font-weight: normal;
+                    text-align: center;
+                    margin-bottom: 40px;
+                    margin-top: -10px;
+                }
+                .container {
+                    max-width: 800px;
+                    margin: 0 auto;
+                    padding: 20px;
+                }
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <h2>LMS Report - Reservations</h2>
+                <h4>Ananda College, Galle</h4>
+                <table>
+                    <thead>
+                        <tr>
+                        <th>Reservation No.</th>
+                        <th>Book No.</th>
+                        <th>Book Title</th>
+                        <th>Student No.</th>
+                        <th>Student Name</th>
+                        <th>Email</th>
+                        <th>Reserved Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>';
+
+    foreach ($data as $item) {
+        $html .= '
+            <tr>
+                <td>' . $item['reservation_no'] . '</td>
+                <td>' . $item['book_no'] . '</td>
+                <td>' . $item['book_title'] . '</td>
+                <td>' . $item['student_no'] . '</td>
+                <td>' . $item['student_name'] . '</td>
+                <td>' . $item['email'] . '</td>
+                <td>' . $item['reserved_date'] . '</td>
+            </tr>';
+    }
+
+    $html .= '
+                    </tbody>
+                </table>
+            </div>
+        </body>
+        </html>';
+
+    $dompdf = new Dompdf\Dompdf();
+    $dompdf->loadHtml($html);
+    $dompdf->setPaper('A4', 'portrait');
+    $dompdf->render();
+
+    $pdfOutput = $dompdf->output();
+    $pdfFilePath = '../../downloads/reservations_report.pdf';
     file_put_contents($pdfFilePath, $pdfOutput);
 
     echo $pdfFilePath;
