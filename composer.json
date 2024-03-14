@@ -1,5 +1,6 @@
 {
     "require": {
-        "symfony/mailer": "^7.0"
+        "symfony/mailer": "^7.0",
+        "dompdf/dompdf": "^2.0"
     }
 }
