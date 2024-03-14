@@ -27,7 +27,7 @@ if (!isset($_SESSION['id']) || $_SESSION['id'] === null) {
 				<div style="display: flex; justify-content: space-between; align-items: center; margin-top: 18px;">
 					<h4 style="font-weight: bold;">| Books</h4>
 					<div>
-						<button class="btn btn-primary" id="report" onclick="generatePDF()"><span class="lni lni-printer"></span>&nbsp;Print</button>
+						<button class="btn btn-primary" id="report" onclick="generatePDF()"><i class="bi bi-file-earmark-arrow-down"></i>&nbsp;Print</button>
 						<button class="btn btn-success" id="addbook" onclick="openAddModal()"><span class="bi-plus"></span>&nbsp;Book</button>
 					</div>
 				</div>

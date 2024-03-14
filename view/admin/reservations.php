@@ -26,7 +26,7 @@ if (!isset($_SESSION['id']) || $_SESSION['id'] === null) {
             <div class="container">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 18px;">
                     <h4 style="font-weight: bold;">| Reservations</h4>
-                    <button class="btn btn-primary" id="report" onclick="generatePDF()"><span class="lni lni-printer"></span>&nbsp;Print</button>
+                    <button class="btn btn-primary" id="report" onclick="generatePDF()"><i class="bi bi-file-earmark-arrow-down"></i>&nbsp;Print</button>
                 </div>
                 <div style="margin-top:30px">
                     <table id="reservations_table" class="table table-striped" style="width:100%">
