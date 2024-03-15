@@ -68,7 +68,6 @@ function returnBook($conn)
     $studentName = $_POST['studentName'];
     $borrowedBookNo = $_POST['borrowedBookNo'];
     $dueDate = $_POST['dueDate'];
-    $borrowedDate = $_POST['borrowedDate'];
 
     $currentDateTime = date('Y-m-d H:i:s');
 
