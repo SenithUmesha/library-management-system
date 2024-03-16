@@ -19,7 +19,7 @@ function checkDueBooks($conn)
 
     $currentDateTime = date('Y-m-d H:i:s');
 
-    $sql = "SELECT * FROM borrowed_books WHERE due_date < ? AND overdue_reminder != 'Sent'";
+    $sql = "SELECT * FROM borrowed_books WHERE due_date < ? AND overdue_reminder IS NULL";
     $stmt = mysqli_prepare($conn, $sql);
     mysqli_stmt_bind_param($stmt, 's', $currentDateTime);
     mysqli_stmt_execute($stmt);
