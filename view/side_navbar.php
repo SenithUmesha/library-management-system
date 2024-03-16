@@ -150,7 +150,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
     }
 
     .sidebar-footer {
-        position: fixed;
+        position: relative;
         bottom: 0;
     }
 </style>
