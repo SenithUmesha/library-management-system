@@ -289,7 +289,7 @@ if (!isset($_SESSION['id']) || $_SESSION['id'] === null) {
 
         function generatePDF() {
             $.ajax({
-                url: 'generate_pdf.php',
+                url: '../../downloads/generate_pdf.php',
                 type: 'POST',
                 data: {
                     action: 'reservations',

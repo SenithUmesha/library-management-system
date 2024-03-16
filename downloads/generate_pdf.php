@@ -1,6 +1,6 @@
 <?php
-require '../../includes/db_conn.php';
-require_once '../../vendor/autoload.php';
+require '../includes/db_conn.php';
+require_once '../vendor/autoload.php';
 
 if (isset($_POST['action']) && $_POST['action'] === 'students') {
     generateStudents($conn);
@@ -113,10 +113,10 @@ function generateStudents($conn)
     $dompdf->render();
 
     $pdfOutput = $dompdf->output();
-    $pdfFilePath = '../../downloads/students_report.pdf';
+    $pdfFilePath = 'students_report.pdf';
     file_put_contents($pdfFilePath, $pdfOutput);
 
-    echo $pdfFilePath;
+    echo '../../downloads/students_report.pdf';
 }
 
 function generateAdmins($conn)
@@ -208,10 +208,10 @@ function generateAdmins($conn)
     $dompdf->render();
 
     $pdfOutput = $dompdf->output();
-    $pdfFilePath = '../../downloads/admins_report.pdf';
+    $pdfFilePath = 'admins_report.pdf';
     file_put_contents($pdfFilePath, $pdfOutput);
 
-    echo $pdfFilePath;
+    echo '../../downloads/admins_report.pdf';
 }
 
 function generateBooks($conn)
@@ -319,10 +319,10 @@ function generateBooks($conn)
     $dompdf->render();
 
     $pdfOutput = $dompdf->output();
-    $pdfFilePath = '../../downloads/books_report.pdf';
+    $pdfFilePath = 'books_report.pdf';
     file_put_contents($pdfFilePath, $pdfOutput);
 
-    echo $pdfFilePath;
+    echo '../../downloads/books_report.pdf';
 }
 
 function generateBorrowedBooks($conn)
@@ -418,10 +418,10 @@ function generateBorrowedBooks($conn)
     $dompdf->render();
 
     $pdfOutput = $dompdf->output();
-    $pdfFilePath = '../../downloads/borrowed_books_report.pdf';
+    $pdfFilePath = 'borrowed_books_report.pdf';
     file_put_contents($pdfFilePath, $pdfOutput);
 
-    echo $pdfFilePath;
+    echo '../../downloads/borrowed_books_report.pdf';
 }
 
 function generateReturnedBooks($conn)
@@ -517,10 +517,10 @@ function generateReturnedBooks($conn)
     $dompdf->render();
 
     $pdfOutput = $dompdf->output();
-    $pdfFilePath = '../../downloads/returned_books_report.pdf';
+    $pdfFilePath = 'returned_books_report.pdf';
     file_put_contents($pdfFilePath, $pdfOutput);
 
-    echo $pdfFilePath;
+    echo '../../downloads/returned_books_report.pdf';
 }
 
 function generateFines($conn)
@@ -622,10 +622,10 @@ function generateFines($conn)
     $dompdf->render();
 
     $pdfOutput = $dompdf->output();
-    $pdfFilePath = '../../downloads/fines_report.pdf';
+    $pdfFilePath = 'fines_report.pdf';
     file_put_contents($pdfFilePath, $pdfOutput);
 
-    echo $pdfFilePath;
+    echo '../../downloads/fines_report.pdf';
 }
 
 function generateReservations($conn)
@@ -723,8 +723,8 @@ function generateReservations($conn)
     $dompdf->render();
 
     $pdfOutput = $dompdf->output();
-    $pdfFilePath = '../../downloads/reservations_report.pdf';
+    $pdfFilePath = 'reservations_report.pdf';
     file_put_contents($pdfFilePath, $pdfOutput);
 
-    echo $pdfFilePath;
+    echo '../../downloads/reservations_report.pdf';
 }
