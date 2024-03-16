@@ -7,6 +7,8 @@ use Symfony\Component\Mailer\Transport;
 use Symfony\Component\Mailer\Mailer;
 use Symfony\Component\Mime\Email;
 
+// Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope LocalMachine
+
 session_start();
 
 checkDueBooks($conn);
