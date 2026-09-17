@@ -1,7 +1,13 @@
 <?php
 include "view/header.php";
 
-$current_page = isset($_GET['page']) ? $_GET['page'] : 'home.php';
+$allowedPages = [
+    'home.php',
+    'view/login.php',
+];
+
+$requestedPage = $_GET['page'] ?? 'home.php';
+$currentPage = in_array($requestedPage, $allowedPages, true) ? $requestedPage : 'home.php';
 ?>
 
 <body>
@@ -14,19 +20,17 @@ $current_page = isset($_GET['page']) ? $_GET['page'] : 'home.php';
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav">
           <li class="nav-item">
-            <a class="nav-link <?php echo $current_page == 'home.php' ? 'active' : ''; ?>" aria-current="page" href="?page=home.php">Home</a>
+            <a class="nav-link <?php echo $currentPage === 'home.php' ? 'active' : ''; ?>" aria-current="page" href="?page=home.php">Home</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link <?php echo $current_page == 'view/login.php' ? 'active' : ''; ?>" aria-current="page" href="?page=view/login.php">Login</a>
+            <a class="nav-link <?php echo $currentPage === 'view/login.php' ? 'active' : ''; ?>" aria-current="page" href="?page=view/login.php">Login</a>
           </li>
         </ul>
       </div>
     </div>
   </nav>
 
-  <?php
-  if ($current_page == 'home.php') {
-  ?>
+  <?php if ($currentPage === 'home.php') { ?>
     <style>
       body {
         padding: 0;
@@ -43,20 +47,12 @@ $current_page = isset($_GET['page']) ? $_GET['page'] : 'home.php';
           <hr class="divider" />
         </div>
         <div class="col-lg-8 align-self-baseline">
-          <p class="text-white-75 mb-5">Efficiently manage your library resources with our user-friendly platform. Explore a world of organized information and seamless book transactions.</p>
-          <a class="btn btn-primary btn-xl" href="?page=view/login.php" id="getStartedBtn">Get Started</a>
+          <p class="text-white-75 mb-5">Manage books, borrowing, reservations, returns, fines and student accounts from one small PHP/MySQL system.</p>
+          <a class="btn btn-primary btn-xl" href="?page=view/login.php">Get Started</a>
         </div>
       </div>
     </div>
-
-    <script>
-      document.getElementById('getStartedBtn').addEventListener('click', function() {
-        window.location.href = 'view/login.php';
-      });
-    </script>
-  <?php
-  } else {
-    include $current_page;
-  }
-  ?>
+  <?php } else {
+    include __DIR__ . '/' . $currentPage;
+  } ?>
 </body>
