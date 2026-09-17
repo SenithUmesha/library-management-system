@@ -1,111 +1,76 @@
 <?php
-require __DIR__ . '../../includes/db_conn.php';
 
-require_once __DIR__ . '../../vendor/autoload.php';
+require __DIR__ . '/../includes/db_conn.php';
+require_once __DIR__ . '/../vendor/autoload.php';
+require_once __DIR__ . '/../includes/mailer.php';
 
-use Symfony\Component\Mailer\Transport;
-use Symfony\Component\Mailer\Mailer;
-use Symfony\Component\Mime\Email;
+/**
+ * CLI-friendly overdue reminder job.
+ *
+ * Run manually:
+ *   php scripts/check_overdue_books.php
+ *
+ * In production this belongs behind cron / Task Scheduler rather than a web request.
+ */
 
-// Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope LocalMachine
+$currentDateTime = date('Y-m-d H:i:s');
+$sql = <<<'SQL'
+SELECT
+    bb.borrowed_book_no,
+    bb.book_title,
+    bb.borrowed_date,
+    bb.due_date,
+    s.email
+FROM borrowed_books bb
+INNER JOIN students s ON s.student_no = bb.student_no
+WHERE bb.due_date < ?
+  AND bb.overdue_reminder IS NULL
+ORDER BY bb.due_date ASC
+SQL;
 
-session_start();
+$stmt = mysqli_prepare($conn, $sql);
+mysqli_stmt_bind_param($stmt, 's', $currentDateTime);
+mysqli_stmt_execute($stmt);
+$result = mysqli_stmt_get_result($stmt);
 
-checkDueBooks($conn);
+$found = mysqli_num_rows($result);
+$sent = 0;
 
-function checkDueBooks($conn)
-{
-    echo ("<script>console.log('PHP: Started');</script>");
+echo "Overdue loans found: {$found}" . PHP_EOL;
 
-    $currentDateTime = date('Y-m-d H:i:s');
-
-    $sql = "SELECT * FROM borrowed_books WHERE due_date < ? AND overdue_reminder IS NULL";
-    $stmt = mysqli_prepare($conn, $sql);
-    mysqli_stmt_bind_param($stmt, 's', $currentDateTime);
-    mysqli_stmt_execute($stmt);
-
-    $result = mysqli_stmt_get_result($stmt);
-
-    echo ("<script>console.log('Overdue Books: " . mysqli_num_rows($result) . "');</script>");
-
-    if ($result && mysqli_num_rows($result) > 0) {
-        while ($row = mysqli_fetch_assoc($result)) {
-            $bookTitle = $row['book_title'];
-            $borrowedDate = $row['borrowed_date'];
-            $dueDate = $row['due_date'];
-            $studentNo = $row['student_no'];
-            $bookNo = $row['book_no'];
-
-            echo ("<script>console.log('Student No:" . $studentNo . "');</script>");
-
-            $sql = "SELECT * FROM students WHERE student_no = ?";
-
-            $stmt2 = mysqli_prepare($conn, $sql);
-            mysqli_stmt_bind_param($stmt2, 'i', $studentNo);
-            mysqli_stmt_execute($stmt2);
-
-            $result1 = mysqli_stmt_get_result($stmt2);
-
-            if ($result1 && mysqli_num_rows($result1) > 0) {
-                $row = mysqli_fetch_assoc($result1);
-                $studentEmail = $row['email'];
-
-                sendReminderEmail($studentEmail, $bookTitle, $borrowedDate, $dueDate);
-                $markReminderSentSql = "UPDATE borrowed_books SET overdue_reminder = 'Sent' WHERE student_no = ? AND book_no = ?";
-                $markReminderSentStmt = mysqli_prepare($conn, $markReminderSentSql);
-                mysqli_stmt_bind_param($markReminderSentStmt, 'ii', $studentNo, $bookNo);
-                mysqli_stmt_execute($markReminderSentStmt);
-                mysqli_stmt_close($markReminderSentStmt);
-
-                echo ("<script>console.log('PHP: Email Sent');</script>");
-            }
-        }
-        mysqli_stmt_close($stmt2);
+while ($loan = mysqli_fetch_assoc($result)) {
+    if (!sendReminderEmail($loan['email'], $loan['book_title'], $loan['borrowed_date'], $loan['due_date'])) {
+        echo "Skipped reminder for borrowed_book_no={$loan['borrowed_book_no']} (mail not configured or failed)." . PHP_EOL;
+        continue;
     }
 
-    mysqli_stmt_close($stmt);
-    mysqli_close($conn);
+    $borrowedBookNo = (int) $loan['borrowed_book_no'];
+    $markStmt = mysqli_prepare($conn, "UPDATE borrowed_books SET overdue_reminder = 'Sent' WHERE borrowed_book_no = ?");
+    mysqli_stmt_bind_param($markStmt, 'i', $borrowedBookNo);
+    mysqli_stmt_execute($markStmt);
+    mysqli_stmt_close($markStmt);
+    $sent++;
 }
 
-function sendReminderEmail($studentEmail, $bookTitle, $borrowedDate, $dueDate)
+mysqli_stmt_close($stmt);
+mysqli_close($conn);
+
+echo "Reminders sent: {$sent}" . PHP_EOL;
+
+function sendReminderEmail(string $studentEmail, string $bookTitle, string $borrowedDate, string $dueDate): bool
 {
-    $transport = Transport::fromDsn('smtp://34senith@gmail.com:osfiefvsuqxjgmhv@smtp.gmail.com:587');
+    $safeTitle = htmlspecialchars($bookTitle, ENT_QUOTES, 'UTF-8');
+    $safeBorrowedDate = htmlspecialchars($borrowedDate, ENT_QUOTES, 'UTF-8');
+    $safeDueDate = htmlspecialchars($dueDate, ENT_QUOTES, 'UTF-8');
 
-    $mailer = new Mailer($transport);
+    $html = <<<HTML
+    <h2>Library overdue reminder</h2>
+    <p>The following borrowed book is now overdue:</p>
+    <p><strong>Book:</strong> {$safeTitle}<br>
+    <strong>Borrowed:</strong> {$safeBorrowedDate}<br>
+    <strong>Due:</strong> {$safeDueDate}</p>
+    <p>Please return the book or contact the library staff if you need assistance.</p>
+    HTML;
 
-    $email = (new Email());
-
-    $email->from('34senith@gmail.com');
-
-    $email->to('' . $studentEmail);
-
-    $email->subject('Reminder: Book Due Date');
-
-    $email->html('
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-</head>
-<body style="font-family: Arial, sans-serif; line-height: 1.6; margin: 0; padding: 20px; background-color: #f4f4f4;">
-<div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
-<h2 style="color: #333;">Reminder: Book Due Date</h2>
-<p style="color: #555;">Dear Student,</p>
-<p style="color: #555;">This is a reminder that the due date for the book "' . $bookTitle . '" is approaching. Please return the book to the library as soon as possible.</p>
-<div style="margin-top: 20px; padding: 10px; background-color: #f9f9f9; border-radius: 6px;" class="book-details">
-<p><strong>Book Title:</strong> ' . $bookTitle . '</p>
-<p><strong>Borrowed Date:</strong> ' . $borrowedDate . '</p>
-<p><strong>Due Date:</strong> ' . $dueDate . '</p>
-</div>
-<p style="color: #555; margin-top: 20px;">If you have any questions or need further assistance, please contact our library staff.</p>
-<p style="color: #555;">Happy reading!</p>
-<div style="margin-top: 20px; font-size: 12px; color: #777;" class="footer">
-<p>Best regards,<br>Library System Team<br>Ananda College</p>
-</div>
-</div>
-</body>
-</html>
-');
-
-    $mailer->send($email);
+    return sendLibraryEmail($studentEmail, 'Reminder: overdue library book', $html);
 }
