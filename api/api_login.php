@@ -1,97 +1,118 @@
 <?php
 require '../includes/db_conn.php';
-require '../util/functions.php';
-require '../util/snippet.php';
 
+header('Content-Type: application/json; charset=utf-8');
 session_start();
 
-if (isset($_POST['action'])) {
-    $action = $_POST['action'];
+$action = $_POST['action'] ?? '';
 
-    switch ($action) {
-        case 'submit':
-            login($conn);
-            break;
-        default:
-            echo json_encode(['error' => 'Invalid action']);
-            break;
-    }
-} else {
-    echo json_encode(['error' => 'Action not specified']);
+if ($action !== 'submit') {
+    http_response_code(400);
+    echo json_encode(['error' => 'Invalid or missing action']);
+    exit;
 }
 
-function login($conn)
+login($conn);
+
+function login(mysqli $conn): void
 {
-    $response = ['success' => false, 'message' => ''];
+    $response = ['success' => false, 'message' => 'Login failed. Please check your details.'];
 
-    $username = sanitize(trim($_POST['username']));
-    $password = sanitize(trim($_POST['password']));
+    $username = trim($_POST['username'] ?? '');
+    $password = $_POST['password'] ?? '';
 
-    $sql_admin = "SELECT * FROM admins WHERE username = ?";
-    $stmt_admin = mysqli_prepare($conn, $sql_admin);
-    mysqli_stmt_bind_param($stmt_admin, "s", $username);
-    mysqli_stmt_execute($stmt_admin);
-    $result_admin = mysqli_stmt_get_result($stmt_admin);
+    if ($username === '' || $password === '') {
+        http_response_code(422);
+        echo json_encode($response);
+        return;
+    }
 
-    if ($row = mysqli_fetch_assoc($result_admin)) {
-        if (password_verify($password, $row['password'])) {
-            $_SESSION['id'] = $row['admin_no'];
-            $_SESSION['username'] = $row['username'];
-            $_SESSION['name'] = $row['admin_name'];
-            $_SESSION['account_type'] = "admin";
+    $admin = findAccountByUsername($conn, 'admins', 'admin', $username);
+    if ($admin && password_verify($password, $admin['password'])) {
+        establishSession($admin['admin_no'], $admin['username'], $admin['admin_name'], 'admin');
 
-            if ($row['last_accessed_date'] === null) {
-                $response['success'] = true;
-                $response['changePassword'] = true;
-                $response['redirect'] = 'view/change_password.php';
-            } else {
-                updateLastAccessedDate($conn, $_SESSION['id'], 'admins', 'admin');
-
-                $response['success'] = true;
-                $response['redirect'] = 'view/admin/students.php';
-            }
+        if ($admin['last_accessed_date'] === null) {
+            $response = [
+                'success' => true,
+                'changePassword' => true,
+                'redirect' => 'view/change_password.php',
+            ];
         } else {
-            $response['message'] = 'Login Failed. Please check your details.';
+            updateLastAccessedDate($conn, (int) $admin['admin_no'], 'admins', 'admin_no');
+            $response = [
+                'success' => true,
+                'redirect' => 'view/admin/students.php',
+            ];
         }
-    } else {
-        $sql_student = "SELECT * FROM students WHERE username = ?";
-        $stmt_student = mysqli_prepare($conn, $sql_student);
-        mysqli_stmt_bind_param($stmt_student, "s", $username);
-        mysqli_stmt_execute($stmt_student);
-        $result_student = mysqli_stmt_get_result($stmt_student);
 
-        if ($row = mysqli_fetch_assoc($result_student)) {
-            if (password_verify($password, $row['password'])) {
-                $_SESSION['id'] = $row['student_no'];
-                $_SESSION['username'] = $row['username'];
-                $_SESSION['name'] = $row['student_name'];
-                $_SESSION['account_type'] = "student";
+        echo json_encode($response);
+        return;
+    }
 
-                if ($row['last_accessed_date'] === null) {
-                    $response['success'] = true;
-                    $response['changePassword'] = true;
-                } else {
-                    updateLastAccessedDate($conn, $_SESSION['id'], 'students', 'student');
+    $student = findAccountByUsername($conn, 'students', 'student', $username);
+    if ($student && password_verify($password, $student['password'])) {
+        establishSession($student['student_no'], $student['username'], $student['student_name'], 'student');
 
-                    $response['success'] = true;
-                    $response['redirect'] = 'view/student/profile.php';
-                }
-            } else {
-                $response['message'] = 'Login Failed. Please check your details.';
-            }
+        if ($student['last_accessed_date'] === null) {
+            $response = [
+                'success' => true,
+                'changePassword' => true,
+                'redirect' => 'view/change_password.php',
+            ];
         } else {
-            $response['message'] = 'Login Failed. Please check your details.';
+            updateLastAccessedDate($conn, (int) $student['student_no'], 'students', 'student_no');
+            $response = [
+                'success' => true,
+                'redirect' => 'view/student/profile.php',
+            ];
         }
     }
 
     echo json_encode($response);
 }
 
-function updateLastAccessedDate($conn, $id, $userType, $user)
+function findAccountByUsername(mysqli $conn, string $table, string $type, string $username): ?array
 {
-    $currentDateTime = date('Y-m-d H:i:s');
-    $sql = "UPDATE $userType SET last_accessed_date = '$currentDateTime' WHERE {$user}_no = ?";
-    $stmt = mysqli_prepare($conn, $sql);
-    mysqli_stmt_bind_param($stmt, "i", $id);
+    $allowed = [
+        'admins' => 'admin_no',
+        'students' => 'student_no',
+    ];
+
+    if (!isset($allowed[$table])) {
+        return null;
+    }
+
+    $stmt = mysqli_prepare($conn, "SELECT * FROM {$table} WHERE username = ? LIMIT 1");
+    mysqli_stmt_bind_param($stmt, 's', $username);
     mysqli_stmt_execute($stmt);
+    $account = mysqli_fetch_assoc(mysqli_stmt_get_result($stmt)) ?: null;
+    mysqli_stmt_close($stmt);
+
+    return $account;
+}
+
+function establishSession(int $id, string $username, string $name, string $accountType): void
+{
+    session_regenerate_id(true);
+    $_SESSION['id'] = $id;
+    $_SESSION['username'] = $username;
+    $_SESSION['name'] = $name;
+    $_SESSION['account_type'] = $accountType;
+}
+
+function updateLastAccessedDate(mysqli $conn, int $id, string $table, string $idColumn): void
+{
+    $allowed = [
+        'admins' => 'admin_no',
+        'students' => 'student_no',
+    ];
+
+    if (($allowed[$table] ?? null) !== $idColumn) {
+        return;
+    }
+
+    $stmt = mysqli_prepare($conn, "UPDATE {$table} SET last_accessed_date = CURRENT_TIMESTAMP WHERE {$idColumn} = ?");
+    mysqli_stmt_bind_param($stmt, 'i', $id);
+    mysqli_stmt_execute($stmt);
+    mysqli_stmt_close($stmt);
 }
