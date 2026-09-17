@@ -1,1 +1,10 @@
+/vendor/
+/.idea/
+/.vscode/
+.env
+.env.*
+!.env.example
 *.pdf
+/downloads/*.pdf
+.DS_Store
+Thumbs.db
