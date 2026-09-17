@@ -1,225 +1,202 @@
 <?php
+
 require '../includes/db_conn.php';
 require '../util/functions.php';
-
 require_once '../vendor/autoload.php';
+require_once '../includes/mailer.php';
 
-use Symfony\Component\Mailer\Transport;
-use Symfony\Component\Mailer\Mailer;
-use Symfony\Component\Mime\Email;
+header('Content-Type: application/json; charset=utf-8');
+session_start();
 
-if (isset($_POST['action'])) {
-    $action = $_POST['action'];
-
-    switch ($action) {
-        case 'fetch':
-            fetchStudent($conn);
-            break;
-        case 'fetch_all':
-            fetchAllStudents($conn);
-            break;
-        case 'add':
-            addStudent($conn);
-            break;
-        case 'update':
-            updateStudent($conn);
-            break;
-        case 'delete':
-            deleteStudent($conn);
-            break;
-        default:
-            echo json_encode(['error' => 'Invalid action']);
-            break;
-    }
-} else {
-    echo json_encode(['error' => 'Action not specified']);
+if (($_SESSION['account_type'] ?? null) !== 'admin') {
+    http_response_code(403);
+    echo json_encode(['error' => 'Admin access required']);
+    exit;
 }
 
-function fetchAllStudents($conn)
+$action = $_POST['action'] ?? '';
+
+switch ($action) {
+    case 'fetch':
+        fetchStudent($conn);
+        break;
+    case 'fetch_all':
+        fetchAllStudents($conn);
+        break;
+    case 'add':
+        addStudent($conn);
+        break;
+    case 'update':
+        updateStudent($conn);
+        break;
+    case 'delete':
+        deleteStudent($conn);
+        break;
+    default:
+        http_response_code(400);
+        echo json_encode(['error' => 'Invalid or missing action']);
+}
+
+function fetchAllStudents(mysqli $conn): void
 {
-    $sql = "SELECT * FROM students";
-    $result = mysqli_query($conn, $sql);
+    $result = mysqli_query(
+        $conn,
+        'SELECT student_no, admission_id, username, email, class, student_name, last_accessed_date FROM students ORDER BY student_no DESC'
+    );
 
-    if ($result && mysqli_num_rows($result) > 0) {
-        $studentsData = [];
-
-        while ($row = mysqli_fetch_assoc($result)) {
-            $studentsData[] = $row;
-        }
-
-        echo json_encode(['data' => $studentsData]);
-    } else {
-        echo json_encode(['data' => []]);
-    }
-
+    echo json_encode(['data' => $result ? mysqli_fetch_all($result, MYSQLI_ASSOC) : []]);
     mysqli_close($conn);
 }
 
-function fetchStudent($conn)
+function fetchStudent(mysqli $conn): void
 {
-    if (isset($_POST['studentNo'])) {
-        $studentNo = $_POST['studentNo'];
-        $sql = "SELECT * FROM students WHERE student_no = '$studentNo'";
-        $result = mysqli_query($conn, $sql);
+    $studentNo = filter_input(INPUT_POST, 'studentNo', FILTER_VALIDATE_INT);
 
-        if ($result && mysqli_num_rows($result) > 0) {
-            $studentData = mysqli_fetch_assoc($result);
-            echo json_encode($studentData);
-        } else {
-            echo json_encode(['error' => 'Student not found']);
-        }
-    } else {
-        echo json_encode(['error' => 'Invalid request']);
+    if (!$studentNo) {
+        http_response_code(422);
+        echo json_encode(['error' => 'Invalid student number']);
+        return;
     }
 
+    $stmt = mysqli_prepare(
+        $conn,
+        'SELECT student_no, admission_id, username, email, class, student_name, last_accessed_date FROM students WHERE student_no = ?'
+    );
+    mysqli_stmt_bind_param($stmt, 'i', $studentNo);
+    mysqli_stmt_execute($stmt);
+    $student = mysqli_fetch_assoc(mysqli_stmt_get_result($stmt));
+
+    echo json_encode($student ?: ['error' => 'Student not found']);
+    mysqli_stmt_close($stmt);
     mysqli_close($conn);
 }
 
-function addStudent($conn)
+function addStudent(mysqli $conn): void
 {
-    $newStudentName = $_POST['newStudentName'];
-    $newAdmissionId = $_POST['newAdmissionId'];
-    $newUsername = $_POST['newUsername'];
-    $newEmail = $_POST['newEmail'];
-    $newClass = $_POST['newClass'];
+    $name = trim($_POST['newStudentName'] ?? '');
+    $admissionId = filter_var($_POST['newAdmissionId'] ?? null, FILTER_VALIDATE_INT);
+    $username = trim($_POST['newUsername'] ?? '');
+    $email = trim($_POST['newEmail'] ?? '');
+    $class = trim($_POST['newClass'] ?? '');
 
-    $checkUsernameQuery = "SELECT * FROM students WHERE username = '$newUsername'";
-    $resultUsername = mysqli_query($conn, $checkUsernameQuery);
-
-    $checkEmailQuery = "SELECT * FROM students WHERE email = '$newEmail'";
-    $resultEmail = mysqli_query($conn, $checkEmailQuery);
-
-    $checkAdmissionIdQuery = "SELECT * FROM students WHERE admission_id = '$newAdmissionId'";
-    $resultAdmissionId = mysqli_query($conn, $checkAdmissionIdQuery);
-
-    if (mysqli_num_rows($resultUsername) > 0) {
-        echo json_encode(['error' => 'Username already exists']);
+    if ($name === '' || !$admissionId || $username === '' || $class === '' || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        http_response_code(422);
+        echo json_encode(['error' => 'Name, admission ID, username, class and a valid email are required']);
         return;
     }
 
-    if (mysqli_num_rows($resultEmail) > 0) {
-        echo json_encode(['error' => 'Email already exists']);
-        return;
+    foreach ([['username', $username], ['email', $email], ['admission_id', (string) $admissionId]] as [$field, $value]) {
+        if (studentValueExists($conn, $field, $value)) {
+            $label = $field === 'admission_id' ? 'Admission ID' : ucfirst($field);
+            echo json_encode(['error' => $label . ' already exists']);
+            return;
+        }
     }
 
-    if (mysqli_num_rows($resultAdmissionId) > 0) {
-        echo json_encode(['error' => 'Admission ID already exists']);
-        return;
-    }
+    $temporaryPassword = (string) generateRandomSixDigitNumber();
+    $hashedPassword = hashPassword($temporaryPassword);
 
-    $randomNumber = generateRandomSixDigitNumber();
-    $hashedPassword = hashPassword($randomNumber);
+    $stmt = mysqli_prepare(
+        $conn,
+        'INSERT INTO students (student_name, admission_id, username, email, class, password, last_accessed_date) VALUES (?, ?, ?, ?, ?, ?, NULL)'
+    );
+    mysqli_stmt_bind_param($stmt, 'sissss', $name, $admissionId, $username, $email, $class, $hashedPassword);
 
-    $sql = "INSERT INTO students (student_name, admission_id, username, email, class, password, last_accessed_date) 
-            VALUES ('$newStudentName', '$newAdmissionId', '$newUsername', '$newEmail', '$newClass', '$hashedPassword', NULL)";
-
-    if (mysqli_query($conn, $sql)) {
-        sendWelcomeEmail($newStudentName, $newUsername, $newEmail, $randomNumber);
-        echo json_encode(['message' => 'Student added successfully']);
-    } else {
+    if (!mysqli_stmt_execute($stmt)) {
+        http_response_code(500);
         echo json_encode(['error' => 'Error adding new student']);
+        mysqli_stmt_close($stmt);
+        return;
     }
 
+    $emailSent = sendWelcomeEmail($name, $username, $email, $temporaryPassword);
+    echo json_encode([
+        'message' => 'Student added successfully',
+        'emailSent' => $emailSent,
+    ]);
+
+    mysqli_stmt_close($stmt);
     mysqli_close($conn);
 }
 
-function updateStudent($conn)
+function updateStudent(mysqli $conn): void
 {
-    if (isset($_POST['studentNo'])) {
-        $studentNo = $_POST['studentNo'];
-        $editStudentName = $_POST['updatedStudentName'];
-        $editClass = $_POST['updatedClass'];
+    $studentNo = filter_input(INPUT_POST, 'studentNo', FILTER_VALIDATE_INT);
+    $name = trim($_POST['updatedStudentName'] ?? '');
+    $class = trim($_POST['updatedClass'] ?? '');
 
-        $sql = "UPDATE students SET student_name = '$editStudentName', class = '$editClass' WHERE student_no = '$studentNo'";
-
-        $result = mysqli_query($conn, $sql);
-
-        if ($result) {
-            echo json_encode(['message' => 'Student updated successfully']);
-        } else {
-            echo json_encode(['error' => 'Error updating student']);
-        }
-
-        mysqli_close($conn);
-    } else {
-        echo json_encode(['error' => 'Invalid request']);
+    if (!$studentNo || $name === '' || $class === '') {
+        http_response_code(422);
+        echo json_encode(['error' => 'Invalid student update']);
+        return;
     }
+
+    $stmt = mysqli_prepare($conn, 'UPDATE students SET student_name = ?, class = ? WHERE student_no = ?');
+    mysqli_stmt_bind_param($stmt, 'ssi', $name, $class, $studentNo);
+
+    echo json_encode(
+        mysqli_stmt_execute($stmt)
+            ? ['message' => 'Student updated successfully']
+            : ['error' => 'Error updating student']
+    );
+
+    mysqli_stmt_close($stmt);
+    mysqli_close($conn);
 }
 
-function deleteStudent($conn)
+function deleteStudent(mysqli $conn): void
 {
-    if (isset($_POST['studentNo'])) {
-        $studentNo = $_POST['studentNo'];
-        $sql = "SELECT * FROM students WHERE student_no = ?";
+    $studentNo = filter_input(INPUT_POST, 'studentNo', FILTER_VALIDATE_INT);
 
-        $stmt = mysqli_prepare($conn, $sql);
-        mysqli_stmt_bind_param($stmt, 'i', $studentNo);
-        mysqli_stmt_execute($stmt);
-
-        $result = mysqli_stmt_get_result($stmt);
-
-        if ($result && mysqli_num_rows($result) > 0) {
-            $deleteSql = "DELETE FROM students WHERE student_no = ?";
-            $deleteStmt = mysqli_prepare($conn, $deleteSql);
-            mysqli_stmt_bind_param($deleteStmt, 'i', $studentNo);
-
-            if (mysqli_stmt_execute($deleteStmt)) {
-                echo json_encode(['success' => 'Student deleted successfully']);
-            } else {
-                echo json_encode(['error' => 'Error deleting student']);
-            }
-
-            mysqli_stmt_close($deleteStmt);
-        } else {
-            echo json_encode(['error' => 'Student not found']);
-        }
-
-        mysqli_stmt_close($stmt);
-        mysqli_close($conn);
-    } else {
-        echo json_encode(['error' => 'Invalid request']);
+    if (!$studentNo) {
+        http_response_code(422);
+        echo json_encode(['error' => 'Invalid student number']);
+        return;
     }
+
+    $stmt = mysqli_prepare($conn, 'DELETE FROM students WHERE student_no = ?');
+    mysqli_stmt_bind_param($stmt, 'i', $studentNo);
+    mysqli_stmt_execute($stmt);
+
+    echo json_encode(
+        mysqli_stmt_affected_rows($stmt) > 0
+            ? ['success' => 'Student deleted successfully']
+            : ['error' => 'Student not found']
+    );
+
+    mysqli_stmt_close($stmt);
+    mysqli_close($conn);
 }
 
-function sendWelcomeEmail($studentName, $username, $studentEmail, $password)
+function studentValueExists(mysqli $conn, string $field, string $value): bool
 {
-    $transport = Transport::fromDsn('smtp://34senith@gmail.com:osfiefvsuqxjgmhv@smtp.gmail.com:587');
+    $allowedFields = ['username', 'email', 'admission_id'];
+    if (!in_array($field, $allowedFields, true)) {
+        return true;
+    }
 
-    $mailer = new Mailer($transport);
+    $stmt = mysqli_prepare($conn, "SELECT 1 FROM students WHERE {$field} = ? LIMIT 1");
+    mysqli_stmt_bind_param($stmt, 's', $value);
+    mysqli_stmt_execute($stmt);
+    $exists = mysqli_num_rows(mysqli_stmt_get_result($stmt)) > 0;
+    mysqli_stmt_close($stmt);
 
-    $email = (new Email());
+    return $exists;
+}
 
-    $email->from('34senith@gmail.com');
+function sendWelcomeEmail(string $studentName, string $username, string $studentEmail, string $password): bool
+{
+    $safeName = htmlspecialchars($studentName, ENT_QUOTES, 'UTF-8');
+    $safeUsername = htmlspecialchars($username, ENT_QUOTES, 'UTF-8');
+    $safePassword = htmlspecialchars($password, ENT_QUOTES, 'UTF-8');
 
-    $email->to('' . $studentEmail);
+    $html = <<<HTML
+    <h2>Welcome to the Library Management System</h2>
+    <p>Hi {$safeName},</p>
+    <p>Your student account has been created.</p>
+    <p><strong>Username:</strong> {$safeUsername}<br><strong>Temporary password:</strong> {$safePassword}</p>
+    <p>Please change the temporary password after your first sign-in.</p>
+    HTML;
 
-    $email->subject('Welcome to Ananda College Library System!');
-
-    $email->html('
-    <html lang="en">
-    <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    </head>
-    <body style="font-family: Arial, sans-serif; line-height: 1.6; margin: 0; padding: 20px; background-color: #f4f4f4;">
-    <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
-    <h2 style="color: #333;">Welcome to Ananda College Library System</h2>
-    <p style="color: #555;">Dear ' . $studentName . ',</p>
-    <p style="color: #555;">We are delighted to welcome you to Ananda College Library System! Your student account has been successfully created, and we are excited to have you as a member of our library community.</p>
-    <div style="margin-top: 20px; padding: 10px; background-color: #f9f9f9; border-radius: 6px;" class="login-details">
-    <p><strong>Username:</strong> ' . $username . '</p>
-    <p><strong>Password:</strong> ' . $password . '</p>
-    </div>
-    <p style="color: #555; margin-top: 20px;">To access the library system, simply use the provided username and password at our Library Management System. Upon your first login, we recommend changing your password for security purposes.</p>
-    <p style="color: #555;">If you have any questions or encounter any issues, feel free to reach out to our support team or visit the library in person.</p>
-    <p style="color: #555; margin-top: 20px;">Happy reading!</p>
-    <div style="margin-top: 20px; font-size: 12px; color: #777;" class="footer">
-    <p>Best regards,<br>Library System Team<br>Ananda College</p>
-    </div>
-    </div>
-    </body>
-    </html>
-    ');
-
-    $mailer->send($email);
+    return sendLibraryEmail($studentEmail, 'Your library student account', $html);
 }
