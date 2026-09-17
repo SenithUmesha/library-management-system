@@ -1,214 +1,209 @@
 <?php
+
 require '../includes/db_conn.php';
 require '../util/functions.php';
-
 require_once '../vendor/autoload.php';
+require_once '../includes/mailer.php';
 
-use Symfony\Component\Mailer\Transport;
-use Symfony\Component\Mailer\Mailer;
-use Symfony\Component\Mime\Email;
+header('Content-Type: application/json; charset=utf-8');
+session_start();
 
-if (isset($_POST['action'])) {
-    $action = $_POST['action'];
-
-    switch ($action) {
-        case 'fetch':
-            fetchAdmin($conn);
-            break;
-        case 'fetch_all':
-            fetchAllAdmins($conn);
-            break;
-        case 'add':
-            addAdmin($conn);
-            break;
-        case 'update':
-            updateAdmin($conn);
-            break;
-        case 'delete':
-            deleteAdmin($conn);
-            break;
-        default:
-            echo json_encode(['error' => 'Invalid action']);
-            break;
-    }
-} else {
-    echo json_encode(['error' => 'Action not specified']);
+if (($_SESSION['account_type'] ?? null) !== 'admin') {
+    http_response_code(403);
+    echo json_encode(['error' => 'Admin access required']);
+    exit;
 }
 
-function fetchAllAdmins($conn)
+$action = $_POST['action'] ?? '';
+
+switch ($action) {
+    case 'fetch':
+        fetchAdmin($conn);
+        break;
+    case 'fetch_all':
+        fetchAllAdmins($conn);
+        break;
+    case 'add':
+        addAdmin($conn);
+        break;
+    case 'update':
+        updateAdmin($conn);
+        break;
+    case 'delete':
+        deleteAdmin($conn);
+        break;
+    default:
+        http_response_code(400);
+        echo json_encode(['error' => 'Invalid or missing action']);
+}
+
+function fetchAllAdmins(mysqli $conn): void
 {
-    $sql = "SELECT * FROM admins";
-    $result = mysqli_query($conn, $sql);
+    $result = mysqli_query(
+        $conn,
+        'SELECT admin_no, admin_name, username, email, last_accessed_date FROM admins ORDER BY admin_no DESC'
+    );
 
-    if ($result && mysqli_num_rows($result) > 0) {
-        $adminsData = [];
-
-        while ($row = mysqli_fetch_assoc($result)) {
-            $adminsData[] = $row;
-        }
-
-        echo json_encode(['data' => $adminsData]);
-    } else {
-        echo json_encode(['data' => []]);
-    }
-
+    echo json_encode(['data' => $result ? mysqli_fetch_all($result, MYSQLI_ASSOC) : []]);
     mysqli_close($conn);
 }
 
-function fetchAdmin($conn)
+function fetchAdmin(mysqli $conn): void
 {
-    if (isset($_POST['adminNo'])) {
-        $adminNo = $_POST['adminNo'];
-        $sql = "SELECT * FROM admins WHERE admin_no = '$adminNo'";
-        $result = mysqli_query($conn, $sql);
+    $adminNo = filter_input(INPUT_POST, 'adminNo', FILTER_VALIDATE_INT);
 
-        if ($result && mysqli_num_rows($result) > 0) {
-            $adminData = mysqli_fetch_assoc($result);
-            echo json_encode($adminData);
-        } else {
-            echo json_encode(['error' => 'Admin not found']);
-        }
-    } else {
-        echo json_encode(['error' => 'Invalid request']);
+    if (!$adminNo) {
+        http_response_code(422);
+        echo json_encode(['error' => 'Invalid admin number']);
+        return;
     }
 
+    $stmt = mysqli_prepare(
+        $conn,
+        'SELECT admin_no, admin_name, username, email, last_accessed_date FROM admins WHERE admin_no = ?'
+    );
+    mysqli_stmt_bind_param($stmt, 'i', $adminNo);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    $admin = mysqli_fetch_assoc($result);
+
+    echo json_encode($admin ?: ['error' => 'Admin not found']);
+    mysqli_stmt_close($stmt);
     mysqli_close($conn);
 }
 
-function addAdmin($conn)
+function addAdmin(mysqli $conn): void
 {
-    $newAdminName = $_POST['newAdminName'];
-    $newUsername = $_POST['newUsername'];
-    $newEmail = $_POST['newEmail'];
+    $name = trim($_POST['newAdminName'] ?? '');
+    $username = trim($_POST['newUsername'] ?? '');
+    $email = trim($_POST['newEmail'] ?? '');
 
-    $checkUsernameQuery = "SELECT * FROM admins WHERE username = '$newUsername'";
-    $resultUsername = mysqli_query($conn, $checkUsernameQuery);
+    if ($name === '' || $username === '' || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        http_response_code(422);
+        echo json_encode(['error' => 'Name, username and a valid email are required']);
+        return;
+    }
 
-    $checkEmailQuery = "SELECT * FROM admins WHERE email = '$newEmail'";
-    $resultEmail = mysqli_query($conn, $checkEmailQuery);
-
-    if (mysqli_num_rows($resultUsername) > 0) {
+    if (adminValueExists($conn, 'username', $username)) {
         echo json_encode(['error' => 'Username already exists']);
         return;
     }
 
-    if (mysqli_num_rows($resultEmail) > 0) {
+    if (adminValueExists($conn, 'email', $email)) {
         echo json_encode(['error' => 'Email already exists']);
         return;
     }
 
-    $randomNumber = generateRandomSixDigitNumber();
-    $hashedPassword = hashPassword($randomNumber);
+    $temporaryPassword = (string) generateRandomSixDigitNumber();
+    $hashedPassword = hashPassword($temporaryPassword);
 
-    $sql = "INSERT INTO admins (admin_name, username, email, password, last_accessed_date) 
-            VALUES ('$newAdminName', '$newUsername', '$newEmail', '$hashedPassword', NULL)";
+    $stmt = mysqli_prepare(
+        $conn,
+        'INSERT INTO admins (admin_name, username, email, password, last_accessed_date) VALUES (?, ?, ?, ?, NULL)'
+    );
+    mysqli_stmt_bind_param($stmt, 'ssss', $name, $username, $email, $hashedPassword);
 
-    if (mysqli_query($conn, $sql)) {
-        sendWelcomeEmail($newAdminName, $newUsername, $newEmail, $randomNumber);
-        echo json_encode(['message' => 'Admin added successfully']);
-    } else {
+    if (!mysqli_stmt_execute($stmt)) {
+        http_response_code(500);
         echo json_encode(['error' => 'Error adding new admin']);
+        mysqli_stmt_close($stmt);
+        return;
     }
 
+    $emailSent = sendWelcomeEmail($name, $username, $email, $temporaryPassword);
+    echo json_encode([
+        'message' => 'Admin added successfully',
+        'emailSent' => $emailSent,
+    ]);
+
+    mysqli_stmt_close($stmt);
     mysqli_close($conn);
 }
 
-function updateAdmin($conn)
+function updateAdmin(mysqli $conn): void
 {
-    if (isset($_POST['adminNo'])) {
-        $adminNo = $_POST['adminNo'];
-        $editAdminName = $_POST['updatedAdminName'];
+    $adminNo = filter_input(INPUT_POST, 'adminNo', FILTER_VALIDATE_INT);
+    $name = trim($_POST['updatedAdminName'] ?? '');
 
-        $sql = "UPDATE admins SET admin_name = '$editAdminName' WHERE admin_no = '$adminNo'";
-
-        $result = mysqli_query($conn, $sql);
-
-        if ($result) {
-            echo json_encode(['message' => 'Admin updated successfully']);
-        } else {
-            echo json_encode(['error' => 'Error updating admin']);
-        }
-
-        mysqli_close($conn);
-    } else {
-        echo json_encode(['error' => 'Invalid request']);
+    if (!$adminNo || $name === '') {
+        http_response_code(422);
+        echo json_encode(['error' => 'Invalid admin update']);
+        return;
     }
+
+    $stmt = mysqli_prepare($conn, 'UPDATE admins SET admin_name = ? WHERE admin_no = ?');
+    mysqli_stmt_bind_param($stmt, 'si', $name, $adminNo);
+
+    echo json_encode(
+        mysqli_stmt_execute($stmt)
+            ? ['message' => 'Admin updated successfully']
+            : ['error' => 'Error updating admin']
+    );
+
+    mysqli_stmt_close($stmt);
+    mysqli_close($conn);
 }
 
-function deleteAdmin($conn)
+function deleteAdmin(mysqli $conn): void
 {
-    if (isset($_POST['adminNo'])) {
-        $adminNo = $_POST['adminNo'];
-        $sql = "SELECT * FROM admins WHERE admin_no = ?";
+    $adminNo = filter_input(INPUT_POST, 'adminNo', FILTER_VALIDATE_INT);
 
-        $stmt = mysqli_prepare($conn, $sql);
-        mysqli_stmt_bind_param($stmt, 'i', $adminNo);
-        mysqli_stmt_execute($stmt);
-
-        $result = mysqli_stmt_get_result($stmt);
-
-        if ($result && mysqli_num_rows($result) > 0) {
-            $deleteSql = "DELETE FROM admins WHERE admin_no = ?";
-            $deleteStmt = mysqli_prepare($conn, $deleteSql);
-            mysqli_stmt_bind_param($deleteStmt, 'i', $adminNo);
-
-            if (mysqli_stmt_execute($deleteStmt)) {
-                echo json_encode(['success' => 'Admin deleted successfully']);
-            } else {
-                echo json_encode(['error' => 'Error deleting admin']);
-            }
-
-            mysqli_stmt_close($deleteStmt);
-        } else {
-            echo json_encode(['error' => 'Admin not found']);
-        }
-
-        mysqli_stmt_close($stmt);
-        mysqli_close($conn);
-    } else {
-        echo json_encode(['error' => 'Invalid request']);
+    if (!$adminNo) {
+        http_response_code(422);
+        echo json_encode(['error' => 'Invalid admin number']);
+        return;
     }
+
+    if ((int) ($_SESSION['id'] ?? 0) === $adminNo) {
+        http_response_code(422);
+        echo json_encode(['error' => 'You cannot delete the account you are currently using']);
+        return;
+    }
+
+    $stmt = mysqli_prepare($conn, 'DELETE FROM admins WHERE admin_no = ?');
+    mysqli_stmt_bind_param($stmt, 'i', $adminNo);
+    mysqli_stmt_execute($stmt);
+
+    echo json_encode(
+        mysqli_stmt_affected_rows($stmt) > 0
+            ? ['success' => 'Admin deleted successfully']
+            : ['error' => 'Admin not found']
+    );
+
+    mysqli_stmt_close($stmt);
+    mysqli_close($conn);
 }
 
-function sendWelcomeEmail($adminName, $username, $adminEmail, $password)
+function adminValueExists(mysqli $conn, string $field, string $value): bool
 {
-    $transport = Transport::fromDsn('smtp://34senith@gmail.com:osfiefvsuqxjgmhv@smtp.gmail.com:587');
+    $allowedFields = ['username', 'email'];
+    if (!in_array($field, $allowedFields, true)) {
+        return true;
+    }
 
-    $mailer = new Mailer($transport);
+    $stmt = mysqli_prepare($conn, "SELECT 1 FROM admins WHERE {$field} = ? LIMIT 1");
+    mysqli_stmt_bind_param($stmt, 's', $value);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    $exists = mysqli_num_rows($result) > 0;
+    mysqli_stmt_close($stmt);
 
-    $email = (new Email());
+    return $exists;
+}
 
-    $email->from('34senith@gmail.com');
+function sendWelcomeEmail(string $adminName, string $username, string $adminEmail, string $password): bool
+{
+    $safeName = htmlspecialchars($adminName, ENT_QUOTES, 'UTF-8');
+    $safeUsername = htmlspecialchars($username, ENT_QUOTES, 'UTF-8');
+    $safePassword = htmlspecialchars($password, ENT_QUOTES, 'UTF-8');
 
-    $email->to('' . $adminEmail);
+    $html = <<<HTML
+    <h2>Welcome to the Library Management System</h2>
+    <p>Hi {$safeName},</p>
+    <p>Your admin account has been created.</p>
+    <p><strong>Username:</strong> {$safeUsername}<br><strong>Temporary password:</strong> {$safePassword}</p>
+    <p>Please change the temporary password after your first sign-in.</p>
+    HTML;
 
-    $email->subject('Welcome to Ananda College Library System!');
-
-    $email->html('
-    <html lang="en">
-    <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    </head>
-    <body style="font-family: Arial, sans-serif; line-height: 1.6; margin: 0; padding: 20px; background-color: #f4f4f4;">
-    <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
-    <h2 style="color: #333;">Welcome to Ananda College Library System</h2>
-    <p style="color: #555;">Dear ' . $adminName . ',</p>
-    <p style="color: #555;">We are delighted to welcome you to Ananda College Library System! Your admin account has been successfully created, and we are excited to have you as a member of our library community.</p>
-    <div style="margin-top: 20px; padding: 10px; background-color: #f9f9f9; border-radius: 6px;" class="login-details">
-    <p><strong>Username:</strong> ' . $username . '</p>
-    <p><strong>Password:</strong> ' . $password . '</p>
-    </div>
-    <p style="color: #555; margin-top: 20px;">To access the library system, simply use the provided username and password at our Library Management System. Upon your first login, we recommend changing your password for security purposes.</p>
-    <p style="color: #555;">If you have any questions or encounter any issues, feel free to reach out to our support team or visit the library in person.</p>
-    <p style="color: #555; margin-top: 20px;">Happy reading!</p>
-    <div style="margin-top: 20px; font-size: 12px; color: #777;" class="footer">
-    <p>Best regards,<br>Library System Team<br>Ananda College</p>
-    </div>
-    </div>
-    </body>
-    </html>
-    ');
-
-    $mailer->send($email);
+    return sendLibraryEmail($adminEmail, 'Your library admin account', $html);
 }
