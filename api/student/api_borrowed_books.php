@@ -1,194 +1,167 @@
 <?php
+
 require '../../includes/db_conn.php';
-require '../../util/functions.php';
-
 require_once '../../vendor/autoload.php';
+require_once '../../includes/mailer.php';
 
-use Symfony\Component\Mailer\Transport;
-use Symfony\Component\Mailer\Mailer;
-use Symfony\Component\Mime\Email;
-
+header('Content-Type: application/json; charset=utf-8');
 session_start();
 
-if (isset($_POST['action'])) {
-    $action = $_POST['action'];
-
-    switch ($action) {
-        case 'return':
-            returnBook($conn);
-            break;
-        case 'fetch_all':
-            fetchAllBorrowedBooks($conn);
-            break;
-        default:
-            echo json_encode(['error' => 'Invalid action']);
-            break;
-    }
-} else {
-    echo json_encode(['error' => 'Action not specified']);
+if (($_SESSION['account_type'] ?? null) !== 'student' || !isset($_SESSION['id'])) {
+    http_response_code(403);
+    echo json_encode(['error' => 'Student access required']);
+    exit;
 }
 
-function fetchAllBorrowedBooks($conn)
+$action = $_POST['action'] ?? '';
+
+switch ($action) {
+    case 'return':
+        returnBook($conn);
+        break;
+    case 'fetch_all':
+        fetchAllBorrowedBooks($conn);
+        break;
+    default:
+        http_response_code(400);
+        echo json_encode(['error' => 'Invalid or missing action']);
+}
+
+function fetchAllBorrowedBooks(mysqli $conn): void
 {
-    if (isset($_SESSION['id'])) {
-        $studentNo = $_SESSION['id'];
+    $studentNo = (int) $_SESSION['id'];
+    $stmt = mysqli_prepare($conn, 'SELECT * FROM borrowed_books WHERE student_no = ? ORDER BY borrowed_date DESC');
+    mysqli_stmt_bind_param($stmt, 'i', $studentNo);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
 
-        $sql = "SELECT * FROM borrowed_books WHERE student_no = ?";
-        $stmt = mysqli_prepare($conn, $sql);
-        mysqli_stmt_bind_param($stmt, 'i', $studentNo);
-        mysqli_stmt_execute($stmt);
-
-        $result = mysqli_stmt_get_result($stmt);
-
-        if ($result && mysqli_num_rows($result) > 0) {
-            $borrowedBookData = [];
-
-            while ($row = mysqli_fetch_assoc($result)) {
-                $borrowedBookData[] = $row;
-            }
-
-            echo json_encode(['data' => $borrowedBookData]);
-        } else {
-            echo json_encode(['data' => []]);
-        }
-
-        mysqli_stmt_close($stmt);
-    } else {
-        echo json_encode(['error' => 'Student ID not found in session']);
-    }
-
+    echo json_encode(['data' => mysqli_fetch_all($result, MYSQLI_ASSOC)]);
+    mysqli_stmt_close($stmt);
     mysqli_close($conn);
 }
 
-function returnBook($conn)
+function returnBook(mysqli $conn): void
 {
-    $bookNo = $_POST['bookNo'];
-    $bookTitle = $_POST['bookTitle'];
-    $studentNo = $_POST['studentNo'];
-    $studentName = $_POST['studentName'];
-    $borrowedBookNo = $_POST['borrowedBookNo'];
-    $dueDate = $_POST['dueDate'];
+    $studentNo = (int) $_SESSION['id'];
+    $borrowedBookNo = filter_input(INPUT_POST, 'borrowedBookNo', FILTER_VALIDATE_INT);
 
-    $currentDateTime = date('Y-m-d H:i:s');
-
-    $dueDateTime = strtotime($dueDate);
-    $currentDate = strtotime(date('Y-m-d H:i:s'));
-
-    if ($dueDateTime < $currentDate) {
-        $fineAmount = 50.00;
-
-        $addFineSql = "INSERT INTO fines (student_no, student_name, book_no, book_title, fine_amount, issued_date, due_date, payment_status, paid_date) 
-                        VALUES (?, ?, ?, ?, ?, ?, ?, 'Unpaid', NULL)";
-        $addFineStmt = mysqli_prepare($conn, $addFineSql);
-        mysqli_stmt_bind_param($addFineStmt, 'isisdss', $studentNo, $studentName, $bookNo, $bookTitle, $fineAmount, $currentDateTime, $dueDate);
-        mysqli_stmt_execute($addFineStmt);
-        mysqli_stmt_close($addFineStmt);
+    if (!$borrowedBookNo) {
+        http_response_code(422);
+        echo json_encode(['error' => 'Invalid borrowed-book number']);
+        return;
     }
 
-    $returnSql = "INSERT INTO returned_books (book_no, book_title, student_no, student_name, returned_date) 
-                  VALUES (?, ?, ?, ?, ?)";
-    $returnStmt = mysqli_prepare($conn, $returnSql);
-    mysqli_stmt_bind_param($returnStmt, 'isiss', $bookNo, $bookTitle, $studentNo, $studentName, $currentDateTime);
+    $borrowedStmt = mysqli_prepare(
+        $conn,
+        'SELECT borrowed_book_no, book_no, book_title, student_no, student_name, borrowed_date, due_date FROM borrowed_books WHERE borrowed_book_no = ? AND student_no = ?'
+    );
+    mysqli_stmt_bind_param($borrowedStmt, 'ii', $borrowedBookNo, $studentNo);
+    mysqli_stmt_execute($borrowedStmt);
+    $borrowed = mysqli_fetch_assoc(mysqli_stmt_get_result($borrowedStmt));
+    mysqli_stmt_close($borrowedStmt);
 
-    $deleteSql = "DELETE FROM borrowed_books WHERE borrowed_book_no = ?";
-    $deleteStmt = mysqli_prepare($conn, $deleteSql);
-    mysqli_stmt_bind_param($deleteStmt, 'i', $borrowedBookNo);
+    if (!$borrowed) {
+        http_response_code(404);
+        echo json_encode(['error' => 'Borrowed book not found for this student']);
+        return;
+    }
 
-    $updateSql = "UPDATE books SET no_of_copies = no_of_copies + 1 WHERE book_no = ?";
-    $updateStmt = mysqli_prepare($conn, $updateSql);
-    mysqli_stmt_bind_param($updateStmt, 'i', $bookNo);
+    $bookNo = (int) $borrowed['book_no'];
+    $bookTitle = $borrowed['book_title'];
+    $studentName = $borrowed['student_name'];
+    $dueDate = $borrowed['due_date'];
+    $returnedAt = date('Y-m-d H:i:s');
 
-    $checkReservationsSql = "SELECT email, book_title, reserved_date, reservation_no FROM reservations WHERE book_no = ?";
-    $checkReservationsStmt = mysqli_prepare($conn, $checkReservationsSql);
-    mysqli_stmt_bind_param($checkReservationsStmt, 'i', $bookNo);
+    mysqli_begin_transaction($conn);
 
-    $success = false;
-    $deleteReservationsStmt = mysqli_prepare($conn, "DELETE FROM reservations WHERE reservation_no = ?");
-
-    if (mysqli_stmt_execute($returnStmt) && mysqli_stmt_execute($deleteStmt) && mysqli_stmt_execute($updateStmt)) {
-        mysqli_stmt_execute($checkReservationsStmt);
-        $resultReservations = mysqli_stmt_get_result($checkReservationsStmt);
-
-        if ($resultReservations && mysqli_num_rows($resultReservations) > 0) {
-            $emails = [];
-            $reservationsToDelete = [];
-
-            while ($row = mysqli_fetch_assoc($resultReservations)) {
-                $email = $row['email'];
-                $bookTitle = $row['book_title'];
-                $reservedDate = $row['reserved_date'];
-                $reservationNo = $row['reservation_no'];
-
-                sendEmail($email, $bookTitle, $reservedDate);
-
-                $emails[] = $email;
-                $reservationsToDelete[] = $reservationNo;
-            }
-
-            foreach ($reservationsToDelete as $reservationNo) {
-                mysqli_stmt_bind_param($deleteReservationsStmt, 'i', $reservationNo);
-                mysqli_stmt_execute($deleteReservationsStmt);
-            }
-
-            $success = true;
-            echo json_encode(['message' => 'Book returned successfully and email sent']);
-        } else {
-            $success = true;
-            echo json_encode(['message' => 'Book returned successfully']);
+    try {
+        if ($dueDate !== null && strtotime($dueDate) < time()) {
+            $fineAmount = 50.00;
+            $fineStmt = mysqli_prepare(
+                $conn,
+                "INSERT INTO fines (student_no, student_name, book_no, book_title, fine_amount, issued_date, due_date, payment_status, paid_date) VALUES (?, ?, ?, ?, ?, ?, ?, 'Unpaid', NULL)"
+            );
+            mysqli_stmt_bind_param($fineStmt, 'isisdss', $studentNo, $studentName, $bookNo, $bookTitle, $fineAmount, $returnedAt, $dueDate);
+            mysqli_stmt_execute($fineStmt);
+            mysqli_stmt_close($fineStmt);
         }
-    } else {
+
+        $returnStmt = mysqli_prepare(
+            $conn,
+            'INSERT INTO returned_books (book_no, book_title, student_no, student_name, returned_date, is_rated) VALUES (?, ?, ?, ?, ?, 0)'
+        );
+        mysqli_stmt_bind_param($returnStmt, 'isiss', $bookNo, $bookTitle, $studentNo, $studentName, $returnedAt);
+        mysqli_stmt_execute($returnStmt);
+        mysqli_stmt_close($returnStmt);
+
+        $deleteStmt = mysqli_prepare($conn, 'DELETE FROM borrowed_books WHERE borrowed_book_no = ? AND student_no = ?');
+        mysqli_stmt_bind_param($deleteStmt, 'ii', $borrowedBookNo, $studentNo);
+        mysqli_stmt_execute($deleteStmt);
+        mysqli_stmt_close($deleteStmt);
+
+        $stockStmt = mysqli_prepare($conn, 'UPDATE books SET no_of_copies = no_of_copies + 1 WHERE book_no = ?');
+        mysqli_stmt_bind_param($stockStmt, 'i', $bookNo);
+        mysqli_stmt_execute($stockStmt);
+        mysqli_stmt_close($stockStmt);
+
+        mysqli_commit($conn);
+    } catch (Throwable $exception) {
+        mysqli_rollback($conn);
+        error_log('Book return failed: ' . $exception->getMessage());
+        http_response_code(500);
         echo json_encode(['error' => 'Error returning book']);
+        return;
     }
 
-    mysqli_stmt_close($returnStmt);
-    mysqli_stmt_close($deleteStmt);
-    mysqli_stmt_close($updateStmt);
-    mysqli_stmt_close($checkReservationsStmt);
-    mysqli_stmt_close($deleteReservationsStmt);
+    $notificationsSent = notifyReservations($conn, $bookNo);
+
+    echo json_encode([
+        'message' => 'Book returned successfully',
+        'reservationNotificationsSent' => $notificationsSent,
+    ]);
 
     mysqli_close($conn);
-
-    return $success;
 }
 
-function sendEmail($studentEmail, $bookTitle, $reservedDate)
+function notifyReservations(mysqli $conn, int $bookNo): int
 {
-    $transport = Transport::fromDsn('smtp://34senith@gmail.com:osfiefvsuqxjgmhv@smtp.gmail.com:587');
+    $stmt = mysqli_prepare(
+        $conn,
+        'SELECT reservation_no, email, book_title, reserved_date FROM reservations WHERE book_no = ? ORDER BY reserved_date ASC'
+    );
+    mysqli_stmt_bind_param($stmt, 'i', $bookNo);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
 
-    $mailer = new Mailer($transport);
+    $sent = 0;
+    while ($reservation = mysqli_fetch_assoc($result)) {
+        if (!sendReservationEmail($reservation['email'], $reservation['book_title'], $reservation['reserved_date'])) {
+            continue;
+        }
 
-    $email = (new Email());
+        $reservationNo = (int) $reservation['reservation_no'];
+        $deleteStmt = mysqli_prepare($conn, 'DELETE FROM reservations WHERE reservation_no = ?');
+        mysqli_stmt_bind_param($deleteStmt, 'i', $reservationNo);
+        mysqli_stmt_execute($deleteStmt);
+        mysqli_stmt_close($deleteStmt);
+        $sent++;
+    }
 
-    $email->from('34senith@gmail.com');
+    mysqli_stmt_close($stmt);
+    return $sent;
+}
 
-    $email->to('' . $studentEmail);
+function sendReservationEmail(string $studentEmail, string $bookTitle, string $reservedDate): bool
+{
+    $safeTitle = htmlspecialchars($bookTitle, ENT_QUOTES, 'UTF-8');
+    $safeReservedDate = htmlspecialchars($reservedDate, ENT_QUOTES, 'UTF-8');
 
-    $email->subject('Book Availability Notification');
+    $html = <<<HTML
+    <h2>Your reserved book is available</h2>
+    <p>The book <strong>{$safeTitle}</strong> is available to borrow.</p>
+    <p><strong>Reserved:</strong> {$safeReservedDate}</p>
+    <p>Please contact the library if you need help with the reservation.</p>
+    HTML;
 
-    $email->html('
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-</head>
-<body style="font-family: Arial, sans-serif; line-height: 1.6; margin: 0; padding: 20px; background-color: #f4f4f4;">
-<div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
-<h2 style="color: #333;">Book Availability Notification</h2>
-<p style="color: #555;">Dear Student,</p>
-<p style="color: #555;">Good news! The book you reserved at Ananda College Library System is now available.</p>
-<div style="margin-top: 20px; padding: 10px; background-color: #f9f9f9; border-radius: 6px;" class="book-details">
-<p><strong>Book Title:</strong> ' . $bookTitle . '</p>
-<p><strong>Reserved Date:</strong> ' . $reservedDate . '</p>
-</div>
-<p style="color: #555; margin-top: 20px;">You can now borrow the book from the library. If you have any questions or need further assistance, please contact our library staff.</p>
-<p style="color: #555;">Happy reading!</p>
-<div style="margin-top: 20px; font-size: 12px; color: #777;" class="footer">
-<p>Best regards,<br>Library System Team<br>Ananda College</p>
-</div>
-</div>
-</body>
-</html>
-');
-
-    $mailer->send($email);
+    return sendLibraryEmail($studentEmail, 'Book availability notification', $html);
 }
